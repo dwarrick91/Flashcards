@@ -7,6 +7,13 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+    
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0074D9"> <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="ArithFun">
+    <link rel="apple-touch-icon" href="./icon-192x192.png">
+
     <style>
         /* --- Base Styles (some might be overridden by themes) --- */
         body {
@@ -184,10 +191,10 @@
             font-size: 1.1em; 
             margin-top: 10px; 
             min-height: 2.5em; 
-            padding: 8px; /* Base padding, adjusted from 5px */
+            padding: 8px; 
             border-radius: 4px; 
             transition: background-color 0.5s ease, border-color 0.5s ease, color 0.5s ease;
-            line-height: 1.4; /* For two-line messages */
+            line-height: 1.4; 
         }
         .correct { font-weight: bold; }
         .incorrect { font-weight: bold; }
@@ -275,7 +282,7 @@
             color: white; text-shadow: 0 1px 2px rgba(0,0,0,0.2);
         }
         .rainbow-theme button#submitAnswerBtn:hover { background-position: right center; }
-        .rainbow-theme #feedback { background-color: rgba(230,247,255,0.5); border: 1px dashed #0074d9; }
+        .rainbow-theme #feedback { background-color: rgba(230,247,255,0.5); border: 1px dashed #0074d9; color: #333; }
         .rainbow-theme .correct { color: #2ECC40; }
         .rainbow-theme .incorrect { color: #FF4136; }
         .rainbow-theme #sticker-section { background-color: #fff; border: 2px solid #0074D9;}
@@ -796,16 +803,13 @@
 
             if (!isNaN(userAnswer)) {
                 if (userAnswer === correctAnswerValue) {
-                    // Set base "Correct!" message first and apply class
                     feedbackEl.textContent = "🌟 Correct! 🌟"; 
-                    feedbackEl.className = 'correct'; // This will apply themed text color
-
+                    feedbackEl.className = 'correct'; 
                     correctAnswers++;
                     if (correctAnswers > 0 && correctAnswers % correctAnswersNeededForSticker === 0) {
                         availableStickerCredits++;
                         
                         let stickerEarnedText = "";
-                        // Theme-specific addition to the "sticker credit earned" message
                         switch (currentTheme) {
                             case "videogame":
                                 stickerEarnedText = "<br>✨ Power-Up! Sticker Credit Unlocked! ✨";
@@ -818,17 +822,16 @@
                                 stickerEarnedText = "<br>🌈 You've earned a sticker credit! 🌈";
                                 break;
                         }
-                        // Append the themed message
                         feedbackEl.innerHTML = feedbackEl.textContent + stickerEarnedText; 
                         updateStickerSectionStatus();
                     }
                 } else {
                     feedbackEl.textContent = `🤔 Almost! The correct answer was ${correctAnswerValue}.`;
-                    feedbackEl.className = 'incorrect'; // This will apply themed text color
+                    feedbackEl.className = 'incorrect'; 
                 }
             } else {
                  feedbackEl.textContent = `Please enter a number.`;
-                 feedbackEl.className = 'incorrect'; // Apply themed text color
+                 feedbackEl.className = 'incorrect'; 
                  questionsAsked--;
             }
 
@@ -889,8 +892,8 @@
             } else {
                 finalMessage = " Keep practicing!";
             }
-            feedbackEl.innerHTML = `🎉 Game Over, ${playerName}! ${finalMessage} 🎉`; // Use innerHTML for emoji
-            feedbackEl.className = ''; // Clear .correct/.incorrect for neutral game over message
+            feedbackEl.innerHTML = `🎉 Game Over, ${playerName}! ${finalMessage} 🎉`; 
+            feedbackEl.className = ''; 
 
              updateStickerSectionStatus();
              if(availableStickerCredits > 0 && stickerSectionEl.classList.contains('hidden')){
@@ -1169,6 +1172,20 @@
             stickerListScrollDownBtn.disabled = stickerListEl.scrollTop + stickerListEl.clientHeight >= stickerListEl.scrollHeight -1;
         }
 
+        // Initial PWA setup (Service Worker registration)
+        if ('serviceWorker' in navigator) {
+          window.addEventListener('load', () => {
+            navigator.serviceWorker.register('./service-worker.js') // Ensure service-worker.js is in the root
+              .then(registration => {
+                console.log('ServiceWorker: Registration successful with scope: ', registration.scope);
+              })
+              .catch(error => {
+                console.log('ServiceWorker: Registration failed: ', error);
+              });
+          });
+        }
+
+        // Initial UI State
         if(personalizedMessageEl) personalizedMessageEl.classList.remove('visible');
         applyTheme(currentTheme); 
         updateScrollButtonStates();
