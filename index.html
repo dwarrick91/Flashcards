@@ -8,179 +8,56 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Nunito:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        /* --- Base Styles --- */
-        body {
-            font-family: 'Nunito', 'Arial', sans-serif;
-            text-align: center;
-            margin: 0;
-            padding: 10px;
-            position: relative;
-            min-height: 100vh;
-            box-sizing: border-box;
-            -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none;
-            overflow-x: hidden;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            transition: background-color 0.5s ease, color 0.5s ease;
-        }
-
-        /* --- Start Menu Styles --- */
-        #start-menu {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: rgba(240, 248, 255, 0.98);
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            z-index: 3000; padding: 15px; box-sizing: border-box; text-align: center; overflow-y: auto;
-        }
-        #start-menu h2 {
-            font-size: 2.3em; margin-bottom: 15px;
-            background-image: linear-gradient(to right, #FF4136, #FF851B, #FFDC00, #2ECC40, #0074D9, #4B0082, #B10DC9);
-            -webkit-background-clip: text; background-clip: text; color: transparent;
-        }
+        /* CSS from previous step - Omitted for brevity but assumed to be complete */
+        body { font-family: 'Nunito', 'Arial', sans-serif; text-align: center; margin: 0; padding: 10px; position: relative; min-height: 100vh; box-sizing: border-box; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; overflow-x: hidden; display: flex; flex-direction: column; align-items: center; transition: background-color 0.5s ease, color 0.5s ease; }
+        #start-menu { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(240, 248, 255, 0.98); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 3000; padding: 15px; box-sizing: border-box; text-align: center; overflow-y: auto; }
+        #start-menu h2 { font-size: 2.3em; margin-bottom: 15px; background-image: linear-gradient(to right, #FF4136, #FF851B, #FFDC00, #2ECC40, #0074D9, #4B0082, #B10DC9); -webkit-background-clip: text; background-clip: text; color: transparent; }
         #start-menu label { font-size: 1.2em; margin-bottom: 6px; display: block; }
-        #start-menu input[type="text"] {
-            padding: 10px; font-size: 1.1em; border: 2px solid #ccc; border-radius: 8px;
-            width: 80%; max-width: 280px; margin-bottom: 10px; text-align: center;
-            box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
-        }
-        .selection-group {
-            margin: 10px 0; padding: 10px; border: 1px solid #ddd; border-radius: 8px;
-            width: 90%; max-width: 320px;
-        }
+        #start-menu input[type="text"] { padding: 10px; font-size: 1.1em; border: 2px solid #ccc; border-radius: 8px; width: 80%; max-width: 280px; margin-bottom: 10px; text-align: center; box-shadow: inset 0 1px 3px rgba(0,0,0,0.1); }
+        .selection-group { margin: 10px 0; padding: 10px; border: 1px solid #ddd; border-radius: 8px; width: 90%; max-width: 320px; }
         .selection-group p { margin-top: 0; margin-bottom: 8px; font-weight: bold; font-size: 1.1em; }
-        .selection-group label {
-            display: block; margin: 5px auto; cursor: pointer; font-size: 1em;
-            max-width: 200px; text-align: left; padding-left: 15px;
-        }
-        .selection-group input[type="radio"] {
-            margin-right: 6px; cursor: pointer; transform: scale(1.1); vertical-align: middle;
-        }
-        #start-menu button#startGameBtn {
-            padding: 12px 25px; font-size: 1.2em; border-radius: 30px; cursor: pointer;
-            transition: background-color 0.3s, transform 0.2s; font-weight: bold; margin-top: 10px;
-        }
+        .selection-group label { display: block; margin: 5px auto; cursor: pointer; font-size: 1em; max-width: 200px; text-align: left; padding-left: 15px; }
+        .selection-group input[type="radio"] { margin-right: 6px; cursor: pointer; transform: scale(1.1); vertical-align: middle; }
+        #start-menu button#startGameBtn { padding: 12px 25px; font-size: 1.2em; border-radius: 30px; cursor: pointer; transition: background-color 0.3s, transform 0.2s; font-weight: bold; margin-top: 10px; }
         .error-message { font-weight: bold; margin-top: 8px; font-size: 0.9em; }
-
-        /* --- Game Area Styles --- */
         #game-and-stickers-container { display: none; flex-direction: column; align-items: center; width: 100%; }
-        #game-container {
-            padding: 20px; padding-top: 50px; border-radius: 10px; width: 90%; max-width: 500px;
-            margin-bottom: 20px; box-sizing: border-box; position: relative;
-            transition: background-color 0.5s ease, border-color 0.5s ease;
-        }
-        #mainMenuBtn {
-            position: absolute; top: 15px; left: 15px; padding: 8px 12px; font-size: 0.9em;
-            border: none; border-radius: 5px; cursor: pointer; z-index: 100;
-            transition: background-color 0.3s, transform 0.2s, color 0.3s;
-        }
+        #game-container { padding: 20px; padding-top: 50px; border-radius: 10px; width: 90%; max-width: 500px; margin-bottom: 20px; box-sizing: border-box; position: relative; transition: background-color 0.5s ease, border-color 0.5s ease; }
+        #mainMenuBtn { position: absolute; top: 15px; left: 15px; padding: 8px 12px; font-size: 0.9em; border: none; border-radius: 5px; cursor: pointer; z-index: 100; transition: background-color 0.3s, transform 0.2s, color 0.3s; }
         #mainMenuBtn:hover { transform: scale(1.05); }
-        #game-container h1 {
-            font-size: 2em; font-weight: bold; margin-bottom: 15px; margin-top: 0;
-            transition: color 0.5s ease;
-        }
-        #problemTextDisplay {
-            font-size: 1.8em; margin-bottom: 10px; color: #333; min-height: 1.5em;
-        }
-        #problemVisuals {
-            font-size: 2.5em; margin-bottom: 15px; min-height: 60px;
-            display: flex; flex-wrap: wrap; justify-content: center; align-items: center;
-        }
-        #problemVisuals .shape {
-            font-size: 2em; margin: 5px; display: inline-block;
-        }
-
-        input[type="number"] {
-            padding: 12px; font-size: 1.2em; width: 80px; max-width: 100px; text-align: center;
-            border: 2px solid #ccc; border-radius: 5px; margin-bottom: 15px; box-sizing: border-box;
-        }
-        button#submitAnswerBtn {
-            padding: 12px 18px; font-size: 1.1em; border: none; border-radius: 25px; cursor: pointer;
-            background-size: 200% auto;
-            transition: background-position 0.5s ease, transform 0.2s, background-color 0.5s ease, color 0.5s ease;
-            display: block; width: 100%; max-width: 220px; margin: 0 auto; box-sizing: border-box; font-weight: bold;
-        }
+        #game-container h1 { font-size: 2em; font-weight: bold; margin-bottom: 15px; margin-top: 0; transition: color 0.5s ease; }
+        #problemTextDisplay { font-size: 1.8em; margin-bottom: 10px; color: #333; min-height: 1.5em; }
+        #problemVisuals { font-size: 2.5em; margin-bottom: 15px; min-height: 60px; display: flex; flex-wrap: wrap; justify-content: center; align-items: center; }
+        #problemVisuals .shape { font-size: 2em; margin: 5px; display: inline-block; }
+        input[type="number"] { padding: 12px; font-size: 1.2em; width: 80px; max-width: 100px; text-align: center; border: 2px solid #ccc; border-radius: 5px; margin-bottom: 15px; box-sizing: border-box; }
+        button#submitAnswerBtn { padding: 12px 18px; font-size: 1.1em; border: none; border-radius: 25px; cursor: pointer; background-size: 200% auto; transition: background-position 0.5s ease, transform 0.2s, background-color 0.5s ease, color 0.5s ease; display: block; width: 100%; max-width: 220px; margin: 0 auto; box-sizing: border-box; font-weight: bold; }
         button#submitAnswerBtn:hover, button#submitAnswerBtn:active { transform: scale(1.05); }
-        
-        #feedback {
-            font-size: 1.1em; margin-top: 10px; min-height: 2.5em; padding: 8px;
-            border-radius: 4px;
-            transition: background-color 0.5s ease, border-color 0.5s ease, color 0.5s ease;
-            line-height: 1.4;
-        }
+        #feedback { font-size: 1.1em; margin-top: 10px; min-height: 2.5em; padding: 8px; border-radius: 4px; transition: background-color 0.5s ease, border-color 0.5s ease, color 0.5s ease; line-height: 1.4; }
         .correct { font-weight: bold; }
         .incorrect { font-weight: bold; }
-
         #score-board { font-size: 1.1em; margin-bottom: 15px; }
-        #sticker-section {
-            margin-top: 20px; padding: 15px; border-radius: 10px; width: 95%; max-width: 600px;
-            margin-left: auto; margin-right: auto; box-sizing: border-box; margin-bottom: 20px;
-            transition: background-color 0.5s ease, border-color 0.5s ease;
-        }
+        #sticker-section { margin-top: 20px; padding: 15px; border-radius: 10px; width: 95%; max-width: 600px; margin-left: auto; margin-right: auto; box-sizing: border-box; margin-bottom: 20px; transition: background-color 0.5s ease, border-color 0.5s ease; }
         #sticker-header { font-size: 1.4em; font-weight: bold; margin-bottom: 10px; min-height: 1.5em; }
         #sticker-prompt { font-size: 0.9em; margin-bottom:10px; }
-        
         .sticker-list-container { display: flex; flex-direction: column; align-items: center; }
-        .scroll-btn {
-            border: none; padding: 5px 15px; font-size: 1.1em; border-radius: 5px;
-            cursor: pointer; transition: background-color 0.3s, color 0.3s;
-            width: 80px; margin: 3px 0; line-height: 1.2;
-        }
+        .scroll-btn { border: none; padding: 5px 15px; font-size: 1.1em; border-radius: 5px; cursor: pointer; transition: background-color 0.3s, color 0.3s; width: 80px; margin: 3px 0; line-height: 1.2; }
         .scroll-btn:hover { transform: scale(1.05); }
         .scroll-btn:disabled { background-color: #cccccc !important; color: #777 !important; cursor: not-allowed; opacity: 0.7; }
-
-        #sticker-list { 
-            display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;
-            max-height: 130px; overflow-y: auto; -webkit-overflow-scrolling: touch; 
-            padding: 10px; border: 1px solid #ddd; border-radius: 5px;
-            width: 100%; box-sizing: border-box;
-            transition: background-color 0.5s ease, border-color 0.5s ease;
-        }
-        #sticker-list img.sticker-option { 
-            width: 50px; height: 50px; object-fit: contain;
-            border: 1px solid #eee; 
-            border-radius: 5px;
-        }
+        #sticker-list { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; max-height: 130px; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 10px; border: 1px solid #ddd; border-radius: 5px; width: 100%; box-sizing: border-box; transition: background-color 0.5s ease, border-color 0.5s ease; }
+        #sticker-list img.sticker-option { width: 50px; height: 50px; object-fit: contain; border: 1px solid #eee; border-radius: 5px; }
         .sticker-option.disabled-drag { cursor: not-allowed; opacity: 0.5; transform: scale(0.95); }
-
-        .sticker-base { /* For word stickers */
-            padding: 10px 15px; border-radius: 25px; font-weight: bold; font-size: 0.95em;
-            text-align: center; transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s, background-color 0.3s, color 0.3s;
-            min-width: 90px; display: inline-flex; align-items: center; justify-content: center;
-            word-break: keep-all; line-height: 1.2;
-        }
+        .sticker-base { padding: 10px 15px; border-radius: 25px; font-weight: bold; font-size: 0.95em; text-align: center; transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s, background-color 0.3s, color 0.3s; min-width: 90px; display: inline-flex; align-items: center; justify-content: center; word-break: keep-all; line-height: 1.2; }
         .sticker-option { cursor: grab; } 
         .sticker-option:not(.disabled-drag):hover { transform: scale(1.1); }
-
         #sticker-board-container { width: 95%; max-width: 700px; margin: 0 auto; }
         #sticker-board-header { font-size: 1.5em; font-weight: bold; margin-bottom: 10px; }
-        #sticker-board {
-            width: 100%; height: 300px; border-radius: 10px; position: relative;
-            overflow: hidden; box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
-            border-width: 4px; border-style: solid; border-color: transparent; 
-            background-clip: padding-box;
-            transition: background-color 0.5s ease, border-image 0.5s ease;
-        }
-        .placed-sticker-text, .placed-animal { 
-            position: absolute; cursor: move; user-select: none; z-index: 10;
-        }
-        .placed-animal img { 
-            width: 60px; height: 60px; object-fit: contain; display: block;
-        }
+        #sticker-board { width: 100%; height: 300px; border-radius: 10px; position: relative; overflow: hidden; box-shadow: inset 0 0 10px rgba(0,0,0,0.05); border-width: 4px; border-style: solid; border-color: transparent; background-clip: padding-box; transition: background-color 0.5s ease, border-image 0.5s ease; }
+        .placed-sticker-text, .placed-animal { position: absolute; cursor: move; user-select: none; z-index: 10; }
+        .placed-animal img { width: 60px; height: 60px; object-fit: contain; display: block; }
         .sticker-ghost { position: fixed; pointer-events: none; opacity: 0.75; z-index: 1000; }
         .sticker-ghost img { width: 50px; height: 50px; object-fit: contain; }
-
-
-        #personalized-message {
-            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.9);
-            padding: 25px 35px; border-radius: 20px; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
-            z-index: 2000; font-size: 2.8em; font-weight: bold; text-align: center;
-            opacity: 0; transition: opacity 0.3s ease-out, transform 0.3s ease-out, background-color 0.3s, border-color 0.3s, color 0.3s;
-            pointer-events: none; border-width: 6px; border-style: solid;
-        }
+        #personalized-message { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.9); padding: 25px 35px; border-radius: 20px; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2); z-index: 2000; font-size: 2.8em; font-weight: bold; text-align: center; opacity: 0; transition: opacity 0.3s ease-out, transform 0.3s ease-out, background-color 0.3s, border-color 0.3s, color 0.3s; pointer-events: none; border-width: 6px; border-style: solid; }
         #personalized-message.visible { opacity: 1; transform: translate(-50%, -50%) scale(1); pointer-events: auto; }
         .hidden { display: none !important; }
-
-        /* --- Theme Specific Styles --- */
         .rainbow-theme body { background-color: #f0f8ff; color: #333; }
         .rainbow-theme #start-menu { background-color: rgba(240, 248, 255, 0.98); }
         .rainbow-theme #start-menu h2, .rainbow-theme .selection-group p { background-image: linear-gradient(to right, #FF4136, #FF851B, #FFDC00, #2ECC40, #0074D9, #4B0082, #B10DC9); -webkit-background-clip: text; background-clip: text; color: transparent; }
@@ -191,7 +68,7 @@
         .rainbow-theme #mainMenuBtn { background-color: #0074D9; color: white; }
         .rainbow-theme #mainMenuBtn:hover { background-color: #0056b3; }
         .rainbow-theme #game-container h1 { background-image: linear-gradient(to right, #FF4136, #FF851B, #FFDC00, #2ECC40, #0074D9, #4B0082, #B10DC9); -webkit-background-clip: text; background-clip: text; color: transparent; }
-        .rainbow-theme button#submitAnswerBtn { background-image: linear-gradient(to right, #FF4136, #FF851B, #FFDC00, #2ECC40, #0074D9, #B10DC9); color: white; text-shadow: 0 1px 2px rgba(0,0,0,0.2); }
+        .rainbow-theme button#submitAnswerBtn { background-image: linear-gradient(to right, #FF4136, #FF851B, #FFDC00, #2ECC40, #0074D9, #4B0082, #B10DC9); color: white; text-shadow: 0 1px 2px rgba(0,0,0,0.2); }
         .rainbow-theme button#submitAnswerBtn:hover { background-position: right center; }
         .rainbow-theme #feedback { background-color: rgba(230,247,255,0.5); border: 1px dashed #0074d9; color: #333;}
         .rainbow-theme .correct { color: #2ECC40; } .rainbow-theme .incorrect { color: #FF4136; }
@@ -206,7 +83,6 @@
         .rainbow-theme #sticker-board-header { color: #2ECC40; }
         .rainbow-theme #sticker-board { background-color: #fffacd; border-image: linear-gradient(45deg, #FF4136, #FF851B, #FFDC00, #2ECC40, #0074D9, #4B0082, #B10DC9) 1; }
         .rainbow-theme #personalized-message { background-color: rgba(255, 255, 255, 0.97); color: #333; }
-
         .videogame-theme body { background-color: #0d0d21; color: #c0c0c0; font-family: 'Press Start 2P', cursive; }
         .videogame-theme #start-menu { background-color: rgba(13, 13, 33, 0.98); }
         .videogame-theme #start-menu h2, .videogame-theme .selection-group p { background-image: linear-gradient(to right, #00FFFF, #FF00FF, #FFFF00); -webkit-background-clip: text; background-clip: text; color: transparent; font-size: 1.8em;  }
@@ -237,7 +113,6 @@
         .videogame-theme #sticker-board-header { color: #00FF00; }
         .videogame-theme #sticker-board { background-color: #101028; border-image: linear-gradient(45deg, #00FFFF, #FF00FF, #FFFF00) 1; }
         .videogame-theme #personalized-message { background-color: rgba(200, 200, 220, 0.95); font-family: 'Press Start 2P', cursive; font-size: 1.5em; border-width: 4px; color: #1a1a2e; text-shadow: 1px 1px 0px #00c8c8; }
-
         .animals-theme body { background-color: #e8f5e9; color: #387002; font-family: 'Nunito', sans-serif; }
         .animals-theme #start-menu { background-color: rgba(232, 245, 233, 0.98); }
         .animals-theme #start-menu h2 { color: #4CAF50; background-image: none; font-size: 2.3em;} 
@@ -907,7 +782,7 @@
             stickerGhost.style.top = (touch.clientY - dragOffsetY) + 'px';
         }
         
-        // REVISED checkForMerges function for all tiers (combining base animals directly)
+        // *** CORRECTED checkForMerges function for all tiers (combining base animals directly) ***
         function checkForMerges() {
             const placedItems = Array.from(stickerBoardEl.children);
             
@@ -918,43 +793,55 @@
             );
 
             // Tier check now happens per recipe; minimum needed is for lowest tier (2)
-            // if (baseAnimalsOnBoardWrappers.length < 2) return false; // Not strictly needed here
+            // if (baseAnimalsOnBoardWrappers.length < 2) return false; // This check is effectively done by recipe loop
 
-            const sortedRecipes = [...mergeRecipes].sort((a, b) => b.tier - a.tier);
+            const sortedRecipes = [...mergeRecipes].sort((a, b) => b.tier - a.tier); // Use the global mergeRecipes
 
             for (const recipe of sortedRecipes) {
+                // Skip recipe if we don't even have enough base animals on board in total for its tier
                 if (baseAnimalsOnBoardWrappers.length < recipe.animalsInvolved.length) {
                     continue; 
                 }
 
+                // Create a temporary list of available base animal DOM elements for the current recipe check
+                // We need to copy the array of wrappers, not just references, to allow safe splicing for checking
                 let availableElementsForRecipeCheck = [...baseAnimalsOnBoardWrappers]; 
                 const animalsToConsumeForThisRecipeWrappers = [];
                 let canMakeRecipe = true;
 
+                // Try to find one distinct DOM element for each required BASE animal type in the recipe
                 for (const requiredType of recipe.animalsInvolved) { 
                     const foundAnimalIndex = availableElementsForRecipeCheck.findIndex(
                         wrapper => wrapper.querySelector('img').dataset.animalType === requiredType
                     );
 
                     if (foundAnimalIndex !== -1) {
+                        // Found one, add it to our list to consume and remove from available for this recipe check
                         animalsToConsumeForThisRecipeWrappers.push(availableElementsForRecipeCheck[foundAnimalIndex]);
                         availableElementsForRecipeCheck.splice(foundAnimalIndex, 1);
                     } else {
+                        // A required base animal type for this recipe is missing
                         canMakeRecipe = false;
                         break; 
                     }
                 }
 
                 if (canMakeRecipe && animalsToConsumeForThisRecipeWrappers.length === recipe.animalsInvolved.length) {
+                    // --- A merge is possible with this recipe using only base animals! ---
                     const firstConsumedAnimalRect = animalsToConsumeForThisRecipeWrappers[0].getBoundingClientRect();
                     const boardRect = stickerBoardEl.getBoundingClientRect();
 
+                    // Remove consumed base animals from the board
                     animalsToConsumeForThisRecipeWrappers.forEach(wrapper => wrapper.remove());
+                    // Update totalStickersPlaced: N animals removed, 1 merged creature added
                     totalStickersPlaced = totalStickersPlaced - animalsToConsumeForThisRecipeWrappers.length + 1; 
 
+
+                    // Create and add the new merged creature IMAGE
                     const mergedCreatureWrapper = document.createElement('div');
+                    // Add a class to identify it as a placed item, and specifically a merged one
                     mergedCreatureWrapper.classList.add('placed-animal', `merged-tier-${recipe.tier}`);
-                    mergedCreatureWrapper.dataset.mergedName = recipe.resultName; 
+                    mergedCreatureWrapper.dataset.mergedName = recipe.resultName; // Mark as merged
                     // Store the base animals that formed this merge, for potential future additive logic (not used by this func)
                     // mergedCreatureWrapper.dataset.baseAnimals = recipe.animalsInvolved.join(',');
 
@@ -962,13 +849,15 @@
                     const mergedImgEl = document.createElement('img');
                     mergedImgEl.src = `images/merged_animals/${recipe.resultImage}`;
                     mergedImgEl.alt = recipe.resultName;
+                    // Merged creatures are not base animals for further base-animal-only merges by this function
                     
                     mergedCreatureWrapper.appendChild(mergedImgEl);
 
+                    // Position the new merged creature
                     let newLeft = firstConsumedAnimalRect.left - boardRect.left;
                     let newTop = firstConsumedAnimalRect.top - boardRect.top;
-                    const mergedImageWidth = 60; 
-                    newLeft += (firstConsumedAnimalRect.width / 2) - (mergedImageWidth / 2);
+                    const mergedImageWidth = 60; // Assuming placed merged animals are 60px wide
+                    newLeft += (firstConsumedAnimalRect.width / 2) - (mergedImageWidth / 2); // Rough centering
 
                     mergedCreatureWrapper.style.left = newLeft + 'px';
                     mergedCreatureWrapper.style.top = newTop + 'px';
@@ -976,28 +865,29 @@
                     stickerBoardEl.appendChild(mergedCreatureWrapper);
                     makePlacedStickerInteractive(mergedCreatureWrapper, stickerBoardEl);
 
+                    // Show merge success message
                     if (personalizedMessageTimeout) clearTimeout(personalizedMessageTimeout);
                     personalizedMessageEl.textContent = `${playerName}, you've created a ${recipe.resultName}! WOW! 🌟`;
                     
-                    personalizedMessageEl.style.borderColor = '#FFD700'; 
+                    personalizedMessageEl.style.borderColor = '#FFD700'; // Gold for any merge success
                     if (currentTheme === "videogame") {
                         personalizedMessageEl.style.color = ''; 
                     } else if (currentTheme === "animals") {
                          personalizedMessageEl.style.color = '#4CAF50';
-                    } else { 
+                    } else { // Rainbow and default
                         personalizedMessageEl.style.color = '#DAA520'; 
                     }
                     
                     personalizedMessageEl.classList.add('visible');
                     personalizedMessageTimeout = setTimeout(() => {
                         personalizedMessageEl.classList.remove('visible');
-                        personalizedMessageEl.style.color = '';
-                    }, 3500);
+                        personalizedMessageEl.style.color = ''; // Reset inline style
+                    }, 3500); // Display merge message a bit longer
 
-                    return true; 
+                    return true; // A merge happened, successfully processed one recipe
                 }
             }
-            return false; 
+            return false; // No merge happened in this check
         }
 
 
