@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Arithmetic & Counting Fun!</title>
+    <title>Arithmetic & Counting Fun with Merging Animals!</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Nunito:wght@400;700&display=swap" rel="stylesheet">
@@ -162,6 +162,12 @@
         }
         .placed-sticker-text, .placed-animal { 
             position: absolute; cursor: move; user-select: none; z-index: 10;
+        }
+        /* Styling for the div that wraps a placed animal image (including merged ones) */
+        .placed-animal {
+            /* If you want borders or specific wrapper styles for placed animals, add them here */
+            /* For now, it mainly serves as a container for the img */
+            line-height: 0; /* To prevent extra space if img is display:inline-block by default */
         }
         .placed-animal img { 
             width: 60px; height: 60px; object-fit: contain; display: block;
@@ -453,7 +459,7 @@
             "theme-sticker-color-4", "theme-sticker-color-5", "theme-sticker-color-6", "theme-sticker-color-7"
         ];
         
-        const animalImageFiles = [
+        const animalImageFiles = [ // Base animals
             { src: "cat.png", name: "Cat", alt: "a Cute Cat" }, 
             { src: "dog.png", name: "Dog", alt: "a Happy Dog" },
             { src: "bear.png", name: "Bear", alt: "a Friendly Bear" },
@@ -932,11 +938,9 @@
             draggedStickerElement = e.target.cloneNode(true); 
             draggedStickerElement.classList.remove('sticker-option', 'disabled-drag');
             
-            // Set dataset for animal type if it's an animal image being dragged from the list
             if (e.target.tagName === 'IMG' && e.target.dataset.animalType) {
                 draggedStickerElement.dataset.animalType = e.target.dataset.animalType;
             }
-
 
             const rect = e.target.getBoundingClientRect();
             dragOffsetX = e.clientX - rect.left;
@@ -963,7 +967,7 @@
                         if (!stickerGhost.classList.contains(cls)) stickerGhost.classList.add(cls);
                      }
                 });
-            } // For img, it will just be the img, CSS handles .sticker-ghost img
+            } 
             
             stickerGhost.style.width = originalSticker.offsetWidth + 'px';
             stickerGhost.style.height = originalSticker.offsetHeight + 'px';
@@ -994,6 +998,7 @@
             stickerGhost.style.top = (touch.clientY - dragOffsetY) + 'px';
         }
         
+        // MODIFIED checkForMerges function
         function checkForMerges() {
             const placedItems = Array.from(stickerBoardEl.children);
             const baseAnimalsOnBoardWrappers = placedItems.filter(item =>
@@ -1011,23 +1016,18 @@
                     continue; 
                 }
 
-                // Create a temporary map of available base animals on board for the current recipe check
-                const currentBoardAnimalMap = new Map();
-                baseAnimalsOnBoardWrappers.forEach(wrapper => {
-                    const type = wrapper.querySelector('img').dataset.animalType;
-                    if (!currentBoardAnimalMap.has(type)) {
-                        currentBoardAnimalMap.set(type, []);
-                    }
-                    currentBoardAnimalMap.get(type).push(wrapper);
-                });
-                
-                let canMakeRecipe = true;
+                let availableElementsForRecipeCheck = [...baseAnimalsOnBoardWrappers]; 
                 const animalsToConsumeForThisRecipeWrappers = [];
+                let canMakeRecipe = true;
 
-                for (const reqType of recipe.animalsInvolved) {
-                    if (currentBoardAnimalMap.has(reqType) && currentBoardAnimalMap.get(reqType).length > 0) {
-                        // "Consume" by taking the first available wrapper of this type
-                        animalsToConsumeForThisRecipeWrappers.push(currentBoardAnimalMap.get(reqType).shift()); 
+                for (const requiredType of recipe.animalsInvolved) {
+                    const foundAnimalIndex = availableElementsForRecipeCheck.findIndex(
+                        wrapper => wrapper.querySelector('img').dataset.animalType === requiredType
+                    );
+
+                    if (foundAnimalIndex !== -1) {
+                        animalsToConsumeForThisRecipeWrappers.push(availableElementsForRecipeCheck[foundAnimalIndex]);
+                        availableElementsForRecipeCheck.splice(foundAnimalIndex, 1);
                     } else {
                         canMakeRecipe = false;
                         break; 
@@ -1039,7 +1039,7 @@
                     const boardRect = stickerBoardEl.getBoundingClientRect();
 
                     animalsToConsumeForThisRecipeWrappers.forEach(wrapper => wrapper.remove());
-                    totalStickersPlaced -= (animalsToConsumeForThisRecipeWrappers.length -1); 
+                    totalStickersPlaced -= (animalsToConsumeForThisRecipeWrappers.length - 1); 
 
                     const mergedCreatureWrapper = document.createElement('div');
                     mergedCreatureWrapper.classList.add('placed-animal', `merged-tier-${recipe.tier}`);
@@ -1115,7 +1115,6 @@
                 if (isAnimal) {
                     const wrapperDiv = document.createElement('div');
                     wrapperDiv.classList.add('placed-animal');
-                    // Ensure the img element (draggedStickerElement) has its animalType dataset
                     if (!draggedStickerElement.dataset.animalType && itemTypeForMerge) {
                         draggedStickerElement.dataset.animalType = itemTypeForMerge;
                     }
@@ -1138,7 +1137,7 @@
                 let anyMergeHappenedThisTurn = false;
                 if (isAnimal && difficultyLevel === 1) { 
                     let mergeOccurredInLoop;
-                    do { // Keep checking for merges as long as they are happening
+                    do { 
                         mergeOccurredInLoop = checkForMerges();
                         if (mergeOccurredInLoop) {
                             anyMergeHappenedThisTurn = true;
