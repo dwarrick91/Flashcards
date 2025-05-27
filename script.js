@@ -1,82 +1,49 @@
 // script.js
 
 let playerName = "Player";
-let difficultyLevel = 3;
-let operationType = "multiplication";
-let currentTheme = "rainbow";
+let difficultyLevel = 3; 
+let operationType = "multiplication"; 
+let currentTheme = "rainbow"; 
 
-let num1, num2, correctAnswerValue; // For arithmetic problems
-let displayedShapesCount; // For preschool counting problems
+let num1, num2, correctAnswerValue; 
+let displayedShapesCount; 
 
 let correctAnswers = 0;
 let questionsAsked = 0;
-const correctAnswersNeededForSticker = 10; // For arithmetic modes
-let totalStickersPlaced = 0; // Generic term for rewards placed on the board
-let availableStickerCredits = 0; // For arithmetic word stickers OR one animal for preschool
+const correctAnswersNeededForSticker = 10; 
+let totalStickersPlaced = 0; 
+let availableStickerCredits = 0; 
 
 const gameLength = 1000;
-const totalStickerOptionsInList = 21; // For word stickers
-const totalAnimalChoices = 5; // Number of unique base animal choices to show
+const totalStickerOptionsInList = 21; 
+const totalAnimalChoices = 5;
+
 
 const encouragingWords = [
     "Great!", "Awesome!", "Super!", "Well Done!", "Fantastic!", "Amazing!", "Excellent!",
     "Bravo!", "Wow!", "Incredible!", "Superb!", "Marvelous!", "Outstanding!", "Perfect!",
     "Terrific!", "Way to Go!", "You Rock!", "Smart!", "Brilliant!", "Star!", "Genius!"
 ];
-const themeStickerColorClasses = [
+const themeStickerColorClasses = [ 
     "theme-sticker-color-1", "theme-sticker-color-2", "theme-sticker-color-3",
     "theme-sticker-color-4", "theme-sticker-color-5", "theme-sticker-color-6", "theme-sticker-color-7"
 ];
 
-// USER NEEDS TO PROVIDE these base animal images in 'images/animals/' folder
+// animalImageFiles is still needed here if populateAnimalChoices uses it directly.
+// Or, if populateAnimalChoices also moves to merge.js or takes animalImageFiles as a param.
+// For now, let's assume populateAnimalChoices remains in script.js and needs this.
 const animalImageFiles = [
-    { src: "cat.png", name: "Cat", alt: "a Cute Cat" },
+    { src: "cat.png", name: "Cat", alt: "a Cute Cat" }, 
     { src: "dog.png", name: "Dog", alt: "a Happy Dog" },
     { src: "bear.png", name: "Bear", alt: "a Friendly Bear" },
     { src: "lion.png", name: "Lion", alt: "a Brave Lion" },
     { src: "panda.png", name: "Panda", alt: "a Playful Panda" }
 ];
 
-// USER NEEDS TO CREATE ALL 26 MERGED ANIMAL IMAGES and place them in 'images/merged_animals/'
-// Recipes are ordered by tier, highest tier (most animals) first for correct merge priority.
-const mergeRecipes = [
-    // --- Tier 5: 5-Animal Merge (1) ---
-    { animalsInvolved: ["Bear", "Cat", "Dog", "Lion", "Panda"].sort(), resultName: "Bearcatdoglionpanda", resultImage: "bearcatdoglionpanda.png", tier: 5 },
-
-    // --- Tier 4: 4-Animal Merges (5) ---
-    { animalsInvolved: ["Bear", "Cat", "Dog", "Lion"].sort(), resultName: "Bearcatdoglion", resultImage: "bearcatdoglion.png", tier: 4 },
-    { animalsInvolved: ["Bear", "Cat", "Dog", "Panda"].sort(), resultName: "Bearcatdogpanda", resultImage: "bearcatdogpanda.png", tier: 4 },
-    { animalsInvolved: ["Bear", "Cat", "Lion", "Panda"].sort(), resultName: "Bearcatlionpanda", resultImage: "bearcatlionpanda.png", tier: 4 },
-    { animalsInvolved: ["Bear", "Dog", "Lion", "Panda"].sort(), resultName: "Beardoglionpanda", resultImage: "beardoglionpanda.png", tier: 4 },
-    { animalsInvolved: ["Cat", "Dog", "Lion", "Panda"].sort(), resultName: "Catdoglionpanda", resultImage: "catdoglionpanda.png", tier: 4 },
-
-    // --- Tier 3: 3-Animal Merges (10) ---
-    { animalsInvolved: ["Bear", "Cat", "Dog"].sort(), resultName: "Bearcatdog", resultImage: "bearcatdog.png", tier: 3 },
-    { animalsInvolved: ["Bear", "Cat", "Lion"].sort(), resultName: "Bearcatlion", resultImage: "bearcatlion.png", tier: 3 },
-    { animalsInvolved: ["Bear", "Cat", "Panda"].sort(), resultName: "Bearcatpanda", resultImage: "bearcatpanda.png", tier: 3 },
-    { animalsInvolved: ["Bear", "Dog", "Lion"].sort(), resultName: "Beardoglion", resultImage: "beardoglion.png", tier: 3 },
-    { animalsInvolved: ["Bear", "Dog", "Panda"].sort(), resultName: "Beardogpanda", resultImage: "beardogpanda.png", tier: 3 },
-    { animalsInvolved: ["Bear", "Lion", "Panda"].sort(), resultName: "Bearlionpanda", resultImage: "bearlionpanda.png", tier: 3 },
-    { animalsInvolved: ["Cat", "Dog", "Lion"].sort(), resultName: "Catdoglion", resultImage: "catdoglion.png", tier: 3 },
-    { animalsInvolved: ["Cat", "Dog", "Panda"].sort(), resultName: "Catdogpanda", resultImage: "catdogpanda.png", tier: 3 },
-    { animalsInvolved: ["Cat", "Lion", "Panda"].sort(), resultName: "Catlionpanda", resultImage: "catlionpanda.png", tier: 3 },
-    { animalsInvolved: ["Dog", "Lion", "Panda"].sort(), resultName: "Doglionpanda", resultImage: "doglionpanda.png", tier: 3 },
-
-    // --- Tier 2: 2-Animal Merges (10) ---
-    { animalsInvolved: ["Bear", "Cat"].sort(), resultName: "Bearcat", resultImage: "bearcat.png", tier: 2 },
-    { animalsInvolved: ["Bear", "Dog"].sort(), resultName: "Beardog", resultImage: "beardog.png", tier: 2 },
-    { animalsInvolved: ["Bear", "Lion"].sort(), resultName: "Bearlion", resultImage: "bearlion.png", tier: 2 },
-    { animalsInvolved: ["Bear", "Panda"].sort(), resultName: "Bearpanda", resultImage: "bearpanda.png", tier: 2 },
-    { animalsInvolved: ["Cat", "Dog"].sort(), resultName: "Catdog", resultImage: "catdog.png", tier: 2 },
-    { animalsInvolved: ["Cat", "Lion"].sort(), resultName: "Catlion", resultImage: "catlion.png", tier: 2 },
-    { animalsInvolved: ["Cat", "Panda"].sort(), resultName: "Catpanda", resultImage: "catpanda.png", tier: 2 },
-    { animalsInvolved: ["Dog", "Lion"].sort(), resultName: "Doglion", resultImage: "doglion.png", tier: 2 },
-    { animalsInvolved: ["Dog", "Panda"].sort(), resultName: "Dogpanda", resultImage: "dogpanda.png", tier: 2 },
-    { animalsInvolved: ["Lion", "Panda"].sort(), resultName: "Lionpanda", resultImage: "lionpanda.png", tier: 2 }
-];
+// mergeRecipes is now in merge.js
+// checkForMerges function is now in merge.js
 
 
-// DOM Element References
 const startMenuEl = document.getElementById('start-menu');
 const playerNameInputEl = document.getElementById('playerNameInput');
 const startGameBtnEl = document.getElementById('startGameBtn');
@@ -85,6 +52,7 @@ const gameAndStickersContainerEl = document.getElementById('game-and-stickers-co
 const mainMenuBtnEl = document.getElementById('mainMenuBtn');
 const difficultyRadios = document.querySelectorAll('input[name="difficulty"]');
 const operationSelectionEl = document.getElementById('operation-selection');
+
 
 const problemTextDisplayEl = document.getElementById('problemTextDisplay');
 const problemVisualsEl = document.getElementById('problemVisuals');
@@ -104,16 +72,15 @@ const stickerListScrollUpBtn = document.getElementById('stickerListScrollUpBtn')
 const stickerListScrollDownBtn = document.getElementById('stickerListScrollDownBtn');
 const stickerListScrollAmount = 60;
 
-// --- Theme and Game Setup ---
 function applyTheme(themeName) {
-    document.body.className = '';
+    document.body.className = ''; 
     document.body.classList.add(themeName + '-theme');
     currentTheme = themeName;
 }
 
 function updateOperationVisibility() {
     const selectedDifficultyRadio = document.querySelector('input[name="difficulty"]:checked');
-    if (selectedDifficultyRadio && parseInt(selectedDifficultyRadio.value) === 1) { // Preschool
+    if (selectedDifficultyRadio && parseInt(selectedDifficultyRadio.value) === 1) { 
         operationSelectionEl.style.display = 'none';
     } else {
         operationSelectionEl.style.display = 'block';
@@ -124,6 +91,7 @@ difficultyRadios.forEach(radio => {
     radio.addEventListener('change', updateOperationVisibility);
 });
 
+
 startGameBtnEl.addEventListener('click', () => {
     const nameInputValue = playerNameInputEl.value.trim();
     if (nameInputValue) {
@@ -132,9 +100,9 @@ startGameBtnEl.addEventListener('click', () => {
 
         const selectedDifficultyRadio = document.querySelector('input[name="difficulty"]:checked');
         difficultyLevel = selectedDifficultyRadio ? parseInt(selectedDifficultyRadio.value) : 3;
-
-        if (difficultyLevel === 1) { // Preschool
-            operationType = "counting";
+        
+        if (difficultyLevel === 1) { 
+            operationType = "counting"; 
         } else {
             const selectedOperationRadio = document.querySelector('input[name="operation"]:checked');
             operationType = selectedOperationRadio ? selectedOperationRadio.value : "multiplication";
@@ -143,6 +111,7 @@ startGameBtnEl.addEventListener('click', () => {
         const selectedThemeRadio = document.querySelector('input[name="theme"]:checked');
         const themeToApply = selectedThemeRadio ? selectedThemeRadio.value : "rainbow";
         applyTheme(themeToApply);
+
 
         startMenuEl.style.display = 'none';
         gameAndStickersContainerEl.style.display = 'flex';
@@ -161,20 +130,20 @@ playerNameInputEl.addEventListener('keypress', function(event) {
 });
 
 function initializeGame() {
-    if (difficultyLevel === 1) {
+    if (difficultyLevel === 1) { 
          document.querySelector("#game-container h1").textContent = `Counting Fun for ${playerName}! 🧸`;
     } else {
          document.querySelector("#game-container h1").textContent = `${operationType.charAt(0).toUpperCase() + operationType.slice(1)} Fun for ${playerName}!`;
     }
     document.getElementById("sticker-board-header").textContent = `${playerName}'s Reward Board! ✨`;
-
+    
     answerEl.disabled = false;
     document.getElementById('submitAnswerBtn').disabled = false;
 
     generateProblem();
-    updateStickerSectionStatus();
+    updateStickerSectionStatus(); 
     if(personalizedMessageEl) personalizedMessageEl.classList.remove('visible');
-    answerEl.focus();
+    answerEl.focus(); 
 }
 
 if (mainMenuBtnEl) {
@@ -189,47 +158,47 @@ function goToMainMenu() {
     questionsAsked = 0;
     totalStickersPlaced = 0;
     availableStickerCredits = 0;
-
+    
     correctCountEl.textContent = correctAnswers;
     questionsAskedEl.textContent = questionsAsked;
     feedbackEl.textContent = '';
-    feedbackEl.className = '';
+    feedbackEl.className = ''; 
     answerEl.value = '';
     answerEl.disabled = false;
     document.getElementById('submitAnswerBtn').disabled = false;
 
-    stickerBoardEl.innerHTML = '';
-    stickerListEl.innerHTML = '';
+    stickerBoardEl.innerHTML = ''; 
+    stickerListEl.innerHTML = ''; 
     stickerSectionEl.classList.add('hidden');
-    problemVisualsEl.innerHTML = '';
-    problemTextDisplayEl.textContent = '';
+    problemVisualsEl.innerHTML = ''; 
+    problemTextDisplayEl.textContent = ''; 
 
     if (personalizedMessageTimeout) {
         clearTimeout(personalizedMessageTimeout);
         personalizedMessageTimeout = null;
     }
     if (personalizedMessageEl) personalizedMessageEl.classList.remove('visible');
-
-    playerNameInputEl.value = "";
-    document.getElementById('grade3').checked = true;
-    document.getElementById('opMultiply').checked = true;
-    document.getElementById('themeRainbow').checked = true;
-    applyTheme("rainbow");
-    difficultyLevel = 3;
-    operationType = "multiplication";
+    
+    playerNameInputEl.value = ""; 
+    document.getElementById('grade3').checked = true; 
+    document.getElementById('opMultiply').checked = true; 
+    document.getElementById('themeRainbow').checked = true; 
+    applyTheme("rainbow"); 
+    difficultyLevel = 3; 
+    operationType = "multiplication"; 
     updateOperationVisibility();
 
-    playerNameInputEl.focus();
+
+    playerNameInputEl.focus(); 
 }
 
-// --- Problem Generation ---
 function generateProblem() {
-    problemVisualsEl.innerHTML = '';
-    problemTextDisplayEl.textContent = '';
+    problemVisualsEl.innerHTML = ''; 
+    problemTextDisplayEl.textContent = ''; 
 
-    if (difficultyLevel === 1) {
+    if (difficultyLevel === 1) { 
         generateCountingProblem();
-    } else {
+    } else { 
         generateArithmeticProblem();
     }
     answerEl.value = '';
@@ -237,8 +206,8 @@ function generateProblem() {
 
 function generateCountingProblem() {
     problemTextDisplayEl.textContent = "How many shapes can you count?";
-    const numShapesToDisplay = Math.floor(Math.random() * 10) + 1;
-    displayedShapesCount = numShapesToDisplay;
+    const numShapesToDisplay = Math.floor(Math.random() * 10) + 1; 
+    displayedShapesCount = numShapesToDisplay; 
     correctAnswerValue = displayedShapesCount;
 
     const shapesEmojis = ['🔴', '🔵', '🟢', '🟡', '🟣', '🟠', '⭐', '🔺', '▪️', '🔶', '❤️', '💜', '🧡'];
@@ -247,7 +216,7 @@ function generateCountingProblem() {
     for (let i = 0; i < displayedShapesCount; i++) {
         const shapeSpan = document.createElement('span');
         shapeSpan.textContent = selectedShapeEmoji;
-        shapeSpan.classList.add('shape');
+        shapeSpan.classList.add('shape'); 
         problemVisualsEl.appendChild(shapeSpan);
     }
 }
@@ -260,10 +229,10 @@ function generateArithmeticProblem() {
         case "addition":
             operatorSymbol = '+';
             switch (difficultyLevel) {
-                case 2: n1 = Math.floor(Math.random() * 21); n2 = Math.floor(Math.random() * 11); break;
-                case 3: n1 = Math.floor(Math.random() * 90) + 10; n2 = Math.floor(Math.random() * 90) + 10; break;
-                case 4: n1 = Math.floor(Math.random() * 401) + 100; n2 = Math.floor(Math.random() * 401) + 100; break;
-                case 5: n1 = Math.floor(Math.random() * 900) + 100; n2 = Math.floor(Math.random() * 900) + 100; break;
+                case 2: n1 = Math.floor(Math.random() * 21); n2 = Math.floor(Math.random() * 11); break; 
+                case 3: n1 = Math.floor(Math.random() * 90) + 10; n2 = Math.floor(Math.random() * 90) + 10; break; 
+                case 4: n1 = Math.floor(Math.random() * 401) + 100; n2 = Math.floor(Math.random() * 401) + 100; break; 
+                case 5: n1 = Math.floor(Math.random() * 900) + 100; n2 = Math.floor(Math.random() * 900) + 100; break; 
                 default: n1 = Math.floor(Math.random() * 90) + 10; n2 = Math.floor(Math.random() * 90) + 10; break;
             }
             answer = n1 + n2;
@@ -279,46 +248,46 @@ function generateArithmeticProblem() {
             }
             answer = n1 - n2;
             break;
-        case "division":
+        case "division": 
             operatorSymbol = '÷';
             let quotient;
             switch (difficultyLevel) {
-                case 3:
-                    n2 = Math.floor(Math.random() * 8) + 2;
-                    quotient = Math.floor(Math.random() * 8) + 2;
+                case 3: 
+                    n2 = Math.floor(Math.random() * 8) + 2; 
+                    quotient = Math.floor(Math.random() * 8) + 2; 
                     n1 = n2 * quotient;
                     break;
-                case 4:
-                    n2 = Math.floor(Math.random() * 11) + 2;
-                    quotient = Math.floor(Math.random() * 11) + 2;
+                case 4: 
+                    n2 = Math.floor(Math.random() * 11) + 2; 
+                    quotient = Math.floor(Math.random() * 11) + 2; 
                     n1 = n2 * quotient;
                     break;
-                case 5:
-                    n2 = Math.floor(Math.random() * 11) + 2;
-                    quotient = Math.floor(Math.random() * 19) + 2;
+                case 5: 
+                    n2 = Math.floor(Math.random() * 11) + 2;  
+                    quotient = Math.floor(Math.random() * 19) + 2; 
                     n1 = n2 * quotient;
                     break;
-                default:
+                default: 
                     n2 = Math.floor(Math.random() * 8) + 2; quotient = Math.floor(Math.random() * 8) + 2; n1 = n2 * quotient; break;
             }
-            if (n2 === 0) { generateProblem(); return; }
+            if (n2 === 0) { generateProblem(); return; } 
             answer = quotient;
             break;
         case "multiplication":
-        default:
+        default: 
             operatorSymbol = '×';
             switch (difficultyLevel) {
-                case 2:
-                    if (Math.random() < 0.7) { n1 = Math.floor(Math.random() * 6); n2 = Math.floor(Math.random() * 11); }
-                    else {
-                        if (Math.random() < 0.5) { n1 = 10; n2 = Math.floor(Math.random() * 6); }
+                case 2: 
+                    if (Math.random() < 0.7) { n1 = Math.floor(Math.random() * 6); n2 = Math.floor(Math.random() * 11); } 
+                    else { 
+                        if (Math.random() < 0.5) { n1 = 10; n2 = Math.floor(Math.random() * 6); } 
                         else { n1 = Math.floor(Math.random() * 6); n2 = 10; }
                     }
                     break;
                 case 3: n1 = Math.floor(Math.random() * 10) + 1; n2 = Math.floor(Math.random() * 10) + 1; break;
                 case 4: n1 = Math.floor(Math.random() * 12) + 1; n2 = Math.floor(Math.random() * 12) + 1; break;
-                case 5:
-                    if (Math.random() > 0.5) { n1 = Math.floor(Math.random() * 12) + 1;  n2 = Math.floor(Math.random() * 10) + 10; }
+                case 5: 
+                    if (Math.random() > 0.5) { n1 = Math.floor(Math.random() * 12) + 1;  n2 = Math.floor(Math.random() * 10) + 10; } 
                     else { n1 = Math.floor(Math.random() * 10) + 10; n2 = Math.floor(Math.random() * 12) + 1; }
                     if (Math.random() < 0.2) { n1 = Math.floor(Math.random() * 14) + 2; n2 = Math.floor(Math.random() * 14) + 2; }
                     break;
@@ -327,26 +296,25 @@ function generateArithmeticProblem() {
             answer = n1 * n2;
             break;
     }
-    num1 = n1; num2 = n2;
+    num1 = n1; num2 = n2; 
     correctAnswerValue = answer;
     problemTextDisplayEl.textContent = `${n1} ${operatorSymbol} ${n2} = ?`;
 }
 
-// --- Answer Checking and Rewards ---
+
 function updateStickerSectionStatus() {
-    if (difficultyLevel === 1) {
-        if (availableStickerCredits > 0) {
-            stickerSectionEl.classList.remove('hidden');
-             // Header & prompt are set by triggerAnimalReward
+    if (difficultyLevel === 1) { 
+        if (availableStickerCredits > 0) { 
+             stickerSectionEl.classList.remove('hidden');
         } else {
-            stickerSectionEl.classList.add('hidden');
+             stickerSectionEl.classList.add('hidden');
         }
-    } else {
+    } else { 
         if (availableStickerCredits > 0) {
             stickerSectionEl.classList.remove('hidden');
             stickerHeaderEl.textContent = `🌟 You've earned ${availableStickerCredits} sticker credit(s)! 🌟`;
             stickerPromptEl.textContent = "Choose one colorful word sticker and drag it to your board.";
-            if (stickerListEl.children.length === 0 || stickerListEl.querySelector('img')) {
+            if (stickerListEl.children.length === 0 || stickerListEl.querySelector('img')) { 
                 populateWordStickers();
             }
             document.querySelectorAll('.sticker-option').forEach(opt => opt.classList.remove('disabled-drag'));
@@ -354,7 +322,7 @@ function updateStickerSectionStatus() {
             stickerHeaderEl.textContent = "Keep answering correctly for stickers!";
             stickerPromptEl.textContent = "You're doing great!";
             document.querySelectorAll('.sticker-option').forEach(opt => opt.classList.add('disabled-drag'));
-            if (questionsAsked < gameLength && questionsAsked > 0) {
+            if (questionsAsked < gameLength && questionsAsked > 0) { 
                 setTimeout(() => {
                     if(availableStickerCredits === 0 && !personalizedMessageEl.classList.contains('visible')) {
                         stickerSectionEl.classList.add('hidden');
@@ -367,7 +335,7 @@ function updateStickerSectionStatus() {
 }
 
 function triggerAnimalReward() {
-    availableStickerCredits = 1;
+    availableStickerCredits = 1; 
     stickerHeaderEl.textContent = "🎉 Yay! Pick an animal friend! 🐾";
     stickerPromptEl.textContent = "Drag an animal to your reward board.";
     populateAnimalChoices();
@@ -375,19 +343,20 @@ function triggerAnimalReward() {
     updateScrollButtonStates();
 }
 
+
 function checkAnswer() {
     const userAnswer = parseInt(answerEl.value);
     questionsAsked++;
 
     if (!isNaN(userAnswer)) {
         if (userAnswer === correctAnswerValue) {
-            feedbackEl.textContent = "🌟 Correct! 🌟";
-            feedbackEl.className = 'correct';
+            feedbackEl.textContent = "🌟 Correct! 🌟"; 
+            feedbackEl.className = 'correct'; 
             correctAnswers++;
 
-            if (difficultyLevel === 1) {
+            if (difficultyLevel === 1) { 
                 triggerAnimalReward();
-            } else {
+            } else { 
                 if (correctAnswers > 0 && correctAnswers % correctAnswersNeededForSticker === 0) {
                     availableStickerCredits++;
                     let stickerEarnedText = "";
@@ -396,17 +365,17 @@ function checkAnswer() {
                         case "animals": stickerEarnedText = "<br>🐾 Wild! You found a Sticker Credit! 🐾"; break;
                         case "rainbow": default: stickerEarnedText = "<br>🌈 You've earned a sticker credit! 🌈"; break;
                     }
-                    feedbackEl.innerHTML = feedbackEl.textContent + stickerEarnedText;
+                    feedbackEl.innerHTML = feedbackEl.textContent + stickerEarnedText; 
                     updateStickerSectionStatus();
                 }
             }
         } else {
             feedbackEl.textContent = `🤔 Almost! The correct answer was ${correctAnswerValue}.`;
-            feedbackEl.className = 'incorrect';
+            feedbackEl.className = 'incorrect'; 
         }
     } else {
          feedbackEl.textContent = `Please enter a number.`;
-         feedbackEl.className = 'incorrect';
+         feedbackEl.className = 'incorrect'; 
          questionsAsked--;
     }
 
@@ -429,7 +398,7 @@ answerEl.addEventListener('keypress', function(event) {
     }
 });
 
-function populateWordStickers() {
+function populateWordStickers() { 
     stickerListEl.innerHTML = '';
     for (let i = 0; i < totalStickerOptionsInList; i++) {
         const wordSticker = document.createElement('div');
@@ -450,17 +419,17 @@ function populateAnimalChoices() {
     for (let i = 0; i < totalAnimalChoices; i++) {
         const animalData = animalImageFiles[i % animalImageFiles.length];
         const animalImgEl = document.createElement('img');
-        animalImgEl.src = `images/animals/${animalData.src}`;
-        animalImgEl.alt = animalData.alt;
-        animalImgEl.dataset.animalType = animalData.name;
-        animalImgEl.classList.add('sticker-option');
+        animalImgEl.src = `images/animals/${animalData.src}`; 
+        animalImgEl.alt = animalData.alt; 
+        animalImgEl.dataset.animalType = animalData.name; 
+        animalImgEl.classList.add('sticker-option'); 
 
         animalImgEl.draggable = true;
         animalImgEl.addEventListener('dragstart', handleDragStartMouse);
         animalImgEl.addEventListener('touchstart', handleDragStartTouch, { passive: false });
         stickerListEl.appendChild(animalImgEl);
     }
-    updateDragDisabledState();
+    updateDragDisabledState(); 
     updateScrollButtonStates();
 }
 
@@ -474,13 +443,14 @@ function updateDragDisabledState() {
     });
 }
 
+
 function endGame() {
     problemTextDisplayEl.textContent = "Game Over!";
     problemVisualsEl.innerHTML = '';
     answerEl.disabled = true;
     document.getElementById('submitAnswerBtn').disabled = true;
 
-    let finalMessage = ` You got ${correctAnswers} out of ${questionsAsked} correct.`;
+    let finalMessage = ` You got ${correctAnswers} out of ${questionsAsked} correct.`; 
     if (totalStickersPlaced > 0) {
         finalMessage += ` You collected ${totalStickersPlaced} reward(s) for your board!`;
     } else if (correctAnswers > 0) {
@@ -488,16 +458,15 @@ function endGame() {
     } else {
         finalMessage = " Keep practicing!";
     }
-    feedbackEl.innerHTML = `🎉 Game Over, ${playerName}! ${finalMessage} 🎉`;
-    feedbackEl.className = '';
+    feedbackEl.innerHTML = `🎉 Game Over, ${playerName}! ${finalMessage} 🎉`; 
+    feedbackEl.className = ''; 
 
-     updateStickerSectionStatus();
+     updateStickerSectionStatus(); 
      if(availableStickerCredits > 0 && stickerSectionEl.classList.contains('hidden')){
          stickerSectionEl.classList.remove('hidden');
      }
 }
 
-// --- Sticker/Animal Drag, Drop, and Merge Logic ---
 let draggedStickerElement = null;
 let stickerGhost = null;
 let dragOffsetX, dragOffsetY;
@@ -506,15 +475,15 @@ function canDragSticker() { return availableStickerCredits > 0; }
 
 function handleDragStartMouse(e) {
     if (!canDragSticker()) { e.preventDefault(); return; }
-    draggedStickerElement = e.target.cloneNode(true);
+    draggedStickerElement = e.target.cloneNode(true); 
     draggedStickerElement.classList.remove('sticker-option', 'disabled-drag');
-
+    
     const rect = e.target.getBoundingClientRect();
     dragOffsetX = e.clientX - rect.left;
     dragOffsetY = e.clientY - rect.top;
     try {
         e.dataTransfer.setDragImage(new Image(), 0, 0);
-        e.dataTransfer.setData('text/plain', e.target.alt || e.target.textContent);
+        e.dataTransfer.setData('text/plain', e.target.alt || e.target.textContent); 
     } catch (error) { /* Failsafe */ }
 }
 
@@ -525,16 +494,17 @@ function handleDragStartTouch(e) {
     const touch = e.targetTouches[0];
     const originalSticker = e.target;
 
-    stickerGhost = originalSticker.cloneNode(true);
+    stickerGhost = originalSticker.cloneNode(true); 
     stickerGhost.classList.remove('sticker-option', 'disabled-drag');
-    stickerGhost.classList.add('sticker-ghost');
-    if (originalSticker.tagName === 'DIV') {
+    stickerGhost.classList.add('sticker-ghost'); 
+    if (originalSticker.tagName === 'DIV') { 
          originalSticker.classList.forEach(cls => {
              if(cls.startsWith('theme-sticker-color-') || cls === 'sticker-base') {
                 if (!stickerGhost.classList.contains(cls)) stickerGhost.classList.add(cls);
              }
         });
     }
+    
     stickerGhost.style.width = originalSticker.offsetWidth + 'px';
     stickerGhost.style.height = originalSticker.offsetHeight + 'px';
 
@@ -548,7 +518,7 @@ function handleDragStartTouch(e) {
 
     draggedStickerElement = originalSticker.cloneNode(true);
     draggedStickerElement.classList.remove('sticker-option', 'disabled-drag');
-
+    
     document.addEventListener('touchmove', handleDragMoveTouch, { passive: false });
     document.addEventListener('touchend', handleDragEndTouch);
 }
@@ -561,101 +531,6 @@ function handleDragMoveTouch(e) {
     stickerGhost.style.top = (touch.clientY - dragOffsetY) + 'px';
 }
 
-function checkForMerges() {
-    const placedItems = Array.from(stickerBoardEl.children);
-    const baseAnimalsOnBoardWrappers = placedItems.filter(item =>
-        item.classList.contains('placed-animal') &&
-        !item.dataset.mergedName && 
-        item.querySelector('img')?.dataset.animalType
-    );
-
-    if (baseAnimalsOnBoardWrappers.length < 2) return false;
-
-    // mergeRecipes is already sorted by tier (descending)
-    for (const recipe of mergeRecipes) {
-        if (baseAnimalsOnBoardWrappers.length < recipe.animalsInvolved.length) {
-            continue;
-        }
-
-        const requiredTypesInRecipe = [...recipe.animalsInvolved];
-        let availableAnimalsForCurrentRecipeCheck = [...baseAnimalsOnBoardWrappers];
-        const animalsToConsumeForThisRecipe = [];
-
-        let canMakeRecipe = true;
-        // Create a temporary map of available animals for THIS recipe check to handle duplicates correctly
-        const tempAvailableMap = new Map();
-        availableAnimalsForCurrentRecipeCheck.forEach(wrapper => {
-            const type = wrapper.querySelector('img').dataset.animalType;
-            if (!tempAvailableMap.has(type)) {
-                tempAvailableMap.set(type, []);
-            }
-            tempAvailableMap.get(type).push(wrapper);
-        });
-
-
-        for (const reqType of requiredTypesInRecipe) {
-            if (tempAvailableMap.has(reqType) && tempAvailableMap.get(reqType).length > 0) {
-                animalsToConsumeForThisRecipe.push(tempAvailableMap.get(reqType).shift());
-            } else {
-                canMakeRecipe = false;
-                break;
-            }
-        }
-
-        if (canMakeRecipe) { // All required distinct animals found for this recipe
-            const firstConsumedAnimalRect = animalsToConsumeForThisRecipe[0].getBoundingClientRect();
-            const boardRect = stickerBoardEl.getBoundingClientRect();
-
-            animalsToConsumeForThisRecipe.forEach(wrapper => wrapper.remove());
-            totalStickersPlaced = totalStickersPlaced - animalsToConsumeForThisRecipe.length + 1;
-
-            const mergedCreatureWrapper = document.createElement('div');
-            mergedCreatureWrapper.classList.add('placed-animal', `merged-tier-${recipe.tier}`);
-            mergedCreatureWrapper.dataset.mergedName = recipe.resultName;
-
-            const mergedImgEl = document.createElement('img');
-            mergedImgEl.src = `images/merged_animals/${recipe.resultImage}`;
-            mergedImgEl.alt = recipe.resultName;
-
-            mergedCreatureWrapper.appendChild(mergedImgEl);
-
-            let newLeft = firstConsumedAnimalRect.left - boardRect.left;
-            let newTop = firstConsumedAnimalRect.top - boardRect.top;
-            const mergedImageWidth = 60;
-            const firstConsumedWidth = firstConsumedAnimalRect.width || mergedImageWidth;
-            newLeft += (firstConsumedWidth / 2) - (mergedImageWidth / 2);
-
-            mergedCreatureWrapper.style.left = newLeft + 'px';
-            mergedCreatureWrapper.style.top = newTop + 'px';
-
-            stickerBoardEl.appendChild(mergedCreatureWrapper);
-            makePlacedStickerInteractive(mergedCreatureWrapper, stickerBoardEl);
-
-            if (personalizedMessageTimeout) clearTimeout(personalizedMessageTimeout);
-            personalizedMessageEl.textContent = `${playerName}, you've created a ${recipe.resultName}! WOW! 🌟`;
-            
-            personalizedMessageEl.style.borderColor = '#FFD700';
-            if (currentTheme === "videogame") {
-                personalizedMessageEl.style.color = '';
-            } else if (currentTheme === "animals") {
-                 personalizedMessageEl.style.color = '#4CAF50';
-            } else {
-                personalizedMessageEl.style.color = '#DAA520';
-            }
-            
-            personalizedMessageEl.classList.add('visible');
-            personalizedMessageTimeout = setTimeout(() => {
-                personalizedMessageEl.classList.remove('visible');
-                personalizedMessageEl.style.color = '';
-            }, 3500);
-
-            return true;
-        }
-    }
-    return false;
-}
-
-
 function placeStickerOnBoard(pageX, pageY) {
     if (!draggedStickerElement) return;
 
@@ -663,15 +538,15 @@ function placeStickerOnBoard(pageX, pageY) {
     const stickerTopLeftXonPage = pageX - dragOffsetX;
     const stickerTopLeftYonPage = pageY - dragOffsetY;
     
-    const isAnimal = draggedStickerElement.tagName === 'IMG';
-    const itemIdentifier = isAnimal ? (draggedStickerElement.alt || "a new friend") : draggedStickerElement.textContent;
-    const itemTypeForMerge = isAnimal ? (draggedStickerElement.dataset.animalType) : null; // Relies on dataset being on the dragged IMG
+    const isAnimalBaseElement = draggedStickerElement.tagName === 'IMG'; // Check if the dragged element itself is an img
+    const itemIdentifier = isAnimalBaseElement ? (draggedStickerElement.alt || "a new friend") : draggedStickerElement.textContent;
+    const itemTypeForMerge = isAnimalBaseElement ? draggedStickerElement.dataset.animalType : null; 
 
-    const itemBgColor = isAnimal ? 'transparent' : window.getComputedStyle(draggedStickerElement).backgroundColor;
-    const itemTextColor = isAnimal ? '#333' : window.getComputedStyle(draggedStickerElement).color;
+    const itemBgColor = isAnimalBaseElement ? 'transparent' : window.getComputedStyle(draggedStickerElement).backgroundColor;
+    const itemTextColor = isAnimalBaseElement ? '#333' : window.getComputedStyle(draggedStickerElement).color;
 
-    const itemWidth = draggedStickerElement.offsetWidth || parseInt(window.getComputedStyle(draggedStickerElement).width) || (isAnimal ? 60 : 90);
-    const itemHeight = draggedStickerElement.offsetHeight || parseInt(window.getComputedStyle(draggedStickerElement).height) || (isAnimal ? 60 : 30);
+    const itemWidth = draggedStickerElement.offsetWidth || parseInt(window.getComputedStyle(draggedStickerElement).width) || (isAnimalBaseElement ? 60 : 90);
+    const itemHeight = draggedStickerElement.offsetHeight || parseInt(window.getComputedStyle(draggedStickerElement).height) || (isAnimalBaseElement ? 60 : 30);
     const itemCenterXonPage = stickerTopLeftXonPage + itemWidth / 2;
     const itemCenterYonPage = stickerTopLeftYonPage + itemHeight / 2;
 
@@ -680,48 +555,44 @@ function placeStickerOnBoard(pageX, pageY) {
         itemCenterYonPage >= boardRect.top &&
         itemCenterYonPage <= boardRect.bottom) {
 
-        let elementToPlace = draggedStickerElement; // This is the CLONE
-        if (isAnimal) {
+        let elementToPlaceOnBoard = draggedStickerElement; 
+        if (isAnimalBaseElement) {
             const wrapperDiv = document.createElement('div');
             wrapperDiv.classList.add('placed-animal');
-            // Ensure the clone (draggedStickerElement which is an img) has its dataset.animalType
-            if (!draggedStickerElement.dataset.animalType && itemTypeForMerge) {
-                 draggedStickerElement.dataset.animalType = itemTypeForMerge;
-            } else if (!draggedStickerElement.dataset.animalType && !itemTypeForMerge) {
-                // Fallback if dataset wasn't on original dragged item (should be from populateAnimalChoices)
-                // This might happen if cloneNode(true) doesn't fully copy dataset in all scenarios, though it usually does.
-                // For safety, you can re-extract from a known source if needed, but ideally original has it.
+            // Ensure the img clone (draggedStickerElement) has its dataset copied
+            if (draggedStickerElement.dataset.animalType) {
+                 wrapperDiv.dataset.animalTypeFromImg = draggedStickerElement.dataset.animalType; // For easier access on wrapper if needed
             }
             wrapperDiv.appendChild(draggedStickerElement); 
-            elementToPlace = wrapperDiv;
+            elementToPlaceOnBoard = wrapperDiv;
         } else {
              draggedStickerElement.classList.add('placed-sticker-text'); 
         }
 
-        elementToPlace.style.left = (stickerTopLeftXonPage - boardRect.left) + 'px';
-        elementToPlace.style.top = (stickerTopLeftYonPage - boardRect.top) + 'px';
+        elementToPlaceOnBoard.style.left = (stickerTopLeftXonPage - boardRect.left) + 'px';
+        elementToPlaceOnBoard.style.top = (stickerTopLeftYonPage - boardRect.top) + 'px';
 
-        stickerBoardEl.appendChild(elementToPlace);
-        makePlacedStickerInteractive(elementToPlace, stickerBoardEl);
+        stickerBoardEl.appendChild(elementToPlaceOnBoard);
+        makePlacedStickerInteractive(elementToPlaceOnBoard, stickerBoardEl);
 
         totalStickersPlaced++;
         availableStickerCredits--; 
         updateStickerSectionStatus(); 
 
         let mergeHappened = false;
-        if (isAnimal && difficultyLevel === 1) { 
-            mergeHappened = checkForMerges(); 
+        if (isAnimalBaseElement && difficultyLevel === 1) { 
+            mergeHappened = checkForMerges(); // checkForMerges will look for .placed-animal > img[data-animal-type]
         }
 
         if (!mergeHappened) { 
             if (personalizedMessageTimeout) { clearTimeout(personalizedMessageTimeout); }
             let personalizedText;
 
-            if (isAnimal && difficultyLevel === 1) {
+            if (isAnimalBaseElement && difficultyLevel === 1) {
                 personalizedText = `Great job, ${playerName}! You collected ${itemIdentifier}! 🥳`;
                 personalizedMessageEl.style.borderColor = '#2ECC40'; 
                 personalizedMessageEl.style.color = (currentTheme === "videogame" && personalizedMessageEl.style.fontFamily.includes('Press Start 2P')) ? '' : '#2ECC40';
-            } else if (!isAnimal) { 
+            } else if (!isAnimalBaseElement) { 
                 const baseWord = itemIdentifier.replace('!', ''); 
                 switch (itemIdentifier) { 
                     case "Star!": personalizedText = `${playerName}, you are a ${baseWord}! ⭐`; break;
@@ -877,4 +748,7 @@ if(personalizedMessageEl) personalizedMessageEl.classList.remove('visible');
 applyTheme(currentTheme); 
 updateOperationVisibility(); 
 updateScrollButtonStates();
+
+
+  
 
