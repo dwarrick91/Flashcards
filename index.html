@@ -3,63 +3,184 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Arithmetic & Counting Fun! (Debug Drop)</title>
+    <title>Arithmetic & Counting Fun with Advanced Merging!</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Nunito:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        /* CSS from previous step - Omitted for brevity but assumed to be complete */
-        body { font-family: 'Nunito', 'Arial', sans-serif; text-align: center; margin: 0; padding: 10px; position: relative; min-height: 100vh; box-sizing: border-box; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; overflow-x: hidden; display: flex; flex-direction: column; align-items: center; transition: background-color 0.5s ease, color 0.5s ease; }
-        #start-menu { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(240, 248, 255, 0.98); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 3000; padding: 15px; box-sizing: border-box; text-align: center; overflow-y: auto; }
-        #start-menu h2 { font-size: 2.3em; margin-bottom: 15px; background-image: linear-gradient(to right, #FF4136, #FF851B, #FFDC00, #2ECC40, #0074D9, #4B0082, #B10DC9); -webkit-background-clip: text; background-clip: text; color: transparent; }
+        /* --- Base Styles --- */
+        body {
+            font-family: 'Nunito', 'Arial', sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 10px;
+            position: relative;
+            min-height: 100vh;
+            box-sizing: border-box;
+            -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: background-color 0.5s ease, color 0.5s ease;
+        }
+
+        /* --- Start Menu Styles --- */
+        #start-menu {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(240, 248, 255, 0.98);
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            z-index: 3000; padding: 15px; box-sizing: border-box; text-align: center; overflow-y: auto;
+        }
+        #start-menu h2 {
+            font-size: 2.3em; margin-bottom: 15px;
+            background-image: linear-gradient(to right, #FF4136, #FF851B, #FFDC00, #2ECC40, #0074D9, #4B0082, #B10DC9);
+            -webkit-background-clip: text; background-clip: text; color: transparent;
+        }
         #start-menu label { font-size: 1.2em; margin-bottom: 6px; display: block; }
-        #start-menu input[type="text"] { padding: 10px; font-size: 1.1em; border: 2px solid #ccc; border-radius: 8px; width: 80%; max-width: 280px; margin-bottom: 10px; text-align: center; box-shadow: inset 0 1px 3px rgba(0,0,0,0.1); }
-        .selection-group { margin: 10px 0; padding: 10px; border: 1px solid #ddd; border-radius: 8px; width: 90%; max-width: 320px; }
+        #start-menu input[type="text"] {
+            padding: 10px; font-size: 1.1em; border: 2px solid #ccc; border-radius: 8px;
+            width: 80%; max-width: 280px; margin-bottom: 10px; text-align: center;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .selection-group {
+            margin: 10px 0; padding: 10px; border: 1px solid #ddd; border-radius: 8px;
+            width: 90%; max-width: 320px;
+        }
         .selection-group p { margin-top: 0; margin-bottom: 8px; font-weight: bold; font-size: 1.1em; }
-        .selection-group label { display: block; margin: 5px auto; cursor: pointer; font-size: 1em; max-width: 200px; text-align: left; padding-left: 15px; }
-        .selection-group input[type="radio"] { margin-right: 6px; cursor: pointer; transform: scale(1.1); vertical-align: middle; }
-        #start-menu button#startGameBtn { padding: 12px 25px; font-size: 1.2em; border-radius: 30px; cursor: pointer; transition: background-color 0.3s, transform 0.2s; font-weight: bold; margin-top: 10px; }
+        .selection-group label {
+            display: block; margin: 5px auto; cursor: pointer; font-size: 1em;
+            max-width: 200px; text-align: left; padding-left: 15px;
+        }
+        .selection-group input[type="radio"] {
+            margin-right: 6px; cursor: pointer; transform: scale(1.1); vertical-align: middle;
+        }
+        #start-menu button#startGameBtn {
+            padding: 12px 25px; font-size: 1.2em; border-radius: 30px; cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s; font-weight: bold; margin-top: 10px;
+        }
         .error-message { font-weight: bold; margin-top: 8px; font-size: 0.9em; }
+
+        /* --- Game Area Styles --- */
         #game-and-stickers-container { display: none; flex-direction: column; align-items: center; width: 100%; }
-        #game-container { padding: 20px; padding-top: 50px; border-radius: 10px; width: 90%; max-width: 500px; margin-bottom: 20px; box-sizing: border-box; position: relative; transition: background-color 0.5s ease, border-color 0.5s ease; }
-        #mainMenuBtn { position: absolute; top: 15px; left: 15px; padding: 8px 12px; font-size: 0.9em; border: none; border-radius: 5px; cursor: pointer; z-index: 100; transition: background-color 0.3s, transform 0.2s, color 0.3s; }
+        #game-container {
+            padding: 20px; padding-top: 50px; border-radius: 10px; width: 90%; max-width: 500px;
+            margin-bottom: 20px; box-sizing: border-box; position: relative;
+            transition: background-color 0.5s ease, border-color 0.5s ease;
+        }
+        #mainMenuBtn {
+            position: absolute; top: 15px; left: 15px; padding: 8px 12px; font-size: 0.9em;
+            border: none; border-radius: 5px; cursor: pointer; z-index: 100;
+            transition: background-color 0.3s, transform 0.2s, color 0.3s;
+        }
         #mainMenuBtn:hover { transform: scale(1.05); }
-        #game-container h1 { font-size: 2em; font-weight: bold; margin-bottom: 15px; margin-top: 0; transition: color 0.5s ease; }
-        #problemTextDisplay { font-size: 1.8em; margin-bottom: 10px; color: #333; min-height: 1.5em; }
-        #problemVisuals { font-size: 2.5em; margin-bottom: 15px; min-height: 60px; display: flex; flex-wrap: wrap; justify-content: center; align-items: center; }
-        #problemVisuals .shape { font-size: 2em; margin: 5px; display: inline-block; }
-        input[type="number"] { padding: 12px; font-size: 1.2em; width: 80px; max-width: 100px; text-align: center; border: 2px solid #ccc; border-radius: 5px; margin-bottom: 15px; box-sizing: border-box; }
-        button#submitAnswerBtn { padding: 12px 18px; font-size: 1.1em; border: none; border-radius: 25px; cursor: pointer; background-size: 200% auto; transition: background-position 0.5s ease, transform 0.2s, background-color 0.5s ease, color 0.5s ease; display: block; width: 100%; max-width: 220px; margin: 0 auto; box-sizing: border-box; font-weight: bold; }
+        #game-container h1 {
+            font-size: 2em; font-weight: bold; margin-bottom: 15px; margin-top: 0;
+            transition: color 0.5s ease;
+        }
+        #problemTextDisplay {
+            font-size: 1.8em; margin-bottom: 10px; color: #333; min-height: 1.5em;
+        }
+        #problemVisuals {
+            font-size: 2.5em; margin-bottom: 15px; min-height: 60px;
+            display: flex; flex-wrap: wrap; justify-content: center; align-items: center;
+        }
+        #problemVisuals .shape {
+            font-size: 2em; margin: 5px; display: inline-block;
+        }
+
+        input[type="number"] {
+            padding: 12px; font-size: 1.2em; width: 80px; max-width: 100px; text-align: center;
+            border: 2px solid #ccc; border-radius: 5px; margin-bottom: 15px; box-sizing: border-box;
+        }
+        button#submitAnswerBtn {
+            padding: 12px 18px; font-size: 1.1em; border: none; border-radius: 25px; cursor: pointer;
+            background-size: 200% auto;
+            transition: background-position 0.5s ease, transform 0.2s, background-color 0.5s ease, color 0.5s ease;
+            display: block; width: 100%; max-width: 220px; margin: 0 auto; box-sizing: border-box; font-weight: bold;
+        }
         button#submitAnswerBtn:hover, button#submitAnswerBtn:active { transform: scale(1.05); }
-        #feedback { font-size: 1.1em; margin-top: 10px; min-height: 2.5em; padding: 8px; border-radius: 4px; transition: background-color 0.5s ease, border-color 0.5s ease, color 0.5s ease; line-height: 1.4; }
+        
+        #feedback {
+            font-size: 1.1em; margin-top: 10px; min-height: 2.5em; padding: 8px;
+            border-radius: 4px;
+            transition: background-color 0.5s ease, border-color 0.5s ease, color 0.5s ease;
+            line-height: 1.4;
+        }
         .correct { font-weight: bold; }
         .incorrect { font-weight: bold; }
+
         #score-board { font-size: 1.1em; margin-bottom: 15px; }
-        #sticker-section { margin-top: 20px; padding: 15px; border-radius: 10px; width: 95%; max-width: 600px; margin-left: auto; margin-right: auto; box-sizing: border-box; margin-bottom: 20px; transition: background-color 0.5s ease, border-color 0.5s ease; }
+        #sticker-section {
+            margin-top: 20px; padding: 15px; border-radius: 10px; width: 95%; max-width: 600px;
+            margin-left: auto; margin-right: auto; box-sizing: border-box; margin-bottom: 20px;
+            transition: background-color 0.5s ease, border-color 0.5s ease;
+        }
         #sticker-header { font-size: 1.4em; font-weight: bold; margin-bottom: 10px; min-height: 1.5em; }
         #sticker-prompt { font-size: 0.9em; margin-bottom:10px; }
+        
         .sticker-list-container { display: flex; flex-direction: column; align-items: center; }
-        .scroll-btn { border: none; padding: 5px 15px; font-size: 1.1em; border-radius: 5px; cursor: pointer; transition: background-color 0.3s, color 0.3s; width: 80px; margin: 3px 0; line-height: 1.2; }
+        .scroll-btn {
+            border: none; padding: 5px 15px; font-size: 1.1em; border-radius: 5px;
+            cursor: pointer; transition: background-color 0.3s, color 0.3s;
+            width: 80px; margin: 3px 0; line-height: 1.2;
+        }
         .scroll-btn:hover { transform: scale(1.05); }
         .scroll-btn:disabled { background-color: #cccccc !important; color: #777 !important; cursor: not-allowed; opacity: 0.7; }
-        #sticker-list { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; max-height: 130px; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 10px; border: 1px solid #ddd; border-radius: 5px; width: 100%; box-sizing: border-box; transition: background-color 0.5s ease, border-color 0.5s ease; }
-        #sticker-list img.sticker-option { width: 50px; height: 50px; object-fit: contain; border: 1px solid #eee; border-radius: 5px; }
+
+        #sticker-list { 
+            display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;
+            max-height: 130px; overflow-y: auto; -webkit-overflow-scrolling: touch; 
+            padding: 10px; border: 1px solid #ddd; border-radius: 5px;
+            width: 100%; box-sizing: border-box;
+            transition: background-color 0.5s ease, border-color 0.5s ease;
+        }
+        #sticker-list img.sticker-option { 
+            width: 50px; height: 50px; object-fit: contain;
+            border: 1px solid #eee; 
+            border-radius: 5px;
+        }
         .sticker-option.disabled-drag { cursor: not-allowed; opacity: 0.5; transform: scale(0.95); }
-        .sticker-base { padding: 10px 15px; border-radius: 25px; font-weight: bold; font-size: 0.95em; text-align: center; transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s, background-color 0.3s, color 0.3s; min-width: 90px; display: inline-flex; align-items: center; justify-content: center; word-break: keep-all; line-height: 1.2; }
+
+        .sticker-base { /* For word stickers */
+            padding: 10px 15px; border-radius: 25px; font-weight: bold; font-size: 0.95em;
+            text-align: center; transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s, background-color 0.3s, color 0.3s;
+            min-width: 90px; display: inline-flex; align-items: center; justify-content: center;
+            word-break: keep-all; line-height: 1.2;
+        }
         .sticker-option { cursor: grab; } 
         .sticker-option:not(.disabled-drag):hover { transform: scale(1.1); }
+
         #sticker-board-container { width: 95%; max-width: 700px; margin: 0 auto; }
         #sticker-board-header { font-size: 1.5em; font-weight: bold; margin-bottom: 10px; }
-        #sticker-board { width: 100%; height: 300px; border-radius: 10px; position: relative; overflow: hidden; box-shadow: inset 0 0 10px rgba(0,0,0,0.05); border-width: 4px; border-style: solid; border-color: transparent; background-clip: padding-box; transition: background-color 0.5s ease, border-image 0.5s ease, border-color 0.5s ease; }
-        .placed-sticker-text, .placed-animal { position: absolute; cursor: move; user-select: none; z-index: 10; }
-        .placed-animal img { width: 60px; height: 60px; object-fit: contain; display: block; }
+        #sticker-board {
+            width: 100%; height: 300px; border-radius: 10px; position: relative;
+            overflow: hidden; box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
+            border-width: 4px; border-style: solid; border-color: transparent; 
+            background-clip: padding-box;
+            transition: background-color 0.5s ease, border-image 0.5s ease;
+        }
+        .placed-sticker-text, .placed-animal { 
+            position: absolute; cursor: move; user-select: none; z-index: 10;
+        }
+        .placed-animal img { 
+            width: 60px; height: 60px; object-fit: contain; display: block;
+        }
         .sticker-ghost { position: fixed; pointer-events: none; opacity: 0.75; z-index: 1000; }
         .sticker-ghost img { width: 50px; height: 50px; object-fit: contain; }
-        #personalized-message { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.9); padding: 25px 35px; border-radius: 20px; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2); z-index: 2000; font-size: 2.8em; font-weight: bold; text-align: center; opacity: 0; transition: opacity 0.3s ease-out, transform 0.3s ease-out, background-color 0.3s, border-color 0.3s, color 0.3s; pointer-events: none; border-width: 6px; border-style: solid; }
+
+
+        #personalized-message {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.9);
+            padding: 25px 35px; border-radius: 20px; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+            z-index: 2000; font-size: 2.8em; font-weight: bold; text-align: center;
+            opacity: 0; transition: opacity 0.3s ease-out, transform 0.3s ease-out, background-color 0.3s, border-color 0.3s, color 0.3s;
+            pointer-events: none; border-width: 6px; border-style: solid;
+        }
         #personalized-message.visible { opacity: 1; transform: translate(-50%, -50%) scale(1); pointer-events: auto; }
         .hidden { display: none !important; }
 
-        /* --- Theme Specific Styles (ensure #sticker-board styles are present) --- */
+        /* --- Theme Specific Styles --- */
         .rainbow-theme body { background-color: #f0f8ff; color: #333; }
         .rainbow-theme #start-menu { background-color: rgba(240, 248, 255, 0.98); }
         .rainbow-theme #start-menu h2, .rainbow-theme .selection-group p { background-image: linear-gradient(to right, #FF4136, #FF851B, #FFDC00, #2ECC40, #0074D9, #4B0082, #B10DC9); -webkit-background-clip: text; background-clip: text; color: transparent; }
@@ -70,7 +191,7 @@
         .rainbow-theme #mainMenuBtn { background-color: #0074D9; color: white; }
         .rainbow-theme #mainMenuBtn:hover { background-color: #0056b3; }
         .rainbow-theme #game-container h1 { background-image: linear-gradient(to right, #FF4136, #FF851B, #FFDC00, #2ECC40, #0074D9, #4B0082, #B10DC9); -webkit-background-clip: text; background-clip: text; color: transparent; }
-        .rainbow-theme button#submitAnswerBtn { background-image: linear-gradient(to right, #FF4136, #FF851B, #FFDC00, #2ECC40, #0074D9, #4B0082, #B10DC9); color: white; text-shadow: 0 1px 2px rgba(0,0,0,0.2); }
+        .rainbow-theme button#submitAnswerBtn { background-image: linear-gradient(to right, #FF4136, #FF851B, #FFDC00, #2ECC40, #0074D9, #B10DC9); color: white; text-shadow: 0 1px 2px rgba(0,0,0,0.2); }
         .rainbow-theme button#submitAnswerBtn:hover { background-position: right center; }
         .rainbow-theme #feedback { background-color: rgba(230,247,255,0.5); border: 1px dashed #0074d9; color: #333;}
         .rainbow-theme .correct { color: #2ECC40; } .rainbow-theme .incorrect { color: #FF4136; }
@@ -151,7 +272,6 @@
         @media (max-width: 700px) {#personalized-message { font-size: 2.2em;} #start-menu h2 {font-size: 2em;} .videogame-theme #start-menu h2, .videogame-theme .selection-group p { font-size: 1.5em; } .videogame-theme #start-menu label, .videogame-theme .selection-group label { font-size: 0.7em;} }
         @media (max-width: 600px) {#game-container h1 {font-size: 1.8em;} .videogame-theme #game-container h1 {font-size: 1.2em;}}
         @media (max-width: 480px) {#personalized-message {font-size: 1.6em;} .videogame-theme #personalized-message {font-size: 1.1em;} #game-container h1 {font-size: 1.6em;} #problemTextDisplay {font-size: 1.5em;} #problemVisuals {font-size: 2em;} #start-menu h2 {font-size: 1.8em;} .videogame-theme #start-menu h2, .videogame-theme .selection-group p { font-size: 1.2em; }}
-
     </style>
 </head>
 <body class="rainbow-theme"> 
@@ -259,41 +379,38 @@
             { src: "panda.png", name: "Panda", alt: "a Playful Panda" }
         ];
 
-        const mergeRecipes = [ // Defines final creature by its ultimate base components for direct merge from base animals
+        const mergeRecipes = [ // Defines final creature by its ultimate base components
             // Tier 2
-            { type: "base+base", components: ["Bear", "Cat"].sort(), resultName: "Bearcat", resultImage: "bearcat.png", resultTier: 2, resultBaseAnimals: ["Bear", "Cat"].sort() },
-            { type: "base+base", components: ["Bear", "Dog"].sort(), resultName: "Beardog", resultImage: "beardog.png", resultTier: 2, resultBaseAnimals: ["Bear", "Dog"].sort() },
-            { type: "base+base", components: ["Bear", "Lion"].sort(), resultName: "Bearlion", resultImage: "bearlion.png", resultTier: 2, resultBaseAnimals: ["Bear", "Lion"].sort() },
-            { type: "base+base", components: ["Bear", "Panda"].sort(), resultName: "Bearpanda", resultImage: "bearpanda.png", resultTier: 2, resultBaseAnimals: ["Bear", "Panda"].sort() },
-            { type: "base+base", components: ["Cat", "Dog"].sort(), resultName: "Catdog", resultImage: "catdog.png", resultTier: 2, resultBaseAnimals: ["Cat", "Dog"].sort() },
-            { type: "base+base", components: ["Cat", "Lion"].sort(), resultName: "Catlion", resultImage: "catlion.png", resultTier: 2, resultBaseAnimals: ["Cat", "Lion"].sort() },
-            { type: "base+base", components: ["Cat", "Panda"].sort(), resultName: "Catpanda", resultImage: "catpanda.png", resultTier: 2, resultBaseAnimals: ["Cat", "Panda"].sort() },
-            { type: "base+base", components: ["Dog", "Lion"].sort(), resultName: "Doglion", resultImage: "doglion.png", resultTier: 2, resultBaseAnimals: ["Dog", "Lion"].sort() },
-            { type: "base+base", components: ["Dog", "Panda"].sort(), resultName: "Dogpanda", resultImage: "dogpanda.png", resultTier: 2, resultBaseAnimals: ["Dog", "Panda"].sort() },
-            { type: "base+base", components: ["Lion", "Panda"].sort(), resultName: "Lionpanda", resultImage: "lionpanda.png", resultTier: 2, resultBaseAnimals: ["Lion", "Panda"].sort() },
-            
-            // Tier 3: Merging a TIER 2 (by its resultName) with a new BASE animal
-            // Example: Catdog + Bear => Bearcatdog
-            { type: "merged+base", components: ["Catdog", "Bear"].sort(), resultName: "Bearcatdog", resultImage: "bearcatdog.png", resultTier: 3, resultBaseAnimals: ["Bear", "Cat", "Dog"].sort() },
-            { type: "merged+base", components: ["Catdog", "Lion"].sort(), resultName: "Catdoglion", resultImage: "catdoglion.png", resultTier: 3, resultBaseAnimals: ["Cat", "Dog", "Lion"].sort() },
-            { type: "merged+base", components: ["Catdog", "Panda"].sort(), resultName: "Catdogpanda", resultImage: "catdogpanda.png", resultTier: 3, resultBaseAnimals: ["Cat", "Dog", "Panda"].sort() },
-            // Add more T3 recipes: For each of the 10 T2 creatures, combine with the 3 remaining unique base animals.
-            // Example for Bearcat + Dog => Bearcatdog
-            { type: "merged+base", components: ["Bearcat", "Dog"].sort(), resultName: "Bearcatdog", resultImage: "bearcatdog.png", resultTier: 3, resultBaseAnimals: ["Bear", "Cat", "Dog"].sort() },
-            // ... and so on for all 30 T3 additive recipes
-            
-            // Tier 4: Merging a TIER 3 with a new BASE animal
-            // Example: Bearcatdog + Lion => Bearcatdoglion
-            { type: "merged+base", components: ["Bearcatdog", "Lion"].sort(), resultName: "Bearcatdoglion", resultImage: "bearcatdoglion.png", resultTier: 4, resultBaseAnimals: ["Bear", "Cat", "Dog", "Lion"].sort() },
-            // ... and so on for all 20 T4 additive recipes
-
-            // Tier 5: Merging a TIER 4 with a new BASE animal
-            // Example: Bearcatdoglion + Panda => Bearcatdoglionpanda
-            { type: "merged+base", components: ["Bearcatdoglion", "Panda"].sort(), resultName: "Bearcatdoglionpanda", resultImage: "bearcatdoglionpanda.png", resultTier: 5, resultBaseAnimals: ["Bear", "Cat", "Dog", "Lion", "Panda"].sort() }
-            // ... and so on for all 5 T5 additive recipes
+            { animalsInvolved: ["Bear", "Cat"].sort(), resultName: "Bearcat", resultImage: "bearcat.png", tier: 2 },
+            { animalsInvolved: ["Bear", "Dog"].sort(), resultName: "Beardog", resultImage: "beardog.png", tier: 2 },
+            { animalsInvolved: ["Bear", "Lion"].sort(), resultName: "Bearlion", resultImage: "bearlion.png", tier: 2 },
+            { animalsInvolved: ["Bear", "Panda"].sort(), resultName: "Bearpanda", resultImage: "bearpanda.png", tier: 2 },
+            { animalsInvolved: ["Cat", "Dog"].sort(), resultName: "Catdog", resultImage: "catdog.png", tier: 2 },
+            { animalsInvolved: ["Cat", "Lion"].sort(), resultName: "Catlion", resultImage: "catlion.png", tier: 2 },
+            { animalsInvolved: ["Cat", "Panda"].sort(), resultName: "Catpanda", resultImage: "catpanda.png", tier: 2 },
+            { animalsInvolved: ["Dog", "Lion"].sort(), resultName: "Doglion", resultImage: "doglion.png", tier: 2 },
+            { animalsInvolved: ["Dog", "Panda"].sort(), resultName: "Dogpanda", resultImage: "dogpanda.png", tier: 2 },
+            { animalsInvolved: ["Lion", "Panda"].sort(), resultName: "Lionpanda", resultImage: "lionpanda.png", tier: 2 },
+            // Tier 3
+            { animalsInvolved: ["Bear", "Cat", "Dog"].sort(), resultName: "Bearcatdog", resultImage: "bearcatdog.png", tier: 3 },
+            { animalsInvolved: ["Bear", "Cat", "Lion"].sort(), resultName: "Bearcatlion", resultImage: "bearcatlion.png", tier: 3 },
+            { animalsInvolved: ["Bear", "Cat", "Panda"].sort(), resultName: "Bearcatpanda", resultImage: "bearcatpanda.png", tier: 3 },
+            { animalsInvolved: ["Bear", "Dog", "Lion"].sort(), resultName: "Beardoglion", resultImage: "beardoglion.png", tier: 3 },
+            { animalsInvolved: ["Bear", "Dog", "Panda"].sort(), resultName: "Beardogpanda", resultImage: "beardogpanda.png", tier: 3 },
+            { animalsInvolved: ["Bear", "Lion", "Panda"].sort(), resultName: "Bearlionpanda", resultImage: "bearlionpanda.png", tier: 3 },
+            { animalsInvolved: ["Cat", "Dog", "Lion"].sort(), resultName: "Catdoglion", resultImage: "catdoglion.png", tier: 3 },
+            { animalsInvolved: ["Cat", "Dog", "Panda"].sort(), resultName: "Catdogpanda", resultImage: "catdogpanda.png", tier: 3 },
+            { animalsInvolved: ["Cat", "Lion", "Panda"].sort(), resultName: "Catlionpanda", resultImage: "catlionpanda.png", tier: 3 },
+            { animalsInvolved: ["Dog", "Lion", "Panda"].sort(), resultName: "Doglionpanda", resultImage: "doglionpanda.png", tier: 3 },
+            // Tier 4
+            { animalsInvolved: ["Bear", "Cat", "Dog", "Lion"].sort(), resultName: "Bearcatdoglion", resultImage: "bearcatdoglion.png", tier: 4 },
+            { animalsInvolved: ["Bear", "Cat", "Dog", "Panda"].sort(), resultName: "Bearcatdogpanda", resultImage: "bearcatdogpanda.png", tier: 4 },
+            { animalsInvolved: ["Bear", "Cat", "Lion", "Panda"].sort(), resultName: "Bearcatlionpanda", resultImage: "bearcatlionpanda.png", tier: 4 },
+            { animalsInvolved: ["Bear", "Dog", "Lion", "Panda"].sort(), resultName: "Beardoglionpanda", resultImage: "beardoglionpanda.png", tier: 4 },
+            { animalsInvolved: ["Cat", "Dog", "Lion", "Panda"].sort(), resultName: "Catdoglionpanda", resultImage: "catdoglionpanda.png", tier: 4 },
+            // Tier 5
+            { animalsInvolved: ["Bear", "Cat", "Dog", "Lion", "Panda"].sort(), resultName: "Bearcatdoglionpanda", resultImage: "bearcatdoglionpanda.png", tier: 5 }
         ];
-        // NOTE: For a fully functional additive merge with all paths, the mergeRecipes array above needs to be fully populated (65 recipes).
-        // The provided example above only shows a few Tier 3+ additive recipes.
 
 
         const startMenuEl = document.getElementById('start-menu');
@@ -790,234 +907,167 @@
             stickerGhost.style.top = (touch.clientY - dragOffsetY) + 'px';
         }
         
-        // *** REVISED checkForMerges function for ADDITIVE merging from Response #31 ***
-        function getItemDetails(itemWrapper) {
-            if (!itemWrapper || !itemWrapper.classList.contains('placed-animal')) return null;
-
-            const isMerged = !!itemWrapper.dataset.mergedName;
-            const imgElement = itemWrapper.querySelector('img');
-
-            if (isMerged) {
-                return {
-                    element: itemWrapper,
-                    name: itemWrapper.dataset.mergedName,
-                    baseAnimals: (itemWrapper.dataset.baseAnimals || "").split(',').filter(Boolean),
-                    isBase: false,
-                    tier: parseInt(itemWrapper.dataset.tier || '1') 
-                };
-            } else if (imgElement && imgElement.dataset.animalType) {
-                return {
-                    element: itemWrapper,
-                    name: imgElement.dataset.animalType,
-                    baseAnimals: [imgElement.dataset.animalType],
-                    isBase: true,
-                    tier: 1
-                };
-            }
-            return null;
-        }
-
+        // REVISED checkForMerges function for all tiers (combining base animals directly)
         function checkForMerges() {
-            const placedItemWrappers = Array.from(stickerBoardEl.children).filter(child => child.classList.contains('placed-animal'));
-            if (placedItemWrappers.length < 2) return false;
+            const placedItems = Array.from(stickerBoardEl.children);
+            
+            const baseAnimalsOnBoardWrappers = placedItems.filter(item =>
+                item.classList.contains('placed-animal') && 
+                item.querySelector('img')?.dataset.animalType && 
+                !item.dataset.mergedName 
+            );
 
-            const sortedRecipes = [...mergeRecipes].sort((a, b) => b.resultTier - a.resultTier);
+            // Tier check now happens per recipe; minimum needed is for lowest tier (2)
+            // if (baseAnimalsOnBoardWrappers.length < 2) return false; // Not strictly needed here
+
+            const sortedRecipes = [...mergeRecipes].sort((a, b) => b.tier - a.tier);
 
             for (const recipe of sortedRecipes) {
-                for (let i = 0; i < placedItemWrappers.length; i++) {
-                    const item1Details = getItemDetails(placedItemWrappers[i]);
-                    if (!item1Details) continue;
+                if (baseAnimalsOnBoardWrappers.length < recipe.animalsInvolved.length) {
+                    continue; 
+                }
 
-                    for (let j = i + 1; j < placedItemWrappers.length; j++) {
-                        const item2Details = getItemDetails(placedItemWrappers[j]);
-                        if (!item2Details) continue;
+                let availableElementsForRecipeCheck = [...baseAnimalsOnBoardWrappers]; 
+                const animalsToConsumeForThisRecipeWrappers = [];
+                let canMakeRecipe = true;
 
-                        const currentPairOnBoardSorted = [item1Details.name, item2Details.name].sort();
-                        const recipeComponentsSorted = [...recipe.components].sort();
+                for (const requiredType of recipe.animalsInvolved) { 
+                    const foundAnimalIndex = availableElementsForRecipeCheck.findIndex(
+                        wrapper => wrapper.querySelector('img').dataset.animalType === requiredType
+                    );
 
-                        if (recipeComponentsSorted.length === 2 && // Ensure recipe is for 2 components
-                            recipeComponentsSorted[0] === currentPairOnBoardSorted[0] &&
-                            recipeComponentsSorted[1] === currentPairOnBoardSorted[1]) {
-                            
-                            let isValidMerge = false;
-                            if (recipe.type === "base+base") {
-                                if (item1Details.isBase && item2Details.isBase) {
-                                    isValidMerge = true;
-                                }
-                            } else if (recipe.type === "merged+base") {
-                                let mergedItemCandidateDetails, baseItemCandidateDetails;
-                                if (!item1Details.isBase && item2Details.isBase) { // Item1 is merged, Item2 is base
-                                    mergedItemCandidateDetails = item1Details; 
-                                    baseItemCandidateDetails = item2Details;
-                                } else if (item1Details.isBase && !item2Details.isBase) { // Item1 is base, Item2 is merged
-                                    mergedItemCandidateDetails = item2Details; 
-                                    baseItemCandidateDetails = item1Details;
-                                }
-
-                                if (mergedItemCandidateDetails && baseItemCandidateDetails) {
-                                    // Check if the names from board match the roles in recipe's components
-                                    const recipeMergedCompName = recipe.components.find(c => c === mergedItemCandidateDetails.name);
-                                    const recipeBaseCompName = recipe.components.find(c => c === baseItemCandidateDetails.name);
-                                   
-                                    if (recipeMergedCompName && recipeBaseCompName) {
-                                        // Crucial check: base animal should not already be in the merged item's base components
-                                        if (!mergedItemCandidateDetails.baseAnimals.includes(baseItemCandidateDetails.name)) {
-                                            isValidMerge = true;
-                                        }
-                                    }
-                                }
-                            }
-
-                            if (isValidMerge) {
-                                const el1ToRemove = item1Details.element;
-                                const el2ToRemove = item2Details.element;
-                                const el1Rect = el1ToRemove.getBoundingClientRect(); 
-                                const boardRect = stickerBoardEl.getBoundingClientRect();
-
-                                el1ToRemove.remove();
-                                el2ToRemove.remove();
-                                totalStickersPlaced--; 
-
-                                const mergedCreatureWrapper = document.createElement('div');
-                                mergedCreatureWrapper.classList.add('placed-animal', `merged-tier-${recipe.resultTier}`);
-                                mergedCreatureWrapper.dataset.mergedName = recipe.resultName;
-                                mergedCreatureWrapper.dataset.baseAnimals = recipe.resultBaseAnimals.join(',');
-                                mergedCreatureWrapper.dataset.tier = recipe.resultTier.toString();
-
-
-                                const mergedImgEl = document.createElement('img');
-                                mergedImgEl.src = `images/merged_animals/${recipe.resultImage}`;
-                                mergedImgEl.alt = recipe.resultName;
-                                mergedCreatureWrapper.appendChild(mergedImgEl);
-
-                                let newLeft = el1Rect.left - boardRect.left;
-                                let newTop = el1Rect.top - boardRect.top;
-                                newLeft += (el1Rect.width / 2) - 30; // Approx center (assuming 60px width for merged)
-
-                                mergedCreatureWrapper.style.left = newLeft + 'px';
-                                mergedCreatureWrapper.style.top = newTop + 'px';
-
-                                stickerBoardEl.appendChild(mergedCreatureWrapper);
-                                makePlacedStickerInteractive(mergedCreatureWrapper, stickerBoardEl);
-
-                                if (personalizedMessageTimeout) clearTimeout(personalizedMessageTimeout);
-                                personalizedMessageEl.textContent = `${playerName}, made a ${recipe.resultName}! Awesome! ✨`;
-                                personalizedMessageEl.style.borderColor = '#FFD700';
-                                if (currentTheme === "videogame") { personalizedMessageEl.style.color = ''; }
-                                else if (currentTheme === "animals") { personalizedMessageEl.style.color = '#4CAF50'; }
-                                else { personalizedMessageEl.style.color = '#DAA520'; }
-                                
-                                personalizedMessageEl.classList.add('visible');
-                                personalizedMessageTimeout = setTimeout(() => {
-                                    personalizedMessageEl.classList.remove('visible');
-                                    personalizedMessageEl.style.color = '';
-                                }, 3500);
-                                return true; 
-                            }
-                        }
+                    if (foundAnimalIndex !== -1) {
+                        animalsToConsumeForThisRecipeWrappers.push(availableElementsForRecipeCheck[foundAnimalIndex]);
+                        availableElementsForRecipeCheck.splice(foundAnimalIndex, 1);
+                    } else {
+                        canMakeRecipe = false;
+                        break; 
                     }
                 }
+
+                if (canMakeRecipe && animalsToConsumeForThisRecipeWrappers.length === recipe.animalsInvolved.length) {
+                    const firstConsumedAnimalRect = animalsToConsumeForThisRecipeWrappers[0].getBoundingClientRect();
+                    const boardRect = stickerBoardEl.getBoundingClientRect();
+
+                    animalsToConsumeForThisRecipeWrappers.forEach(wrapper => wrapper.remove());
+                    totalStickersPlaced = totalStickersPlaced - animalsToConsumeForThisRecipeWrappers.length + 1; 
+
+                    const mergedCreatureWrapper = document.createElement('div');
+                    mergedCreatureWrapper.classList.add('placed-animal', `merged-tier-${recipe.tier}`);
+                    mergedCreatureWrapper.dataset.mergedName = recipe.resultName; 
+                    // Store the base animals that formed this merge, for potential future additive logic (not used by this func)
+                    // mergedCreatureWrapper.dataset.baseAnimals = recipe.animalsInvolved.join(',');
+
+
+                    const mergedImgEl = document.createElement('img');
+                    mergedImgEl.src = `images/merged_animals/${recipe.resultImage}`;
+                    mergedImgEl.alt = recipe.resultName;
+                    
+                    mergedCreatureWrapper.appendChild(mergedImgEl);
+
+                    let newLeft = firstConsumedAnimalRect.left - boardRect.left;
+                    let newTop = firstConsumedAnimalRect.top - boardRect.top;
+                    const mergedImageWidth = 60; 
+                    newLeft += (firstConsumedAnimalRect.width / 2) - (mergedImageWidth / 2);
+
+                    mergedCreatureWrapper.style.left = newLeft + 'px';
+                    mergedCreatureWrapper.style.top = newTop + 'px';
+
+                    stickerBoardEl.appendChild(mergedCreatureWrapper);
+                    makePlacedStickerInteractive(mergedCreatureWrapper, stickerBoardEl);
+
+                    if (personalizedMessageTimeout) clearTimeout(personalizedMessageTimeout);
+                    personalizedMessageEl.textContent = `${playerName}, you've created a ${recipe.resultName}! WOW! 🌟`;
+                    
+                    personalizedMessageEl.style.borderColor = '#FFD700'; 
+                    if (currentTheme === "videogame") {
+                        personalizedMessageEl.style.color = ''; 
+                    } else if (currentTheme === "animals") {
+                         personalizedMessageEl.style.color = '#4CAF50';
+                    } else { 
+                        personalizedMessageEl.style.color = '#DAA520'; 
+                    }
+                    
+                    personalizedMessageEl.classList.add('visible');
+                    personalizedMessageTimeout = setTimeout(() => {
+                        personalizedMessageEl.classList.remove('visible');
+                        personalizedMessageEl.style.color = '';
+                    }, 3500);
+
+                    return true; 
+                }
             }
-            return false;
+            return false; 
         }
 
 
-        function placeStickerOnBoard(pageX, pageY) { // This function handles regular placement & triggers overlap check for new items
+        function placeStickerOnBoard(pageX, pageY) {
             if (!draggedStickerElement) return;
 
             const boardRect = stickerBoardEl.getBoundingClientRect();
-            const itemTopLeftXonPage = pageX - dragOffsetX;
-            const itemTopLeftYonPage = pageY - dragOffsetY;
+            const stickerTopLeftXonPage = pageX - dragOffsetX;
+            const stickerTopLeftYonPage = pageY - dragOffsetY;
             
-            const isAnimalFromList = draggedStickerElement.tagName === 'IMG' && !!draggedStickerElement.dataset.animalType;
-            const itemIdentifier = isAnimalFromList ? (draggedStickerElement.alt || "a new friend") : draggedStickerElement.textContent;
-            const itemTypeForDataset = isAnimalFromList ? draggedStickerElement.dataset.animalType : null; 
+            const isAnimal = draggedStickerElement.tagName === 'IMG';
+            const itemIdentifier = isAnimal ? (draggedStickerElement.alt || "a new friend") : draggedStickerElement.textContent;
+            const itemTypeForMerge = isAnimal ? draggedStickerElement.dataset.animalType : null; 
 
-            const itemBgColor = isAnimalFromList ? 'transparent' : window.getComputedStyle(draggedStickerElement).backgroundColor;
-            const itemTextColor = isAnimalFromList ? '#333' : window.getComputedStyle(draggedStickerElement).color;
+            const itemBgColor = isAnimal ? 'transparent' : window.getComputedStyle(draggedStickerElement).backgroundColor;
+            const itemTextColor = isAnimal ? '#333' : window.getComputedStyle(draggedStickerElement).color;
 
-            // Temporarily hide the dragged ghost to correctly identify element underneath for OVERLAP check
-            let originalGhostDisplay = '';
-            if (stickerGhost) {
-                originalGhostDisplay = stickerGhost.style.display;
-                stickerGhost.style.display = 'none';
-            }
-            const elementUnderDrop = document.elementFromPoint(pageX - window.scrollX, pageY - window.scrollY);
-            if (stickerGhost) stickerGhost.style.display = originalGhostDisplay;
+            const itemWidth = draggedStickerElement.offsetWidth || parseInt(window.getComputedStyle(draggedStickerElement).width) || (isAnimal ? 60 : 90);
+            const itemHeight = draggedStickerElement.offsetHeight || parseInt(window.getComputedStyle(draggedStickerElement).height) || (isAnimal ? 60 : 30);
+            const itemCenterXonPage = stickerTopLeftXonPage + itemWidth / 2;
+            const itemCenterYonPage = stickerTopLeftYonPage + itemHeight / 2;
 
-            let droppedOnExistingItemWrapper = null;
-            if (elementUnderDrop) {
-                droppedOnExistingItemWrapper = elementUnderDrop.closest('.placed-animal');
-                 if (!droppedOnExistingItemWrapper && elementUnderDrop.classList.contains('placed-sticker-text')) {
-                     droppedOnExistingItemWrapper = null; 
-                 }
-            }
-            if (droppedOnExistingItemWrapper && !stickerBoardEl.contains(droppedOnExistingItemWrapper)) {
-                droppedOnExistingItemWrapper = null;
-            }
+            if (itemCenterXonPage >= boardRect.left &&
+                itemCenterXonPage <= boardRect.right &&
+                itemCenterYonPage >= boardRect.top &&
+                itemCenterYonPage <= boardRect.bottom) {
 
-            let mergeAttemptedAndHappened = false;
-            if (difficultyLevel === 1 && isAnimalFromList && droppedOnExistingItemWrapper) {
-                const draggedItemDetails = {
-                    element: null, 
-                    name: itemTypeForDataset, // This is the type of the animal dragged from the list
-                    baseAnimals: [itemTypeForDataset],
-                    isBase: true,
-                    tier: 1
-                };
-                const targetItemDetails = getItemDetails(droppedOnExistingItemWrapper);
-                
-                if (targetItemDetails) { 
-                    mergeAttemptedAndHappened = attemptMergeByDirectOverlap(draggedItemDetails, targetItemDetails);
+                let elementToPlace = draggedStickerElement; 
+                if (isAnimal) {
+                    const wrapperDiv = document.createElement('div');
+                    wrapperDiv.classList.add('placed-animal');
+                    if (!draggedStickerElement.dataset.animalType && itemTypeForMerge) {
+                        draggedStickerElement.dataset.animalType = itemTypeForMerge;
+                    }
+                    wrapperDiv.appendChild(draggedStickerElement); 
+                    elementToPlace = wrapperDiv;
+                } else {
+                     draggedStickerElement.classList.add('placed-sticker-text'); 
                 }
-            }
 
+                elementToPlace.style.left = (stickerTopLeftXonPage - boardRect.left) + 'px';
+                elementToPlace.style.top = (stickerTopLeftYonPage - boardRect.top) + 'px';
 
-            if (mergeAttemptedAndHappened) {
+                stickerBoardEl.appendChild(elementToPlace);
+                makePlacedStickerInteractive(elementToPlace, stickerBoardEl);
+
+                totalStickersPlaced++;
                 availableStickerCredits--; 
                 updateStickerSectionStatus(); 
-            } else { 
-                // Standard placement if no merge, or if not a merge scenario (e.g., dropping on empty space)
-                const itemWidth = draggedStickerElement.offsetWidth || parseInt(window.getComputedStyle(draggedStickerElement).width) || (isAnimalFromList ? 60 : 90);
-                const itemHeight = draggedStickerElement.offsetHeight || parseInt(window.getComputedStyle(draggedStickerElement).height) || (isAnimalFromList ? 60 : 30);
-                const itemCenterXonPage = stickerTopLeftXonPage + itemWidth / 2;
-                const itemCenterYonPage = stickerTopLeftYonPage + itemHeight / 2;
 
-                if (itemCenterXonPage >= boardRect.left && itemCenterXonPage <= boardRect.right &&
-                    itemCenterYonPage >= boardRect.top && itemCenterYonPage <= boardRect.bottom) {
-
-                    let elementToPlace = draggedStickerElement; 
-                    if (isAnimalFromList) {
-                        const wrapperDiv = document.createElement('div');
-                        wrapperDiv.classList.add('placed-animal');
-                        if (!draggedStickerElement.dataset.animalType && itemTypeForDataset) {
-                            draggedStickerElement.dataset.animalType = itemTypeForDataset;
+                let anyMergeHappenedThisTurn = false;
+                if (isAnimal && difficultyLevel === 1) { 
+                    let mergeOccurredInLoop;
+                    do { 
+                        mergeOccurredInLoop = checkForMerges();
+                        if (mergeOccurredInLoop) {
+                            anyMergeHappenedThisTurn = true;
                         }
-                        draggedStickerElement.dataset.tier = "1"; // Base animals are tier 1
-                        wrapperDiv.appendChild(draggedStickerElement); 
-                        elementToPlace = wrapperDiv;
-                    } else {
-                         draggedStickerElement.classList.add('placed-sticker-text'); 
-                    }
+                    } while (mergeOccurredInLoop); 
+                }
 
-                    elementToPlace.style.left = (stickerTopLeftXonPage - boardRect.left) + 'px';
-                    elementToPlace.style.top = (stickerTopLeftYonPage - boardRect.top) + 'px';
-
-                    stickerBoardEl.appendChild(elementToPlace);
-                    makePlacedStickerInteractive(elementToPlace, stickerBoardEl);
-
-                    totalStickersPlaced++;
-                    availableStickerCredits--; 
-                    updateStickerSectionStatus(); 
-
-                    // Normal personalized message for non-merge placements
+                if (!anyMergeHappenedThisTurn) { 
                     if (personalizedMessageTimeout) { clearTimeout(personalizedMessageTimeout); }
                     let personalizedText;
-                    if (isAnimalFromList && difficultyLevel === 1) { 
+
+                    if (isAnimal && difficultyLevel === 1) { 
                         personalizedText = `Great job, ${playerName}! You collected ${itemIdentifier}! 🥳`;
                         personalizedMessageEl.style.borderColor = '#2ECC40'; 
                         personalizedMessageEl.style.color = (currentTheme === "videogame" && personalizedMessageEl.style.fontFamily.includes('Press Start 2P')) ? '' : '#2ECC40';
-                    } else if (!isAnimalFromList) { 
+                    } else if (!isAnimal) { 
                         const baseWord = itemIdentifier.replace('!', ''); 
                         switch (itemIdentifier) { 
                             case "Star!": personalizedText = `${playerName}, you are a ${baseWord}! ⭐`; break;
@@ -1046,119 +1096,34 @@
                             personalizedMessageEl.style.color = ''; 
                         }, 2800);
                     }
-                } else {
-                    // Dropped outside board, credit not used up if it was a new item from list
-                    // But availableStickerCredits was already decremented for the drag initiation for preschool
-                    // This needs careful handling. For now, if outside, it's just lost.
                 }
             }
         }
 
-        // This is the MOUSE drop handler for the sticker board.
+        stickerBoardEl.addEventListener('dragover', (e) => e.preventDefault());
         stickerBoardEl.addEventListener('drop', (e) => {
             e.preventDefault();
-            if (draggedStickerElement && canDragSticker()) { // canDragSticker ensures credit
-                // Determine what was dragged (base animal img from list, word sticker div, or existing item from board)
-                const isDraggedItemFromBoard = !!draggedStickerElement.closest('#sticker-board');
-                
-                let droppedOnTargetElement = null;
-                const elementUnderMouse = document.elementFromPoint(e.clientX, e.clientY);
-                if (elementUnderMouse) {
-                    droppedOnTargetElement = elementUnderMouse.closest('.placed-animal');
-                    if (!droppedOnTargetElement && elementUnderMouse.classList.contains('placed-sticker-text') && elementUnderMouse !== draggedStickerElement ) {
-                       droppedOnTargetElement = null; 
-                    }
-                    if (draggedStickerElement.parentElement === droppedOnTargetElement || draggedStickerElement === droppedOnTargetElement) { // Avoid self-drop merge
-                        droppedOnTargetElement = null;
-                    }
-                }
-                if (droppedOnTargetElement && !stickerBoardEl.contains(droppedOnTargetElement)) {
-                     droppedOnTargetElement = null; 
-                }
-
-                let mergeAttemptedAndHappened = false;
-                if (difficultyLevel === 1 && droppedOnTargetElement) { // Preschool mode & dropped on something
-                    const draggedItemDetails = getItemDetails(draggedStickerElement.parentElement || draggedStickerElement); // Get details of what's being dragged
-                    const targetItemDetails = getItemDetails(droppedOnTargetElement);
-
-                    if (draggedItemDetails && targetItemDetails && draggedItemDetails.element !== targetItemDetails.element) {
-                         mergeAttemptedAndHappened = attemptMergeByDirectOverlap(draggedItemDetails, targetItemDetails);
-                    }
-                }
-
-                if (mergeAttemptedAndHappened) {
-                    // Credit was used for the initial drag from list; merge logic handles counts.
-                    // If dragged item was from board, it's consumed.
-                    if (!isDraggedItemFromBoard && availableStickerCredits > 0) availableStickerCredits--; // Consume if new
-                    updateStickerSectionStatus(); 
-                } else {
-                    if (isDraggedItemFromBoard) {
-                        // Item was moved from board, position already updated by makePlacedStickerInteractive's moveDrag
-                        // No credit change.
-                    } else {
-                        // Place new item from list normally
-                        placeItemOnBoardRegularly(e.clientX, e.clientY, draggedStickerElement);
-                    }
-                }
+            if (draggedStickerElement && !stickerGhost) {
+                 placeStickerOnBoard(e.clientX, e.clientY);
             }
-            draggedStickerElement = null; 
+            draggedStickerElement = null;
         });
 
-        function handleDragEndTouch(e) { // This is the main drop handler for touch
+        function handleDragEndTouch(e) {
             const touch = e.changedTouches[0];
-            let droppedOnTargetElement = null;
-
-            if (stickerGhost) stickerGhost.style.display = 'none';
-            const elementUnderTouch = document.elementFromPoint(touch.clientX, touch.clientY);
-            if (stickerGhost) stickerGhost.style.display = ''; 
-
-            if (elementUnderTouch) {
-                 droppedOnTargetElement = elementUnderTouch.closest('.placed-animal');
-                 if (!droppedOnTargetElement && elementUnderTouch.classList.contains('placed-sticker-text') && elementUnderTouch !== draggedStickerElement) {
-                     droppedOnTargetElement = null; 
-                 }
-                 if (draggedStickerElement.parentElement === droppedOnTargetElement || draggedStickerElement === droppedOnTargetElement) {
-                     droppedOnTargetElement = null;
-                 }
+            if (stickerGhost) {
+                if (stickerGhost.parentNode) stickerGhost.parentNode.removeChild(stickerGhost);
+                stickerGhost = null;
             }
-            if (droppedOnTargetElement && !stickerBoardEl.contains(droppedOnTargetElement)) {
-                droppedOnTargetElement = null;
-            }
-
-            if (stickerGhost && stickerGhost.parentNode) stickerGhost.parentNode.removeChild(stickerGhost);
-            stickerGhost = null;
-            
-            if (draggedStickerElement && canDragSticker() && touch) {
-                const isDraggedItemFromBoard = !!draggedStickerElement.closest('#sticker-board');
-                
-                let mergeAttemptedAndHappened = false;
-                if (difficultyLevel === 1 && droppedOnTargetElement) {
-                    const draggedItemDetails = getItemDetails(draggedStickerElement.parentElement || draggedStickerElement);
-                    const targetItemDetails = getItemDetails(droppedOnTargetElement);
-                    if (draggedItemDetails && targetItemDetails && draggedItemDetails.element !== targetItemDetails.element) {
-                        mergeAttemptedAndHappened = attemptMergeByDirectOverlap(draggedItemDetails, targetItemDetails);
-                    }
-                }
-
-                if (mergeAttemptedAndHappened) {
-                    if (!isDraggedItemFromBoard && availableStickerCredits > 0) availableStickerCredits--;
-                    updateStickerSectionStatus();
-                } else {
-                    if (isDraggedItemFromBoard) {
-                        // Position already handled
-                    } else {
-                        placeItemOnBoardRegularly(touch.clientX, touch.clientY, draggedStickerElement);
-                    }
-                }
+            if (draggedStickerElement && touch) {
+                 placeStickerOnBoard(touch.clientX, touch.clientY);
             }
             draggedStickerElement = null;
             document.removeEventListener('touchmove', handleDragMoveTouch);
             document.removeEventListener('touchend', handleDragEndTouch);
         }
-        
 
-        function makePlacedStickerInteractive(stickerWrapper, container) { 
-            // ... (This function remains largely the same, ensure `draggedStickerElement = stickerWrapper` in startDrag) ...
+        function makePlacedStickerInteractive(sticker, container) { 
             let isDraggingPlaced = false;
             let interactionPointOffsetX, interactionPointOffsetY;
 
@@ -1166,17 +1131,13 @@
                 isDraggingPlaced = true;
                 const clientX = e.clientX || e.targetTouches[0].clientX;
                 const clientY = e.clientY || e.targetTouches[0].clientY;
-                const stickerRect = stickerWrapper.getBoundingClientRect();
+                const stickerRect = sticker.getBoundingClientRect();
 
                 interactionPointOffsetX = clientX - stickerRect.left;
                 interactionPointOffsetY = clientY - stickerRect.top;
 
-                stickerWrapper.style.cursor = 'grabbing';
-                stickerWrapper.style.zIndex = (parseInt(window.getComputedStyle(stickerWrapper).zIndex || 10) + 10).toString();
-                
-                // When moving an existing item, it becomes the draggedStickerElement for overlap check
-                draggedStickerElement = stickerWrapper; 
-
+                sticker.style.cursor = 'grabbing';
+                sticker.style.zIndex = (parseInt(window.getComputedStyle(sticker).zIndex || 10) + 10).toString();
 
                 if (e.type === 'mousedown') {
                     document.addEventListener('mousemove', moveDrag);
@@ -1201,59 +1162,20 @@
                 let newLeftInContainer = newLeftOnPage - containerRect.left;
                 let newTopInContainer = newTopOnPage - containerRect.top;
 
-                const itemWidth = stickerWrapper.offsetWidth; 
-                const itemHeight = stickerWrapper.offsetHeight;
+                const itemWidth = sticker.offsetWidth; 
+                const itemHeight = sticker.offsetHeight;
 
 
                 newLeftInContainer = Math.max(0, Math.min(newLeftInContainer, containerRect.width - itemWidth));
                 newTopInContainer = Math.max(0, Math.min(newTopInContainer, containerRect.height - itemHeight));
 
-                stickerWrapper.style.left = newLeftInContainer + 'px';
-                stickerWrapper.style.top = newTopInContainer + 'px';
+                sticker.style.left = newLeftInContainer + 'px';
+                sticker.style.top = newTopInContainer + 'px';
             }
 
-            function endDrag(e) { 
-                if (!isDraggingPlaced) return;
+            function endDrag(e) {
                 isDraggingPlaced = false;
-                stickerWrapper.style.cursor = 'move';
-
-                const clientX = e.clientX || e.changedTouches[0].clientX;
-                const clientY = e.clientY || e.changedTouches[0].clientY;
-
-                let droppedOnTargetElement = null;
-                // Temporarily hide the item being dragged to correctly detect element underneath
-                const originalDisplay = stickerWrapper.style.display;
-                stickerWrapper.style.display = 'none';
-                const elementUnderDrop = document.elementFromPoint(clientX, clientY);
-                stickerWrapper.style.display = originalDisplay;
-
-
-                 if (elementUnderDrop) {
-                    droppedOnTargetElement = elementUnderDrop.closest('.placed-animal');
-                     if (droppedOnTargetElement === stickerWrapper) droppedOnTargetElement = null; 
-                 }
-                if (droppedOnTargetElement && !stickerBoardEl.contains(droppedOnTargetElement)) {
-                    droppedOnTargetElement = null;
-                }
-
-                let mergeAttemptedAndHappened = false;
-                if (difficultyLevel === 1 && stickerWrapper.classList.contains('placed-animal') && droppedOnTargetElement && stickerWrapper !== droppedOnTargetElement) {
-                    const draggedItemDetailsOnBoard = getItemDetails(stickerWrapper); 
-                    const targetItemDetailsOnBoard = getItemDetails(droppedOnTargetElement);
-                    
-                    if (draggedItemDetailsOnBoard && targetItemDetailsOnBoard) {
-                         mergeAttemptedAndHappened = attemptMergeByDirectOverlap(draggedItemDetailsOnBoard, targetItemDetailsOnBoard);
-                    }
-                }
-
-                if (mergeAttemptedAndHappened) {
-                    // The original dragged sticker (stickerWrapper) has been removed by attemptMergeByDirectOverlap
-                } else {
-                    // No merge, position is already updated by moveDrag.
-                    // Check if dropped outside board (advanced: snap back or remove)
-                }
-
-                draggedStickerElement = null; 
+                sticker.style.cursor = 'move';
                 if (e.type === 'mouseup') {
                     document.removeEventListener('mousemove', moveDrag);
                     document.removeEventListener('mouseup', endDrag);
@@ -1263,9 +1185,9 @@
                 }
             }
 
-            stickerWrapper.addEventListener('mousedown', startDrag);
-            stickerWrapper.addEventListener('touchstart', startDrag, { passive: false });
-            stickerWrapper.ondragstart = () => false;
+            sticker.addEventListener('mousedown', startDrag);
+            sticker.addEventListener('touchstart', startDrag, { passive: false });
+            sticker.ondragstart = () => false;
         }
 
         if (stickerListScrollUpBtn && stickerListScrollDownBtn && stickerListEl) {
@@ -1284,7 +1206,9 @@
 
         function updateScrollButtonStates() {
             if (!stickerListEl || !stickerListScrollUpBtn || !stickerListScrollDownBtn) return;
+
             const isScrollable = stickerListEl.scrollHeight > stickerListEl.clientHeight;
+
             if (!isScrollable) {
                 stickerListScrollUpBtn.disabled = true;
                 stickerListScrollDownBtn.disabled = true;
@@ -1294,10 +1218,12 @@
             stickerListScrollDownBtn.disabled = stickerListEl.scrollTop + stickerListEl.clientHeight >= stickerListEl.scrollHeight -1;
         }
 
+        // Initial state setup
         if(personalizedMessageEl) personalizedMessageEl.classList.remove('visible');
         applyTheme(currentTheme); 
         updateOperationVisibility(); 
         updateScrollButtonStates();
+
 
     </script>
 
