@@ -78,25 +78,15 @@
             font-size: 2em; font-weight: bold; margin-bottom: 15px; margin-top: 0;
             transition: color 0.5s ease;
         }
-        #problemTextDisplay { /* For text like "How many shapes?" or "2 x 3 = ?" */
-            font-size: 1.8em; /* Slightly smaller for instructions */
-            margin-bottom: 10px;
-            color: #333; /* Default, can be themed */
-            min-height: 1.5em;
+        #problemTextDisplay {
+            font-size: 1.8em; margin-bottom: 10px; color: #333; min-height: 1.5em;
         }
-        #problemVisuals { /* For displaying shapes or could be empty for arithmetic */
-            font-size: 2.5em; /* Shapes can be large */
-            margin-bottom: 15px;
-            min-height: 60px; /* Space for shapes */
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            align-items: center;
+        #problemVisuals {
+            font-size: 2.5em; margin-bottom: 15px; min-height: 60px;
+            display: flex; flex-wrap: wrap; justify-content: center; align-items: center;
         }
-        #problemVisuals .shape { /* Style for individual shapes if using divs/spans */
-            font-size: 2em; /* Emoji size or styled div size */
-            margin: 5px;
-            display: inline-block;
+        #problemVisuals .shape {
+            font-size: 2em; margin: 5px; display: inline-block;
         }
 
         input[type="number"] {
@@ -138,25 +128,27 @@
         .scroll-btn:hover { transform: scale(1.05); }
         .scroll-btn:disabled { background-color: #cccccc !important; color: #777 !important; cursor: not-allowed; opacity: 0.7; }
 
-        #sticker-list { /* Also used for animal choices */
+        #sticker-list { 
             display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;
             max-height: 130px; overflow-y: auto; -webkit-overflow-scrolling: touch; 
             padding: 10px; border: 1px solid #ddd; border-radius: 5px;
             width: 100%; box-sizing: border-box;
             transition: background-color 0.5s ease, border-color 0.5s ease;
         }
-        #sticker-list img { /* For animal images */
+        #sticker-list img.sticker-option { 
             width: 50px; height: 50px; object-fit: contain;
+            border: 1px solid #eee; 
+            border-radius: 5px;
         }
         .sticker-option.disabled-drag { cursor: not-allowed; opacity: 0.5; transform: scale(0.95); }
 
-        .sticker-base { /* For word stickers and animal images in list */
+        .sticker-base { /* For word stickers */
             padding: 10px 15px; border-radius: 25px; font-weight: bold; font-size: 0.95em;
             text-align: center; transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s, background-color 0.3s, color 0.3s;
             min-width: 90px; display: inline-flex; align-items: center; justify-content: center;
             word-break: keep-all; line-height: 1.2;
         }
-        .sticker-option { cursor: grab; }
+        .sticker-option { cursor: grab; } 
         .sticker-option:not(.disabled-drag):hover { transform: scale(1.1); }
 
         #sticker-board-container { width: 95%; max-width: 700px; margin: 0 auto; }
@@ -168,11 +160,11 @@
             background-clip: padding-box;
             transition: background-color 0.5s ease, border-image 0.5s ease;
         }
-        .placed-sticker-text, .placed-animal { /* Common class for placed items */
+        .placed-sticker-text, .placed-animal { 
             position: absolute; cursor: move; user-select: none; z-index: 10;
         }
-        .placed-animal img { /* Ensure placed animal image scales if needed */
-            width: 60px; height: 60px; object-fit: contain;
+        .placed-animal img { /* This styles the img tag INSIDE the .placed-animal div */
+            width: 60px; height: 60px; object-fit: contain; display: block;
         }
         .sticker-ghost { position: fixed; pointer-events: none; opacity: 0.75; z-index: 1000; }
         .sticker-ghost img { width: 50px; height: 50px; object-fit: contain; }
@@ -188,10 +180,11 @@
         #personalized-message.visible { opacity: 1; transform: translate(-50%, -50%) scale(1); pointer-events: auto; }
         .hidden { display: none !important; }
 
+        /* --- Theme Specific Styles --- */
         /* --- Rainbow Theme (Default) --- */
         .rainbow-theme body { background-color: #f0f8ff; color: #333; }
         .rainbow-theme #start-menu { background-color: rgba(240, 248, 255, 0.98); }
-        .rainbow-theme #start-menu h2, .rainbow-theme #difficulty-selection p, .rainbow-theme #operation-selection p, .rainbow-theme #theme-selection p {
+        .rainbow-theme #start-menu h2, .rainbow-theme .selection-group p {
             background-image: linear-gradient(to right, #FF4136, #FF851B, #FFDC00, #2ECC40, #0074D9, #4B0082, #B10DC9);
             -webkit-background-clip: text; background-clip: text; color: transparent;
         }
@@ -219,7 +212,7 @@
         .rainbow-theme .scroll-btn { background-color: #0074D9; color: white; }
         .rainbow-theme .scroll-btn:hover { background-color: #0056b3; }
         .rainbow-theme #sticker-list { background-color: #f9f9f9; border: 1px solid #ddd; }
-        .rainbow-theme .sticker-base { box-shadow: 0 3px 6px rgba(0,0,0,0.2); }
+        .rainbow-theme .sticker-base { box-shadow: 0 3px 6px rgba(0,0,0,0.2); } 
         .rainbow-theme .sticker-base.theme-sticker-color-1 { background-color: #FF4136; color: white; }
         .rainbow-theme .sticker-base.theme-sticker-color-2 { background-color: #FF851B; color: white; }
         .rainbow-theme .sticker-base.theme-sticker-color-3 { background-color: #FFDC00; color: #333; }
@@ -236,15 +229,13 @@
         .videogame-theme #start-menu { background-color: rgba(13, 13, 33, 0.98); }
         .videogame-theme #start-menu h2, .videogame-theme .selection-group p {
             background-image: linear-gradient(to right, #00FFFF, #FF00FF, #FFFF00);
-            -webkit-background-clip: text; background-clip: text; color: transparent;
-            font-size: 1.8em; 
+            -webkit-background-clip: text; background-clip: text; color: transparent; font-size: 1.8em; 
         }
         .videogame-theme #start-menu label, .videogame-theme .selection-group label { color: #00FFFF; font-size: 0.8em;}
         .videogame-theme #start-menu input[type="text"] { background-color: #1a1a2e; color: #00FFFF; border: 2px solid #00FFFF; font-size: 0.9em;}
         .videogame-theme #start-menu button#startGameBtn { background-color: #FF00FF; color: #0d0d21; box-shadow: 0 0 10px #FF00FF; border: 2px solid #FFFF00; font-size: 1em;}
         .videogame-theme #start-menu button#startGameBtn:hover { background-color: #cc00cc;}
         .videogame-theme .error-message { color: #FF00FF; }
-
         .videogame-theme #game-container { background-color: #1a1a2e; border: 3px solid #00FFFF; box-shadow: 0 0 15px #00FFFF; }
         .videogame-theme #mainMenuBtn { background-color: #FF00FF; color: #0d0d21; border: 1px solid #FFFF00;}
         .videogame-theme #mainMenuBtn:hover { background-color: #cc00cc;}
@@ -254,25 +245,20 @@
         }
         .videogame-theme button#submitAnswerBtn { background-image: none; background-color: #00FFFF; color: #0d0d21; text-shadow: none; border: 2px solid #FFFF00;}
         .videogame-theme button#submitAnswerBtn:hover { background-color: #00cccc; }
-        .videogame-theme #problem, .videogame-theme #problemTextDisplay, .videogame-theme input[type="number"], .videogame-theme #score-board, .videogame-theme #sticker-prompt  { color: #c0c0c0; }
+        .videogame-theme #problemVisuals .shape, .videogame-theme #problemTextDisplay, .videogame-theme input[type="number"], .videogame-theme #score-board, .videogame-theme #sticker-prompt  { color: #c0c0c0; }
         .videogame-theme input[type="number"] { background-color: #0d0d21; border-color: #00FFFF; color: #00FFFF;}
-        
         .videogame-theme #feedback { 
             background-color: #101028; border: 1px solid #00FFFF; color: #c0c0c0; 
             font-family: 'Press Start 2P', cursive; font-size: 0.8em; line-height: 1.4;
         }
-        .videogame-theme .correct { 
-            color: #00FF00; text-shadow: 0 0 3px #00FF00, 0 0 5px #00FF00; font-weight: normal; 
-        }
-        .videogame-theme .incorrect { 
-            color: #FF0000; text-shadow: 0 0 3px #FF0000, 0 0 5px #FF0000; font-weight: normal;
-        }
-        
+        .videogame-theme .correct { color: #00FF00; text-shadow: 0 0 3px #00FF00, 0 0 5px #00FF00; font-weight: normal; }
+        .videogame-theme .incorrect { color: #FF0000; text-shadow: 0 0 3px #FF0000, 0 0 5px #FF0000; font-weight: normal;}
         .videogame-theme #sticker-section { background-color: #1a1a2e; border: 2px solid #FF00FF; }
         .videogame-theme #sticker-header { color: #FF00FF; }
         .videogame-theme .scroll-btn { background-color: #FF00FF; color: #0d0d21; border: 1px solid #FFFF00;}
         .videogame-theme .scroll-btn:hover { background-color: #cc00cc;}
         .videogame-theme #sticker-list { background-color: #0d0d21; border-color: #00FFFF; }
+        .videogame-theme #sticker-list img.sticker-option { border-color: #00FFFF; }
         .videogame-theme .sticker-base { box-shadow: 0 2px 5px rgba(0,0,0,0.5); font-size: 0.7em; padding: 8px 10px;}
         .videogame-theme .sticker-base.theme-sticker-color-1 { background-color: #ff3366; color: white; } 
         .videogame-theme .sticker-base.theme-sticker-color-2 { background-color: #33ff99; color: black; } 
@@ -281,18 +267,12 @@
         .videogame-theme .sticker-base.theme-sticker-color-5 { background-color: #cc33ff; color: white; } 
         .videogame-theme .sticker-base.theme-sticker-color-6 { background-color: #ffffff; color: black; } 
         .videogame-theme .sticker-base.theme-sticker-color-7 { background-color: #00ff00; color: black; } 
-
         .videogame-theme #sticker-board-header { color: #00FF00; }
         .videogame-theme #sticker-board { background-color: #101028; border-image: linear-gradient(45deg, #00FFFF, #FF00FF, #FFFF00) 1; }
         .videogame-theme #personalized-message { 
-            background-color: rgba(200, 200, 220, 0.95); 
-            font-family: 'Press Start 2P', cursive; 
-            font-size: 1.5em; 
-            border-width: 4px; 
-            color: #1a1a2e; 
-            text-shadow: 1px 1px 0px #00c8c8; 
+            background-color: rgba(200, 200, 220, 0.95); font-family: 'Press Start 2P', cursive; 
+            font-size: 1.5em; border-width: 4px; color: #1a1a2e; text-shadow: 1px 1px 0px #00c8c8; 
         }
-
 
         /* --- Animals Theme --- */
         .animals-theme body { background-color: #e8f5e9; color: #387002; font-family: 'Nunito', sans-serif; }
@@ -304,33 +284,25 @@
         .animals-theme #start-menu button#startGameBtn { background-color: #4CAF50; color: white; box-shadow: 0 4px 8px rgba(76, 175, 80, 0.4); }
         .animals-theme #start-menu button#startGameBtn:hover { background-color: #388e3c; }
         .animals-theme .error-message { color: #d32f2f; } 
-
         .animals-theme #game-container { background-color: #ffffff; border: 3px solid #a5d6a7; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
         .animals-theme #mainMenuBtn { background-color: #4CAF50; color: white; }
         .animals-theme #mainMenuBtn:hover { background-color: #388e3c; }
         .animals-theme #game-container h1 { color: #387002; background-image: none; font-size: 2.2em;}
         .animals-theme button#submitAnswerBtn { background-image: none; background-color: #81c784; color: #1b5e20; text-shadow: none; }
         .animals-theme button#submitAnswerBtn:hover { background-color: #66bb6a; }
-        .animals-theme #problem, .animals-theme #problemTextDisplay, .animals-theme input[type="number"], .animals-theme #score-board, .animals-theme #sticker-prompt { color: #387002; }
+        .animals-theme #problemVisuals .shape, .animals-theme #problemTextDisplay, .animals-theme input[type="number"], .animals-theme #score-board, .animals-theme #sticker-prompt { color: #387002; }
         .animals-theme input[type="number"] { border-color: #81c784; }
-        
         .animals-theme #feedback { 
-            background-color: #f1f8e9; 
-            border: 1px solid #a5d6a7; 
-            color: #387002; 
+            background-color: #f1f8e9; border: 1px solid #a5d6a7; color: #387002; 
         }
-        .animals-theme .correct { 
-            color: #388e3c; 
-        }
-        .animals-theme .incorrect { 
-            color: #c62828; 
-        }
-
+        .animals-theme .correct { color: #388e3c; }
+        .animals-theme .incorrect { color: #c62828; }
         .animals-theme #sticker-section { background-color: #ffffff; border: 2px solid #66bb6a; }
         .animals-theme #sticker-header { color: #388e3c; }
         .animals-theme .scroll-btn { background-color: #66bb6a; color: white; }
         .animals-theme .scroll-btn:hover { background-color: #4caf50; }
         .animals-theme #sticker-list { background-color: #f1f8e9; border-color: #a5d6a7; }
+        .animals-theme #sticker-list img.sticker-option { border-color: #a5d6a7; }
         .animals-theme .sticker-base { box-shadow: 0 2px 5px rgba(0,0,0,0.15); }
         .animals-theme .sticker-base.theme-sticker-color-1 { background-color: #ffb300; color: white; } 
         .animals-theme .sticker-base.theme-sticker-color-2 { background-color: #7cb342; color: white; } 
@@ -339,7 +311,6 @@
         .animals-theme .sticker-base.theme-sticker-color-5 { background-color: #4fc3f7; color: white; } 
         .animals-theme .sticker-base.theme-sticker-color-6 { background-color: #fff176; color: #5d4037; } 
         .animals-theme .sticker-base.theme-sticker-color-7 { background-color: #ba68c8; color: white; } 
-
         .animals-theme #sticker-board-header { color: #387002; }
         .animals-theme #sticker-board { background-color: #c8e6c9; border-image: linear-gradient(45deg, #8d6e63, #ffb300, #7cb342, #4db6ac, #4fc3f7) 1; }
         .animals-theme #personalized-message { background-color: rgba(232, 245, 233, 0.95); color: #2e7d32; border-width: 4px;}
@@ -366,7 +337,7 @@
             #personalized-message { font-size: 1.6em; padding: 15px 20px; width: 85%; }
              .videogame-theme #personalized-message {font-size: 1.1em;}
             #game-container h1 { font-size: 1.6em; }
-            #problemTextDisplay {font-size: 1.5em;} /* Adjust problem text for small screens */
+            #problemTextDisplay {font-size: 1.5em;} 
             #problemVisuals {font-size: 2em;}
             input[type="number"] { font-size: 1.1em; width: 70px; }
             button#submitAnswerBtn { font-size: 1em; }
@@ -385,8 +356,9 @@
         }
     </style>
 </head>
-<body class="rainbow-theme"> <div id="start-menu">
-        <h2>Welcome to Arithmetic Fun!</h2>
+<body class="rainbow-theme"> 
+    <div id="start-menu">
+        <h2>Welcome to Arithmetic & Counting Fun!</h2>
         <label for="playerNameInput">Enter your name:</label>
         <input type="text" id="playerNameInput" maxlength="25" placeholder="Your Name">
 
@@ -425,17 +397,21 @@
             <div id="score-board">
                 Correct Answers: <span id="correct-count">0</span> / <span id="questions-asked">0</span>
             </div>
-            <div id="problemTextDisplay"></div> <div id="problemVisuals"></div>   <input type="number" id="answer" inputmode="numeric" pattern="[0-9]*" autofocus>
+            <div id="problemTextDisplay"></div> 
+            <div id="problemVisuals"></div>   
+            <input type="number" id="answer" inputmode="numeric" pattern="[0-9]*" autofocus>
             <br>
             <button id="submitAnswerBtn" onclick="checkAnswer()">Submit Answer</button>
             <div id="feedback"></div>
         </div>
 
-        <div id="sticker-section" class="hidden"> <h2 id="sticker-header">Time for a Reward!</h2>
+        <div id="sticker-section" class="hidden"> 
+            <h2 id="sticker-header">Time for a Reward!</h2>
             <p id="sticker-prompt">Drag your reward to the board below.</p>
             <div class="sticker-list-container">
                 <button id="stickerListScrollUpBtn" class="scroll-btn">▲</button>
-                <div id="sticker-list"></div> <button id="stickerListScrollDownBtn" class="scroll-btn">▼</button>
+                <div id="sticker-list"></div> 
+                <button id="stickerListScrollDownBtn" class="scroll-btn">▼</button>
             </div>
         </div>
 
@@ -453,17 +429,17 @@
         let operationType = "multiplication"; 
         let currentTheme = "rainbow"; 
 
-        let num1, num2, correctAnswerValue; // For arithmetic
-        let displayedShapesCount; // For preschool counting
+        let num1, num2, correctAnswerValue; 
+        let displayedShapesCount; 
 
         let correctAnswers = 0;
         let questionsAsked = 0;
-        const correctAnswersNeededForSticker = 10; // For arithmetic modes
-        let totalStickersPlaced = 0; // Generic term for rewards placed
-        let availableStickerCredits = 0; // For arithmetic word stickers OR one animal for preschool
+        const correctAnswersNeededForSticker = 10; 
+        let totalStickersPlaced = 0; 
+        let availableStickerCredits = 0; 
 
         const gameLength = 1000;
-        const totalStickerOptionsInList = 21; // For word stickers
+        const totalStickerOptionsInList = 21; 
         const totalAnimalChoices = 5;
 
 
@@ -476,13 +452,49 @@
             "theme-sticker-color-1", "theme-sticker-color-2", "theme-sticker-color-3",
             "theme-sticker-color-4", "theme-sticker-color-5", "theme-sticker-color-6", "theme-sticker-color-7"
         ];
-        // IMPORTANT: User needs to provide these animal images in 'images/animals/' folder
+        
         const animalImageFiles = [
-            { src: "cat.png", name: "Cat" }, 
-            { src: "dog.png", name: "Dog" },
-            { src: "bear.png", name: "Bear" },
-            { src: "lion.png", name: "Lion" },
-            { src: "panda.png", name: "Panda" }
+            { src: "cat.png", name: "Cat", alt: "a Cute Cat" }, 
+            { src: "dog.png", name: "Dog", alt: "a Happy Dog" },
+            { src: "bear.png", name: "Bear", alt: "a Friendly Bear" },
+            { src: "lion.png", name: "Lion", alt: "a Brave Lion" },
+            { src: "panda.png", name: "Panda", alt: "a Playful Panda" }
+        ];
+
+        const mergeRecipes = [
+            // Tier 2: 2-Animal Merges (10)
+            { animalsInvolved: ["Bear", "Cat"].sort(), resultName: "Bearcat", resultImage: "bearcat.png", tier: 2 },
+            { animalsInvolved: ["Bear", "Dog"].sort(), resultName: "Beardog", resultImage: "beardog.png", tier: 2 },
+            { animalsInvolved: ["Bear", "Lion"].sort(), resultName: "Bearlion", resultImage: "bearlion.png", tier: 2 },
+            { animalsInvolved: ["Bear", "Panda"].sort(), resultName: "Bearpanda", resultImage: "bearpanda.png", tier: 2 },
+            { animalsInvolved: ["Cat", "Dog"].sort(), resultName: "Catdog", resultImage: "catdog.png", tier: 2 },
+            { animalsInvolved: ["Cat", "Lion"].sort(), resultName: "Catlion", resultImage: "catlion.png", tier: 2 },
+            { animalsInvolved: ["Cat", "Panda"].sort(), resultName: "Catpanda", resultImage: "catpanda.png", tier: 2 },
+            { animalsInvolved: ["Dog", "Lion"].sort(), resultName: "Doglion", resultImage: "doglion.png", tier: 2 },
+            { animalsInvolved: ["Dog", "Panda"].sort(), resultName: "Dogpanda", resultImage: "dogpanda.png", tier: 2 },
+            { animalsInvolved: ["Lion", "Panda"].sort(), resultName: "Lionpanda", resultImage: "lionpanda.png", tier: 2 },
+
+            // Tier 3: 3-Animal Merges (10)
+            { animalsInvolved: ["Bear", "Cat", "Dog"].sort(), resultName: "Bearcatdog", resultImage: "bearcatdog.png", tier: 3 },
+            { animalsInvolved: ["Bear", "Cat", "Lion"].sort(), resultName: "Bearcatlion", resultImage: "bearcatlion.png", tier: 3 },
+            { animalsInvolved: ["Bear", "Cat", "Panda"].sort(), resultName: "Bearcatpanda", resultImage: "bearcatpanda.png", tier: 3 },
+            { animalsInvolved: ["Bear", "Dog", "Lion"].sort(), resultName: "Beardoglion", resultImage: "beardoglion.png", tier: 3 },
+            { animalsInvolved: ["Bear", "Dog", "Panda"].sort(), resultName: "Beardogpanda", resultImage: "beardogpanda.png", tier: 3 },
+            { animalsInvolved: ["Bear", "Lion", "Panda"].sort(), resultName: "Bearlionpanda", resultImage: "bearlionpanda.png", tier: 3 },
+            { animalsInvolved: ["Cat", "Dog", "Lion"].sort(), resultName: "Catdoglion", resultImage: "catdoglion.png", tier: 3 },
+            { animalsInvolved: ["Cat", "Dog", "Panda"].sort(), resultName: "Catdogpanda", resultImage: "catdogpanda.png", tier: 3 },
+            { animalsInvolved: ["Cat", "Lion", "Panda"].sort(), resultName: "Catlionpanda", resultImage: "catlionpanda.png", tier: 3 },
+            { animalsInvolved: ["Dog", "Lion", "Panda"].sort(), resultName: "Doglionpanda", resultImage: "doglionpanda.png", tier: 3 },
+
+            // Tier 4: 4-Animal Merges (5)
+            { animalsInvolved: ["Bear", "Cat", "Dog", "Lion"].sort(), resultName: "Bearcatdoglion", resultImage: "bearcatdoglion.png", tier: 4 },
+            { animalsInvolved: ["Bear", "Cat", "Dog", "Panda"].sort(), resultName: "Bearcatdogpanda", resultImage: "bearcatdogpanda.png", tier: 4 },
+            { animalsInvolved: ["Bear", "Cat", "Lion", "Panda"].sort(), resultName: "Bearcatlionpanda", resultImage: "bearcatlionpanda.png", tier: 4 },
+            { animalsInvolved: ["Bear", "Dog", "Lion", "Panda"].sort(), resultName: "Beardoglionpanda", resultImage: "beardoglionpanda.png", tier: 4 },
+            { animalsInvolved: ["Cat", "Dog", "Lion", "Panda"].sort(), resultName: "Catdoglionpanda", resultImage: "catdoglionpanda.png", tier: 4 },
+
+            // Tier 5: 5-Animal Merge (1)
+            { animalsInvolved: ["Bear", "Cat", "Dog", "Lion", "Panda"].sort(), resultName: "Bearcatdoglionpanda", resultImage: "bearcatdoglionpanda.png", tier: 5 }
         ];
 
 
@@ -522,7 +534,7 @@
         
         function updateOperationVisibility() {
             const selectedDifficultyRadio = document.querySelector('input[name="difficulty"]:checked');
-            if (selectedDifficultyRadio && parseInt(selectedDifficultyRadio.value) === 1) { // Preschool
+            if (selectedDifficultyRadio && parseInt(selectedDifficultyRadio.value) === 1) { 
                 operationSelectionEl.style.display = 'none';
             } else {
                 operationSelectionEl.style.display = 'block';
@@ -543,8 +555,8 @@
                 const selectedDifficultyRadio = document.querySelector('input[name="difficulty"]:checked');
                 difficultyLevel = selectedDifficultyRadio ? parseInt(selectedDifficultyRadio.value) : 3;
                 
-                if (difficultyLevel === 1) { // Preschool
-                    operationType = "counting"; // Set a specific operation type for preschool
+                if (difficultyLevel === 1) { 
+                    operationType = "counting"; 
                 } else {
                     const selectedOperationRadio = document.querySelector('input[name="operation"]:checked');
                     operationType = selectedOperationRadio ? selectedOperationRadio.value : "multiplication";
@@ -572,7 +584,7 @@
         });
 
         function initializeGame() {
-            if (difficultyLevel === 1) {
+            if (difficultyLevel === 1) { 
                  document.querySelector("#game-container h1").textContent = `Counting Fun for ${playerName}! 🧸`;
             } else {
                  document.querySelector("#game-container h1").textContent = `${operationType.charAt(0).toUpperCase() + operationType.slice(1)} Fun for ${playerName}!`;
@@ -583,8 +595,7 @@
             document.getElementById('submitAnswerBtn').disabled = false;
 
             generateProblem();
-            // populateStickerList(); // Don't populate word stickers yet, wait for reward type
-            updateStickerSectionStatus(); // This will handle initial state of sticker/reward section
+            updateStickerSectionStatus(); 
             if(personalizedMessageEl) personalizedMessageEl.classList.remove('visible');
             answerEl.focus(); 
         }
@@ -611,9 +622,10 @@
             document.getElementById('submitAnswerBtn').disabled = false;
 
             stickerBoardEl.innerHTML = ''; 
+            stickerListEl.innerHTML = ''; 
             stickerSectionEl.classList.add('hidden');
-            problemVisualsEl.innerHTML = ''; // Clear any shapes
-            problemTextDisplayEl.textContent = ''; // Clear problem text
+            problemVisualsEl.innerHTML = ''; 
+            problemTextDisplayEl.textContent = ''; 
 
             if (personalizedMessageTimeout) {
                 clearTimeout(personalizedMessageTimeout);
@@ -635,22 +647,21 @@
         }
 
         function generateProblem() {
-            problemVisualsEl.innerHTML = ''; // Clear visual area
-            problemTextDisplayEl.textContent = ''; // Clear text area
+            problemVisualsEl.innerHTML = ''; 
+            problemTextDisplayEl.textContent = ''; 
 
-            if (difficultyLevel === 1) { // Preschool Counting
+            if (difficultyLevel === 1) { 
                 generateCountingProblem();
-            } else { // Arithmetic Problems
+            } else { 
                 generateArithmeticProblem();
             }
             answerEl.value = '';
-            // Focus is handled by initializeGame for first problem and checkAnswer for subsequent
         }
         
         function generateCountingProblem() {
             problemTextDisplayEl.textContent = "How many shapes can you count?";
-            const numShapesToDisplay = Math.floor(Math.random() * 10) + 1; // 1 to 10 shapes
-            displayedShapesCount = numShapesToDisplay; // Store for answer checking
+            const numShapesToDisplay = Math.floor(Math.random() * 10) + 1; 
+            displayedShapesCount = numShapesToDisplay; 
             correctAnswerValue = displayedShapesCount;
 
             const shapesEmojis = ['🔴', '🔵', '🟢', '🟡', '🟣', '🟠', '⭐', '🔺', '▪️', '🔶', '❤️', '💜', '🧡'];
@@ -659,8 +670,7 @@
             for (let i = 0; i < displayedShapesCount; i++) {
                 const shapeSpan = document.createElement('span');
                 shapeSpan.textContent = selectedShapeEmoji;
-                shapeSpan.classList.add('shape'); // For potential specific styling
-                // Random positioning within problemVisualsEl can be added here for more challenge
+                shapeSpan.classList.add('shape'); 
                 problemVisualsEl.appendChild(shapeSpan);
             }
         }
@@ -696,7 +706,7 @@
                     operatorSymbol = '÷';
                     let quotient;
                     switch (difficultyLevel) {
-                        case 3: // Division starts from 3rd grade
+                        case 3: 
                             n2 = Math.floor(Math.random() * 8) + 2; 
                             quotient = Math.floor(Math.random() * 8) + 2; 
                             n1 = n2 * quotient;
@@ -711,7 +721,7 @@
                             quotient = Math.floor(Math.random() * 19) + 2; 
                             n1 = n2 * quotient;
                             break;
-                        default: // Fallback for division if difficulty is 2 or unspecified
+                        default: 
                             n2 = Math.floor(Math.random() * 8) + 2; quotient = Math.floor(Math.random() * 8) + 2; n1 = n2 * quotient; break;
                     }
                     if (n2 === 0) { generateProblem(); return; } 
@@ -740,27 +750,25 @@
                     answer = n1 * n2;
                     break;
             }
-            num1 = n1; num2 = n2; // Store globally if needed, mostly for consistency
+            num1 = n1; num2 = n2; 
             correctAnswerValue = answer;
             problemTextDisplayEl.textContent = `${n1} ${operatorSymbol} ${n2} = ?`;
         }
 
 
         function updateStickerSectionStatus() {
-            // This function now primarily handles the visibility and content of the reward section
-            // For preschool, it's shown after every correct. For others, after 10.
-            if (difficultyLevel === 1) { // Preschool - animal reward conditions handled by triggerAnimalReward
-                if (availableStickerCredits > 0) { // If an animal reward is pending
+            if (difficultyLevel === 1) { 
+                if (availableStickerCredits > 0) { 
                      stickerSectionEl.classList.remove('hidden');
                 } else {
                      stickerSectionEl.classList.add('hidden');
                 }
-            } else { // Arithmetic modes
+            } else { 
                 if (availableStickerCredits > 0) {
                     stickerSectionEl.classList.remove('hidden');
                     stickerHeaderEl.textContent = `🌟 You've earned ${availableStickerCredits} sticker credit(s)! 🌟`;
                     stickerPromptEl.textContent = "Choose one colorful word sticker and drag it to your board.";
-                    if (stickerListEl.children.length === 0 || stickerListEl.querySelector('img')) { // If empty or has animals, repopulate with words
+                    if (stickerListEl.children.length === 0 || stickerListEl.querySelector('img')) { 
                         populateWordStickers();
                     }
                     document.querySelectorAll('.sticker-option').forEach(opt => opt.classList.remove('disabled-drag'));
@@ -781,7 +789,7 @@
         }
         
         function triggerAnimalReward() {
-            availableStickerCredits = 1; // Give one credit to pick an animal
+            availableStickerCredits = 1; 
             stickerHeaderEl.textContent = "🎉 Yay! Pick an animal friend! 🐾";
             stickerPromptEl.textContent = "Drag an animal to your reward board.";
             populateAnimalChoices();
@@ -800,9 +808,9 @@
                     feedbackEl.className = 'correct'; 
                     correctAnswers++;
 
-                    if (difficultyLevel === 1) { // Preschool Counting Reward
+                    if (difficultyLevel === 1) { 
                         triggerAnimalReward();
-                    } else { // Arithmetic Sticker Reward Logic
+                    } else { 
                         if (correctAnswers > 0 && correctAnswers % correctAnswersNeededForSticker === 0) {
                             availableStickerCredits++;
                             let stickerEarnedText = "";
@@ -829,8 +837,7 @@
             questionsAskedEl.textContent = questionsAsked;
 
             if (questionsAsked < gameLength) {
-                // Only generate a new problem if the current one was valid or it's the start
-                if (!isNaN(userAnswer) || questionsAsked === 0 || (difficultyLevel === 1 && userAnswer !== undefined)) {
+                if (!isNaN(userAnswer) || questionsAsked === 0 || (difficultyLevel === 1 && userAnswer !== undefined) ){
                      generateProblem();
                 }
             } else {
@@ -845,7 +852,7 @@
             }
         });
 
-        function populateWordStickers() { // Renamed from populateStickerList
+        function populateWordStickers() { 
             stickerListEl.innerHTML = '';
             for (let i = 0; i < totalStickerOptionsInList; i++) {
                 const wordSticker = document.createElement('div');
@@ -866,18 +873,17 @@
             for (let i = 0; i < totalAnimalChoices; i++) {
                 const animalData = animalImageFiles[i % animalImageFiles.length];
                 const animalImgEl = document.createElement('img');
-                animalImgEl.src = `images/animals/${animalData.src}`; // USER NEEDS TO PROVIDE IMAGES FOLDER
-                animalImgEl.alt = animalData.name;
-                animalImgEl.classList.add('sticker-option'); // Re-use for styling & drag
-                // No need for sticker-base if img has its own size, or add specific img styling
-                // animalImgEl.style.width = '50px'; animalImgEl.style.height = '50px'; // Or CSS
+                animalImgEl.src = `images/animals/${animalData.src}`; 
+                animalImgEl.alt = animalData.alt; 
+                animalImgEl.dataset.animalType = animalData.name; 
+                animalImgEl.classList.add('sticker-option'); 
 
                 animalImgEl.draggable = true;
                 animalImgEl.addEventListener('dragstart', handleDragStartMouse);
                 animalImgEl.addEventListener('touchstart', handleDragStartTouch, { passive: false });
                 stickerListEl.appendChild(animalImgEl);
             }
-            updateDragDisabledState(); // Should allow drag since credit is 1
+            updateDragDisabledState(); 
             updateScrollButtonStates();
         }
 
@@ -898,7 +904,7 @@
             answerEl.disabled = true;
             document.getElementById('submitAnswerBtn').disabled = true;
 
-            let finalMessage = ` You got ${correctAnswers} out of ${questionsAsked} correct.`; // Use questionsAsked for accuracy
+            let finalMessage = ` You got ${correctAnswers} out of ${questionsAsked} correct.`; 
             if (totalStickersPlaced > 0) {
                 finalMessage += ` You collected ${totalStickersPlaced} reward(s) for your board!`;
             } else if (correctAnswers > 0) {
@@ -909,7 +915,7 @@
             feedbackEl.innerHTML = `🎉 Game Over, ${playerName}! ${finalMessage} 🎉`; 
             feedbackEl.className = ''; 
 
-             updateStickerSectionStatus(); // To show pending rewards if any
+             updateStickerSectionStatus(); 
              if(availableStickerCredits > 0 && stickerSectionEl.classList.contains('hidden')){
                  stickerSectionEl.classList.remove('hidden');
              }
@@ -925,16 +931,14 @@
             if (!canDragSticker()) { e.preventDefault(); return; }
             draggedStickerElement = e.target.cloneNode(true); 
             draggedStickerElement.classList.remove('sticker-option', 'disabled-drag');
-            // Add a common class for all placed items, text or image
-            draggedStickerElement.classList.add(e.target.tagName === 'IMG' ? 'placed-animal' : 'placed-sticker-text');
-
+            // No specific 'placed-text' or 'placed-animal' added to clone here initially
 
             const rect = e.target.getBoundingClientRect();
             dragOffsetX = e.clientX - rect.left;
             dragOffsetY = e.clientY - rect.top;
             try {
                 e.dataTransfer.setDragImage(new Image(), 0, 0);
-                e.dataTransfer.setData('text/plain', e.target.alt || e.target.textContent); // Use alt for images
+                e.dataTransfer.setData('text/plain', e.target.alt || e.target.textContent); 
             } catch (error) { /* Failsafe */ }
         }
 
@@ -954,7 +958,7 @@
                         if (!stickerGhost.classList.contains(cls)) stickerGhost.classList.add(cls);
                      }
                 });
-            }
+            } // For img, it will just be the img
             
             stickerGhost.style.width = originalSticker.offsetWidth + 'px';
             stickerGhost.style.height = originalSticker.offsetHeight + 'px';
@@ -969,7 +973,6 @@
 
             draggedStickerElement = originalSticker.cloneNode(true);
             draggedStickerElement.classList.remove('sticker-option', 'disabled-drag');
-            draggedStickerElement.classList.add(originalSticker.tagName === 'IMG' ? 'placed-animal' : 'placed-sticker-text');
             
             document.addEventListener('touchmove', handleDragMoveTouch, { passive: false });
             document.addEventListener('touchend', handleDragEndTouch);
@@ -982,6 +985,94 @@
             stickerGhost.style.left = (touch.clientX - dragOffsetX) + 'px';
             stickerGhost.style.top = (touch.clientY - dragOffsetY) + 'px';
         }
+        
+        function checkForMerges() {
+            const placedItems = Array.from(stickerBoardEl.children);
+            const baseAnimalsOnBoardWrappers = placedItems.filter(item =>
+                item.classList.contains('placed-animal') &&
+                item.querySelector('img')?.dataset.animalType &&
+                !item.dataset.mergedName 
+            );
+
+            if (baseAnimalsOnBoardWrappers.length < 2) return false;
+
+            const sortedRecipes = [...mergeRecipes].sort((a, b) => b.tier - a.tier);
+
+            for (const recipe of sortedRecipes) {
+                if (baseAnimalsOnBoardWrappers.length < recipe.animalsInvolved.length) {
+                    continue; 
+                }
+
+                const requiredTypesInRecipe = [...recipe.animalsInvolved]; 
+                let availableAnimalsForRecipe = [...baseAnimalsOnBoardWrappers]; 
+                const animalsToConsumeForThisRecipe = [];
+
+                for (const reqType of requiredTypesInRecipe) {
+                    const foundAnimalIndex = availableAnimalsForRecipe.findIndex(
+                        wrapper => wrapper.querySelector('img').dataset.animalType === reqType
+                    );
+
+                    if (foundAnimalIndex !== -1) {
+                        animalsToConsumeForThisRecipe.push(availableAnimalsForRecipe[foundAnimalIndex]);
+                        availableAnimalsForRecipe.splice(foundAnimalIndex, 1); 
+                    } else {
+                        animalsToConsumeForThisRecipe.length = 0; 
+                        break; 
+                    }
+                }
+
+                if (animalsToConsumeForThisRecipe.length === requiredTypesInRecipe.length) {
+                    const firstConsumedAnimalRect = animalsToConsumeForThisRecipe[0].getBoundingClientRect();
+                    const boardRect = stickerBoardEl.getBoundingClientRect();
+
+                    animalsToConsumeForThisRecipe.forEach(wrapper => wrapper.remove());
+                    totalStickersPlaced -= (animalsToConsumeForThisRecipe.length - 1); 
+
+                    const mergedCreatureWrapper = document.createElement('div');
+                    mergedCreatureWrapper.classList.add('placed-animal', `merged-tier-${recipe.tier}`);
+                    mergedCreatureWrapper.dataset.mergedName = recipe.resultName;
+
+                    const mergedImgEl = document.createElement('img');
+                    mergedImgEl.src = `images/merged_animals/${recipe.resultImage}`;
+                    mergedImgEl.alt = recipe.resultName;
+                    
+                    mergedCreatureWrapper.appendChild(mergedImgEl);
+
+                    let newLeft = firstConsumedAnimalRect.left - boardRect.left;
+                    let newTop = firstConsumedAnimalRect.top - boardRect.top;
+                    const mergedImageWidth = 60; 
+                    newLeft += (firstConsumedAnimalRect.width / 2) - (mergedImageWidth / 2);
+
+                    mergedCreatureWrapper.style.left = newLeft + 'px';
+                    mergedCreatureWrapper.style.top = newTop + 'px';
+
+                    stickerBoardEl.appendChild(mergedCreatureWrapper);
+                    makePlacedStickerInteractive(mergedCreatureWrapper, stickerBoardEl);
+
+                    if (personalizedMessageTimeout) clearTimeout(personalizedMessageTimeout);
+                    personalizedMessageEl.textContent = `${playerName}, you've created a ${recipe.resultName}! WOW! 🌟`;
+                    
+                    personalizedMessageEl.style.borderColor = '#FFD700'; 
+                    if (currentTheme === "videogame") {
+                        personalizedMessageEl.style.color = ''; 
+                    } else if (currentTheme === "animals") {
+                         personalizedMessageEl.style.color = '#4CAF50';
+                    } else { 
+                        personalizedMessageEl.style.color = '#DAA520'; 
+                    }
+                    
+                    personalizedMessageEl.classList.add('visible');
+                    personalizedMessageTimeout = setTimeout(() => {
+                        personalizedMessageEl.classList.remove('visible');
+                        personalizedMessageEl.style.color = '';
+                    }, 3500);
+
+                    return true; 
+                }
+            }
+            return false; 
+        }
+
 
         function placeStickerOnBoard(pageX, pageY) {
             if (!draggedStickerElement) return;
@@ -991,10 +1082,11 @@
             const stickerTopLeftYonPage = pageY - dragOffsetY;
             
             const isAnimal = draggedStickerElement.tagName === 'IMG';
-            const itemIdentifier = isAnimal ? (draggedStickerElement.alt || "friend") : draggedStickerElement.textContent;
-            const itemBgColor = isAnimal ? 'transparent' : window.getComputedStyle(draggedStickerElement).backgroundColor; // Animals don't have bg
-            const itemTextColor = isAnimal ? '#333' : window.getComputedStyle(draggedStickerElement).color; // Default for animal message
+            const itemIdentifier = isAnimal ? (draggedStickerElement.alt || "a new friend") : draggedStickerElement.textContent;
+            const itemTypeForMerge = isAnimal ? draggedStickerElement.dataset.animalType : null; 
 
+            const itemBgColor = isAnimal ? 'transparent' : window.getComputedStyle(draggedStickerElement).backgroundColor;
+            const itemTextColor = isAnimal ? '#333' : window.getComputedStyle(draggedStickerElement).color;
 
             const itemWidth = draggedStickerElement.offsetWidth || parseInt(window.getComputedStyle(draggedStickerElement).width) || (isAnimal ? 60 : 90);
             const itemHeight = draggedStickerElement.offsetHeight || parseInt(window.getComputedStyle(draggedStickerElement).height) || (isAnimal ? 60 : 30);
@@ -1006,50 +1098,73 @@
                 itemCenterYonPage >= boardRect.top &&
                 itemCenterYonPage <= boardRect.bottom) {
 
-                draggedStickerElement.style.left = (stickerTopLeftXonPage - boardRect.left) + 'px';
-                draggedStickerElement.style.top = (stickerTopLeftYonPage - boardRect.top) + 'px';
+                let elementToPlace = draggedStickerElement; 
+                if (isAnimal) {
+                    const wrapperDiv = document.createElement('div');
+                    wrapperDiv.classList.add('placed-animal');
+                    // Ensure the original draggedStickerElement (the <img>) has its dataset.animalType
+                    if (!draggedStickerElement.dataset.animalType && itemTypeForMerge) {
+                        draggedStickerElement.dataset.animalType = itemTypeForMerge;
+                    }
+                    wrapperDiv.appendChild(draggedStickerElement); 
+                    elementToPlace = wrapperDiv;
+                } else {
+                     draggedStickerElement.classList.add('placed-sticker-text'); 
+                }
 
-                stickerBoardEl.appendChild(draggedStickerElement);
-                makePlacedStickerInteractive(draggedStickerElement, stickerBoardEl);
+                elementToPlace.style.left = (stickerTopLeftXonPage - boardRect.left) + 'px';
+                elementToPlace.style.top = (stickerTopLeftYonPage - boardRect.top) + 'px';
+
+                stickerBoardEl.appendChild(elementToPlace);
+                makePlacedStickerInteractive(elementToPlace, stickerBoardEl);
 
                 totalStickersPlaced++;
-                availableStickerCredits--; // This is crucial
-                updateStickerSectionStatus(); // This will hide section if credits are 0
+                availableStickerCredits--; 
+                updateStickerSectionStatus(); 
 
-                if (personalizedMessageTimeout) { clearTimeout(personalizedMessageTimeout); }
+                let mergeHappened = false;
+                if (isAnimal && difficultyLevel === 1) { 
+                    mergeHappened = checkForMerges(); 
+                }
 
-                let personalizedText;
-                if (isAnimal) {
-                    personalizedText = `Great job, ${playerName}! You collected a ${itemIdentifier}! 🥳`;
-                    personalizedMessageEl.style.borderColor = '#2ECC40'; // Green border for animal success
-                    personalizedMessageEl.style.color = (currentTheme === "videogame") ? '' : '#2ECC40'; // Use theme default for VG, green for others
-                } else { // Word sticker
-                    const baseWord = itemIdentifier.replace('!', ''); 
-                    switch (itemIdentifier) { 
-                        case "Star!": personalizedText = `${playerName}, you are a ${baseWord}! ⭐`; break;
-                        case "Genius!": personalizedText = `${playerName}, you are a ${baseWord}! 🧠`; break;
-                        case "Well Done!": personalizedText = `Well Done, ${playerName}! 👍`; break;
-                        case "Way to Go!": personalizedText = `Way to Go, ${playerName}! 🚀`; break;
-                        case "You Rock!": personalizedText = `${playerName}, you Rock! 🎸`; break;
-                        case "Bravo!": personalizedText = `Bravo, ${playerName}! 👏`; break;
-                        case "Wow!": personalizedText = `Wow, ${playerName}! That was amazing! ✨`; break;
-                        default: personalizedText = `${playerName}, you are ${itemIdentifier}`; break;
+                if (!mergeHappened) { 
+                    if (personalizedMessageTimeout) { clearTimeout(personalizedMessageTimeout); }
+                    let personalizedText;
+
+                    if (isAnimal && difficultyLevel === 1) {
+                        personalizedText = `Great job, ${playerName}! You collected ${itemIdentifier}! 🥳`;
+                        personalizedMessageEl.style.borderColor = '#2ECC40'; 
+                        personalizedMessageEl.style.color = (currentTheme === "videogame" && personalizedMessageEl.style.fontFamily.includes('Press Start 2P')) ? '' : '#2ECC40';
+                    } else if (!isAnimal) { 
+                        const baseWord = itemIdentifier.replace('!', ''); 
+                        switch (itemIdentifier) { 
+                            case "Star!": personalizedText = `${playerName}, you are a ${baseWord}! ⭐`; break;
+                            case "Genius!": personalizedText = `${playerName}, you are a ${baseWord}! 🧠`; break;
+                            case "Well Done!": personalizedText = `Well Done, ${playerName}! 👍`; break;
+                            case "Way to Go!": personalizedText = `Way to Go, ${playerName}! 🚀`; break;
+                            case "You Rock!": personalizedText = `${playerName}, you Rock! 🎸`; break;
+                            case "Bravo!": personalizedText = `Bravo, ${playerName}! 👏`; break;
+                            case "Wow!": personalizedText = `Wow, ${playerName}! That was amazing! ✨`; break;
+                            default: personalizedText = `${playerName}, you are ${itemIdentifier}`; break;
+                        }
+                        personalizedMessageEl.style.borderColor = itemBgColor; 
+                        if (currentTheme === "videogame") {
+                            personalizedMessageEl.style.color = ''; 
+                        } else {
+                            if (itemTextColor === 'rgb(51, 51, 51)') { personalizedMessageEl.style.color = '#333'; } 
+                            else { personalizedMessageEl.style.color = itemBgColor; }
+                        }
                     }
-                    personalizedMessageEl.style.borderColor = itemBgColor;
-                    if (currentTheme === "videogame") {
-                        personalizedMessageEl.style.color = ''; 
-                    } else {
-                        if (itemTextColor === 'rgb(51, 51, 51)') { personalizedMessageEl.style.color = '#333'; } 
-                        else { personalizedMessageEl.style.color = itemBgColor; }
+                    
+                    if (personalizedText) { 
+                        personalizedMessageEl.textContent = personalizedText;
+                        personalizedMessageEl.classList.add('visible');
+                        personalizedMessageTimeout = setTimeout(() => {
+                            personalizedMessageEl.classList.remove('visible');
+                            personalizedMessageEl.style.color = ''; 
+                        }, 2800);
                     }
                 }
-                
-                personalizedMessageEl.textContent = personalizedText;
-                personalizedMessageEl.classList.add('visible');
-                personalizedMessageTimeout = setTimeout(() => {
-                    personalizedMessageEl.classList.remove('visible');
-                    personalizedMessageEl.style.color = ''; 
-                }, 2800);
             }
         }
 
@@ -1076,7 +1191,7 @@
             document.removeEventListener('touchend', handleDragEndTouch);
         }
 
-        function makePlacedStickerInteractive(sticker, container) {
+        function makePlacedStickerInteractive(sticker, container) { 
             let isDraggingPlaced = false;
             let interactionPointOffsetX, interactionPointOffsetY;
 
@@ -1115,8 +1230,8 @@
                 let newLeftInContainer = newLeftOnPage - containerRect.left;
                 let newTopInContainer = newTopOnPage - containerRect.top;
 
-                const itemWidth = sticker.offsetWidth || parseInt(window.getComputedStyle(sticker).width) || (sticker.tagName === 'IMG' ? 60 : 90);
-                const itemHeight = sticker.offsetHeight || parseInt(window.getComputedStyle(sticker).height) || (sticker.tagName === 'IMG' ? 60 : 30);
+                const itemWidth = sticker.offsetWidth; 
+                const itemHeight = sticker.offsetHeight;
 
 
                 newLeftInContainer = Math.max(0, Math.min(newLeftInContainer, containerRect.width - itemWidth));
@@ -1174,7 +1289,7 @@
         // Initial state setup
         if(personalizedMessageEl) personalizedMessageEl.classList.remove('visible');
         applyTheme(currentTheme); 
-        updateOperationVisibility(); // Call this to set initial state of operation selector
+        updateOperationVisibility(); 
         updateScrollButtonStates();
 
 
