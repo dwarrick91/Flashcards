@@ -163,7 +163,7 @@
         .placed-sticker-text, .placed-animal { 
             position: absolute; cursor: move; user-select: none; z-index: 10;
         }
-        .placed-animal img { /* This styles the img tag INSIDE the .placed-animal div */
+        .placed-animal img { 
             width: 60px; height: 60px; object-fit: contain; display: block;
         }
         .sticker-ghost { position: fixed; pointer-events: none; opacity: 0.75; z-index: 1000; }
@@ -931,7 +931,12 @@
             if (!canDragSticker()) { e.preventDefault(); return; }
             draggedStickerElement = e.target.cloneNode(true); 
             draggedStickerElement.classList.remove('sticker-option', 'disabled-drag');
-            // No specific 'placed-text' or 'placed-animal' added to clone here initially
+            
+            // Set dataset for animal type if it's an animal image being dragged from the list
+            if (e.target.tagName === 'IMG' && e.target.dataset.animalType) {
+                draggedStickerElement.dataset.animalType = e.target.dataset.animalType;
+            }
+
 
             const rect = e.target.getBoundingClientRect();
             dragOffsetX = e.clientX - rect.left;
@@ -952,13 +957,13 @@
             stickerGhost = originalSticker.cloneNode(true); 
             stickerGhost.classList.remove('sticker-option', 'disabled-drag');
             stickerGhost.classList.add('sticker-ghost'); 
-            if (originalSticker.tagName === 'DIV') { // Word sticker
+            if (originalSticker.tagName === 'DIV') { 
                  originalSticker.classList.forEach(cls => {
                      if(cls.startsWith('theme-sticker-color-') || cls === 'sticker-base') {
                         if (!stickerGhost.classList.contains(cls)) stickerGhost.classList.add(cls);
                      }
                 });
-            } // For img, it will just be the img
+            } // For img, it will just be the img, CSS handles .sticker-ghost img
             
             stickerGhost.style.width = originalSticker.offsetWidth + 'px';
             stickerGhost.style.height = originalSticker.offsetHeight + 'px';
@@ -973,6 +978,9 @@
 
             draggedStickerElement = originalSticker.cloneNode(true);
             draggedStickerElement.classList.remove('sticker-option', 'disabled-drag');
+             if (originalSticker.tagName === 'IMG' && originalSticker.dataset.animalType) {
+                draggedStickerElement.dataset.animalType = originalSticker.dataset.animalType;
+            }
             
             document.addEventListener('touchmove', handleDragMoveTouch, { passive: false });
             document.addEventListener('touchend', handleDragEndTouch);
@@ -1003,34 +1011,39 @@
                     continue; 
                 }
 
-                const requiredTypesInRecipe = [...recipe.animalsInvolved]; 
-                let availableAnimalsForRecipe = [...baseAnimalsOnBoardWrappers]; 
-                const animalsToConsumeForThisRecipe = [];
+                // Create a temporary map of available base animals on board for the current recipe check
+                const currentBoardAnimalMap = new Map();
+                baseAnimalsOnBoardWrappers.forEach(wrapper => {
+                    const type = wrapper.querySelector('img').dataset.animalType;
+                    if (!currentBoardAnimalMap.has(type)) {
+                        currentBoardAnimalMap.set(type, []);
+                    }
+                    currentBoardAnimalMap.get(type).push(wrapper);
+                });
+                
+                let canMakeRecipe = true;
+                const animalsToConsumeForThisRecipeWrappers = [];
 
-                for (const reqType of requiredTypesInRecipe) {
-                    const foundAnimalIndex = availableAnimalsForRecipe.findIndex(
-                        wrapper => wrapper.querySelector('img').dataset.animalType === reqType
-                    );
-
-                    if (foundAnimalIndex !== -1) {
-                        animalsToConsumeForThisRecipe.push(availableAnimalsForRecipe[foundAnimalIndex]);
-                        availableAnimalsForRecipe.splice(foundAnimalIndex, 1); 
+                for (const reqType of recipe.animalsInvolved) {
+                    if (currentBoardAnimalMap.has(reqType) && currentBoardAnimalMap.get(reqType).length > 0) {
+                        // "Consume" by taking the first available wrapper of this type
+                        animalsToConsumeForThisRecipeWrappers.push(currentBoardAnimalMap.get(reqType).shift()); 
                     } else {
-                        animalsToConsumeForThisRecipe.length = 0; 
+                        canMakeRecipe = false;
                         break; 
                     }
                 }
 
-                if (animalsToConsumeForThisRecipe.length === requiredTypesInRecipe.length) {
-                    const firstConsumedAnimalRect = animalsToConsumeForThisRecipe[0].getBoundingClientRect();
+                if (canMakeRecipe && animalsToConsumeForThisRecipeWrappers.length === recipe.animalsInvolved.length) {
+                    const firstConsumedAnimalRect = animalsToConsumeForThisRecipeWrappers[0].getBoundingClientRect();
                     const boardRect = stickerBoardEl.getBoundingClientRect();
 
-                    animalsToConsumeForThisRecipe.forEach(wrapper => wrapper.remove());
-                    totalStickersPlaced -= (animalsToConsumeForThisRecipe.length - 1); 
+                    animalsToConsumeForThisRecipeWrappers.forEach(wrapper => wrapper.remove());
+                    totalStickersPlaced -= (animalsToConsumeForThisRecipeWrappers.length -1); 
 
                     const mergedCreatureWrapper = document.createElement('div');
                     mergedCreatureWrapper.classList.add('placed-animal', `merged-tier-${recipe.tier}`);
-                    mergedCreatureWrapper.dataset.mergedName = recipe.resultName;
+                    mergedCreatureWrapper.dataset.mergedName = recipe.resultName; 
 
                     const mergedImgEl = document.createElement('img');
                     mergedImgEl.src = `images/merged_animals/${recipe.resultImage}`;
@@ -1102,7 +1115,7 @@
                 if (isAnimal) {
                     const wrapperDiv = document.createElement('div');
                     wrapperDiv.classList.add('placed-animal');
-                    // Ensure the original draggedStickerElement (the <img>) has its dataset.animalType
+                    // Ensure the img element (draggedStickerElement) has its animalType dataset
                     if (!draggedStickerElement.dataset.animalType && itemTypeForMerge) {
                         draggedStickerElement.dataset.animalType = itemTypeForMerge;
                     }
@@ -1122,16 +1135,22 @@
                 availableStickerCredits--; 
                 updateStickerSectionStatus(); 
 
-                let mergeHappened = false;
+                let anyMergeHappenedThisTurn = false;
                 if (isAnimal && difficultyLevel === 1) { 
-                    mergeHappened = checkForMerges(); 
+                    let mergeOccurredInLoop;
+                    do { // Keep checking for merges as long as they are happening
+                        mergeOccurredInLoop = checkForMerges();
+                        if (mergeOccurredInLoop) {
+                            anyMergeHappenedThisTurn = true;
+                        }
+                    } while (mergeOccurredInLoop); 
                 }
 
-                if (!mergeHappened) { 
+                if (!anyMergeHappenedThisTurn) { 
                     if (personalizedMessageTimeout) { clearTimeout(personalizedMessageTimeout); }
                     let personalizedText;
 
-                    if (isAnimal && difficultyLevel === 1) {
+                    if (isAnimal && difficultyLevel === 1) { 
                         personalizedText = `Great job, ${playerName}! You collected ${itemIdentifier}! 🥳`;
                         personalizedMessageEl.style.borderColor = '#2ECC40'; 
                         personalizedMessageEl.style.color = (currentTheme === "videogame" && personalizedMessageEl.style.fontFamily.includes('Press Start 2P')) ? '' : '#2ECC40';
