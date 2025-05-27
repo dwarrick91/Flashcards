@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Arithmetic & Counting Fun with Merging Animals!</title>
+    <title>Arithmetic & Counting Fun with Advanced Merging!</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Nunito:wght@400;700&display=swap" rel="stylesheet">
@@ -379,8 +379,8 @@
             { src: "panda.png", name: "Panda", alt: "a Playful Panda" }
         ];
 
-        const mergeRecipes = [
-            // Tier 2: 2-Animal Merges (10)
+        const mergeRecipes = [ // Defines final creature by its ultimate base components
+            // Tier 2
             { animalsInvolved: ["Bear", "Cat"].sort(), resultName: "Bearcat", resultImage: "bearcat.png", tier: 2 },
             { animalsInvolved: ["Bear", "Dog"].sort(), resultName: "Beardog", resultImage: "beardog.png", tier: 2 },
             { animalsInvolved: ["Bear", "Lion"].sort(), resultName: "Bearlion", resultImage: "bearlion.png", tier: 2 },
@@ -391,8 +391,7 @@
             { animalsInvolved: ["Dog", "Lion"].sort(), resultName: "Doglion", resultImage: "doglion.png", tier: 2 },
             { animalsInvolved: ["Dog", "Panda"].sort(), resultName: "Dogpanda", resultImage: "dogpanda.png", tier: 2 },
             { animalsInvolved: ["Lion", "Panda"].sort(), resultName: "Lionpanda", resultImage: "lionpanda.png", tier: 2 },
-
-            // Tier 3: 3-Animal Merges (10)
+            // Tier 3
             { animalsInvolved: ["Bear", "Cat", "Dog"].sort(), resultName: "Bearcatdog", resultImage: "bearcatdog.png", tier: 3 },
             { animalsInvolved: ["Bear", "Cat", "Lion"].sort(), resultName: "Bearcatlion", resultImage: "bearcatlion.png", tier: 3 },
             { animalsInvolved: ["Bear", "Cat", "Panda"].sort(), resultName: "Bearcatpanda", resultImage: "bearcatpanda.png", tier: 3 },
@@ -403,15 +402,13 @@
             { animalsInvolved: ["Cat", "Dog", "Panda"].sort(), resultName: "Catdogpanda", resultImage: "catdogpanda.png", tier: 3 },
             { animalsInvolved: ["Cat", "Lion", "Panda"].sort(), resultName: "Catlionpanda", resultImage: "catlionpanda.png", tier: 3 },
             { animalsInvolved: ["Dog", "Lion", "Panda"].sort(), resultName: "Doglionpanda", resultImage: "doglionpanda.png", tier: 3 },
-
-            // Tier 4: 4-Animal Merges (5)
+            // Tier 4
             { animalsInvolved: ["Bear", "Cat", "Dog", "Lion"].sort(), resultName: "Bearcatdoglion", resultImage: "bearcatdoglion.png", tier: 4 },
             { animalsInvolved: ["Bear", "Cat", "Dog", "Panda"].sort(), resultName: "Bearcatdogpanda", resultImage: "bearcatdogpanda.png", tier: 4 },
             { animalsInvolved: ["Bear", "Cat", "Lion", "Panda"].sort(), resultName: "Bearcatlionpanda", resultImage: "bearcatlionpanda.png", tier: 4 },
             { animalsInvolved: ["Bear", "Dog", "Lion", "Panda"].sort(), resultName: "Beardoglionpanda", resultImage: "beardoglionpanda.png", tier: 4 },
             { animalsInvolved: ["Cat", "Dog", "Lion", "Panda"].sort(), resultName: "Catdoglionpanda", resultImage: "catdoglionpanda.png", tier: 4 },
-
-            // Tier 5: 5-Animal Merge (1)
+            // Tier 5
             { animalsInvolved: ["Bear", "Cat", "Dog", "Lion", "Panda"].sort(), resultName: "Bearcatdoglionpanda", resultImage: "bearcatdoglionpanda.png", tier: 5 }
         ];
 
@@ -910,23 +907,22 @@
             stickerGhost.style.top = (touch.clientY - dragOffsetY) + 'px';
         }
         
-        // REVISED checkForMerges function
+        // REVISED checkForMerges function for all tiers (combining base animals directly)
         function checkForMerges() {
             const placedItems = Array.from(stickerBoardEl.children);
             
             const baseAnimalsOnBoardWrappers = placedItems.filter(item =>
-                item.classList.contains('placed-animal') &&
-                item.querySelector('img')?.dataset.animalType &&
+                item.classList.contains('placed-animal') && 
+                item.querySelector('img')?.dataset.animalType && 
                 !item.dataset.mergedName 
             );
 
-            // No need to check if length < 2 here, as recipes will define minimum required
-            // if (baseAnimalsOnBoardWrappers.length < 2) return false; 
+            // Tier check now happens per recipe; minimum needed is for lowest tier (2)
+            // if (baseAnimalsOnBoardWrappers.length < 2) return false; // Not strictly needed here
 
             const sortedRecipes = [...mergeRecipes].sort((a, b) => b.tier - a.tier);
 
             for (const recipe of sortedRecipes) {
-                // Ensure we have enough base animals on board in total for this recipe's tier
                 if (baseAnimalsOnBoardWrappers.length < recipe.animalsInvolved.length) {
                     continue; 
                 }
@@ -935,7 +931,7 @@
                 const animalsToConsumeForThisRecipeWrappers = [];
                 let canMakeRecipe = true;
 
-                for (const requiredType of recipe.animalsInvolved) {
+                for (const requiredType of recipe.animalsInvolved) { 
                     const foundAnimalIndex = availableElementsForRecipeCheck.findIndex(
                         wrapper => wrapper.querySelector('img').dataset.animalType === requiredType
                     );
@@ -959,6 +955,9 @@
                     const mergedCreatureWrapper = document.createElement('div');
                     mergedCreatureWrapper.classList.add('placed-animal', `merged-tier-${recipe.tier}`);
                     mergedCreatureWrapper.dataset.mergedName = recipe.resultName; 
+                    // Store the base animals that formed this merge, for potential future additive logic (not used by this func)
+                    // mergedCreatureWrapper.dataset.baseAnimals = recipe.animalsInvolved.join(',');
+
 
                     const mergedImgEl = document.createElement('img');
                     mergedImgEl.src = `images/merged_animals/${recipe.resultImage}`;
@@ -1011,7 +1010,6 @@
             
             const isAnimal = draggedStickerElement.tagName === 'IMG';
             const itemIdentifier = isAnimal ? (draggedStickerElement.alt || "a new friend") : draggedStickerElement.textContent;
-            // Ensure itemTypeForMerge gets the base animal name for merge checking
             const itemTypeForMerge = isAnimal ? draggedStickerElement.dataset.animalType : null; 
 
             const itemBgColor = isAnimal ? 'transparent' : window.getComputedStyle(draggedStickerElement).backgroundColor;
@@ -1031,7 +1029,6 @@
                 if (isAnimal) {
                     const wrapperDiv = document.createElement('div');
                     wrapperDiv.classList.add('placed-animal');
-                    // The draggedStickerElement is the <img>, ensure it has its animalType data
                     if (!draggedStickerElement.dataset.animalType && itemTypeForMerge) {
                         draggedStickerElement.dataset.animalType = itemTypeForMerge;
                     }
