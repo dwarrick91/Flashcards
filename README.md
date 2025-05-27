@@ -51,7 +51,7 @@ The main goal of this application is to provide a **fun and educational tool** f
     * **Arithmetic (Grades 2-5):** Solve the math problem shown and enter your answer.
     * Click "Submit Answer".
 3.  **Rewards:**
-    * **Preschool:** After a correct answer, you'll get to pick an animal! Drag it to your reward board. If you place two compatible animals, they might merge into a new creature!
+    * **Preschool:** After a correct answer, you'll get to pick an animal! Drag it to your reward board. If you place compatible animals, they might merge into a new creature!
     * **Arithmetic:** After every 10 correct answers, you'll earn a sticker credit. The sticker list will appear, allowing you to drag a fun word sticker to your board.
 4.  **Reward Board:** Drag and drop your collected animals or word stickers anywhere you like on your personal reward board.
 5.  **Main Menu:** Click the "Main Menu" button at any time to return to the start screen, change settings, or start a new game.
@@ -62,25 +62,32 @@ The main goal of this application is to provide a **fun and educational tool** f
 
 This game is a single HTML file that includes all necessary CSS and JavaScript.
 
-1.  **Download/Save:** Make sure you have the `flashcard_game.html` file (or whatever you've named the main HTML file).
+1.  **Download/Save:** Make sure you have the main HTML file for the game.
 2.  **Image Assets (Crucial for Preschool Mode):**
     * Create a folder named `images` in the same directory as your HTML file.
     * Inside the `images` folder, create two more folders:
         * `animals`
         * `merged_animals`
     * **Place your base animal images** (e.g., `cat.png`, `dog.png`, `bear.png`, `lion.png`, `panda.png`) into the `images/animals/` folder.
-    * **Create and place your merged animal images** (e.g., `bearcat.png`, `catdog.png`, ..., `bearcatdoglionpanda.png` – a total of 26 for all combinations) into the `images/merged_animals/` folder. *The JavaScript code expects these specific filenames based on the alphabetical concatenation of the base animal names.*
+    * **Create and place your merged animal images** (e.g., `bearcat.png`, `catdog.png`, ..., `bearcatdoglionpanda.png` – a total of 26 for all direct base animal combinations, or more if you've implemented additive merging with unique intermediate visuals) into the `images/merged_animals/` folder. *The JavaScript code expects specific filenames based on the alphabetical concatenation of the base animal names.*
 3.  **Open in Browser:** Simply open the HTML file in a modern web browser (like Chrome, Firefox, Edge, Safari).
+
+---
+
+## Development Note 🛠️
+
+This "Arithmetic & Counting Fun" game was conceptualized and its code was entirely generated through an iterative process with **Google's Gemini language model**. The development involved prompting for features, explaining requirements, debugging, and refining the HTML, CSS, and JavaScript interactively with AI assistance.
 
 ---
 
 ## Future Ideas (Possible Enhancements) 💡
 
 * Sound effects for correct/incorrect answers and sticker placement.
-* More complex merging logic or visual effects for merges.
-* A "sticker book" to save and view all collected rewards.
-* User accounts or progress saving (would require backend or LocalStorage).
+* More complex merging logic or visual effects for merges (if not already fully implemented).
+* A "sticker book" or "collection page" to save and view all collected rewards.
+* User accounts or progress saving (would require backend or more advanced LocalStorage usage).
 * More varied shapes and visual elements for the counting game.
+* Different types of rewards or mini-games unlocked by progress.
 
 ---
 
