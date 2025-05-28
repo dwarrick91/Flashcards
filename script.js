@@ -1,9 +1,9 @@
 // script.js
 
 let playerName = "Player";
-let difficultyLevel = 3; // Default difficulty
-let operationType = "multiplication"; // Default operation
-let currentTheme = "rainbow"; // Default theme
+let difficultyLevel = 3; // Default difficulty, will be set from UI on game start
+let operationType = "multiplication"; // Default operation, will be set from UI on game start
+let currentTheme = "rainbow"; // Default theme, will be set from UI on game start
 
 let num1, num2, correctAnswerValue; // For arithmetic problems
 // let displayedShapesCount; // Not strictly needed globally if correctAnswerValue is used for counting
@@ -39,7 +39,7 @@ const animalImageFiles = [
 
 // --- Gallery Specific Variables ---
 const gallerySlotsCount = 32;
-let collectedCreatures = {};
+let collectedCreatures = {}; // This will be loaded per player
 let allCreatureMetaData = [];
 const placeholderImagePath = 'images/placeholder.png'; // Ensure you have this image
 
@@ -52,7 +52,7 @@ const gameAndStickersContainerEl = document.getElementById('game-and-stickers-co
 const mainMenuBtnEl = document.getElementById('mainMenuBtn');
 const difficultyRadios = document.querySelectorAll('input[name="difficulty"]');
 const operationSelectionEl = document.getElementById('operation-selection');
-const themeRadios = document.querySelectorAll('input[name="theme"]'); // Get theme radios for reset
+const themeRadios = document.querySelectorAll('input[name="theme"]');
 
 const problemTextDisplayEl = document.getElementById('problemTextDisplay');
 const problemVisualsEl = document.getElementById('problemVisuals');
@@ -75,42 +75,38 @@ const stickerListScrollAmount = 60;
 const animalGalleryEl = document.getElementById('animal-gallery');
 
 
-// --- ADDED THIS FUNCTION ---
 function canDragSticker() {
     if (availableStickerCredits <= 0) {
-        // console.log("No reward credits available to drag.");
         return false;
     }
     return true;
 }
-// --- END OF ADDED FUNCTION ---
-
 
 // --- Local Storage Functions ---
 function savePlayerData() {
     if (!playerName || playerName === "Player" || playerName.trim() === "") {
-        console.log("Save SKIPPED: Player name not valid for saving ('" + playerName + "').");
+        console.log("Save SKIPPED: Player name not valid ('" + playerName + "') for saving collectedCreatures.");
         return;
     }
     try {
-        const playerData = {
-            collectedCreatures: collectedCreatures,
-            lastTheme: currentTheme,
-            lastDifficulty: difficultyLevel,
-            lastOperation: operationType
+        // ONLY save collectedCreatures
+        const playerDataToSave = {
+            collectedCreatures: collectedCreatures
+            // No longer saving theme, difficulty, operation here
         };
         const storageKey = localStorageKeyPrefix + playerName;
-        localStorage.setItem(storageKey, JSON.stringify(playerData));
-        console.log(`SAVED data for player "${playerName}" under key "${storageKey}":`, playerData);
+        localStorage.setItem(storageKey, JSON.stringify(playerDataToSave));
+        console.log(`SAVED collectedCreatures for player "${playerName}" under key "${storageKey}":`, playerDataToSave);
     } catch (e) {
         console.error("Error SAVING player data to local storage:", e);
     }
 }
 
 function loadPlayerData(name) {
-    console.log(`Attempting to LOAD data for player: "${name}"`);
+    console.log(`Attempting to LOAD collectedCreatures for player: "${name}"`);
     const storageKey = localStorageKeyPrefix + name;
-    let playerHasSavedData = false;
+    collectedCreatures = {}; // Reset for this load attempt
+
     try {
         const savedDataString = localStorage.getItem(storageKey);
         console.log(`Retrieved from localStorage for key "${storageKey}":`, savedDataString);
@@ -118,70 +114,17 @@ function loadPlayerData(name) {
         if (savedDataString) {
             const savedPlayerData = JSON.parse(savedDataString);
             console.log("Parsed savedPlayerData:", savedPlayerData);
-
-            collectedCreatures = savedPlayerData.collectedCreatures || {};
-            currentTheme = savedPlayerData.lastTheme || "rainbow";
-            difficultyLevel = savedPlayerData.lastDifficulty || 3;
-
-            if (difficultyLevel === 1) {
-                operationType = "counting";
-            } else {
-                operationType = savedPlayerData.lastOperation || "multiplication";
-            }
-            playerHasSavedData = true;
-            console.log(`LOADED data for player "${name}": Diff=${difficultyLevel}, Op=${operationType}, Theme=${currentTheme}`);
+            collectedCreatures = savedPlayerData.collectedCreatures || {}; // Load only this
+            console.log(`LOADED collectedCreatures for player "${name}"`);
         } else {
-            console.log(`No saved data found for player: "${name}". Initializing with UI defaults or hardcoded defaults.`);
-            collectedCreatures = {};
-            // Read current UI selections as defaults if no saved data, or set hardcoded defaults
-            const selectedDifficultyRadio = document.querySelector('input[name="difficulty"]:checked');
-            difficultyLevel = selectedDifficultyRadio ? parseInt(selectedDifficultyRadio.value) : 3;
-
-            if (difficultyLevel === 1) {
-                operationType = "counting";
-            } else {
-                const selectedOperationRadio = document.querySelector('input[name="operation"]:checked');
-                operationType = selectedOperationRadio ? selectedOperationRadio.value : "multiplication";
-            }
-            const selectedThemeRadio = document.querySelector('input[name="theme"]:checked');
-            currentTheme = selectedThemeRadio ? selectedThemeRadio.value : "rainbow";
+            console.log(`No saved data (collectedCreatures) found for new player: "${name}". Collection will be empty.`);
         }
     } catch (e) {
         console.error(`Error LOADING player data for "${name}":`, e);
-        collectedCreatures = {};
-        difficultyLevel = 3;
-        operationType = "multiplication";
-        currentTheme = "rainbow";
+        collectedCreatures = {}; // Default to fresh state on error
     }
-
-    // AFTER setting the JS variables, update the UI radio buttons to match these determined values
-    const diffRadioId = difficultyLevel === 1 ? 'gradePreschool' : `grade${difficultyLevel}`;
-    const diffRadio = document.getElementById(diffRadioId);
-    if (diffRadio) diffRadio.checked = true;
-    else console.warn("loadPlayerData: Could not find difficulty radio for ID:", diffRadioId);
-
-    updateOperationVisibility(); // Update based on determined difficultyLevel
-
-    if (difficultyLevel !== 1) {
-        let opRadioIdToEnsure;
-        if (operationType === "multiplication") {
-            opRadioIdToEnsure = "opMultiply";
-        } else {
-            opRadioIdToEnsure = `op${operationType.charAt(0).toUpperCase() + operationType.slice(1)}`;
-        }
-        const opRadioToEnsure = document.getElementById(opRadioIdToEnsure);
-        if (opRadioToEnsure) opRadioToEnsure.checked = true;
-        else console.warn("loadPlayerData: Could not find operation radio for ID:", opRadioIdToEnsure);
-    }
-
-    const themeRadioIdToEnsure = `theme${currentTheme.charAt(0).toUpperCase() + currentTheme.slice(1)}`;
-    const themeRadioToEnsure = document.getElementById(themeRadioIdToEnsure);
-    if (themeRadioToEnsure) themeRadioToEnsure.checked = true;
-    else console.warn("loadPlayerData: Could not find theme radio for ID:", themeRadioIdToEnsure);
-
-    applyTheme(currentTheme); // Visually apply the theme based on the currentTheme variable
-
-    return playerHasSavedData;
+    // This function no longer sets UI radio buttons for difficulty, op, theme.
+    // Those are taken from the UI when "Start Game" is clicked.
 }
 
 
@@ -190,17 +133,14 @@ function applyTheme(themeName) {
     console.log("Applying theme:", themeName);
     document.body.className = '';
     document.body.classList.add(themeName + '-theme');
-    currentTheme = themeName; // Update global
+    currentTheme = themeName; // Update global currentTheme
 
-    // Ensure the UI radio button matches the applied theme
+    // Ensure UI radio button matches the applied theme
     const themeRadio = document.getElementById(`theme${themeName.charAt(0).toUpperCase() + themeName.slice(1)}`);
     if (themeRadio) {
         themeRadio.checked = true;
     }
-    // Save player data only if a game is actively running (start menu is hidden).
-    if (playerName && playerName !== "Player" && startMenuEl.style.display === 'none') {
-         savePlayerData();
-    }
+    // DO NOT savePlayerData() here for theme, as theme is not a persistent setting per player anymore.
 }
 
 // --- Start Menu Logic ---
@@ -214,32 +154,7 @@ function updateOperationVisibility() {
 }
 
 difficultyRadios.forEach(radio => {
-    radio.addEventListener('change', (event) => {
-        difficultyLevel = parseInt(event.target.value); // Update global on UI change
-        if (difficultyLevel === 1) {
-            operationType = "counting"; // Preschool is always counting
-        } else {
-            // If switching away from preschool, ensure an arithmetic operation is selected
-            const currentOpRadio = document.querySelector('input[name="operation"]:checked');
-            operationType = currentOpRadio ? currentOpRadio.value : "multiplication"; // Keep current or default
-        }
-        updateOperationVisibility();
-    });
-});
-
-document.querySelectorAll('input[name="operation"]').forEach(radio => {
-    radio.addEventListener('change', (event) => {
-        if (difficultyLevel !== 1) { // Only update if not preschool
-            operationType = event.target.value;
-        }
-    });
-});
-document.querySelectorAll('input[name="theme"]').forEach(radio => {
-    radio.addEventListener('change', (event) => {
-        // applyTheme will be called at game start or if we add mid-game theme change option.
-        // For now, this just allows user to select on start menu.
-        // currentTheme = event.target.value; // Let applyTheme handle setting the global
-    });
+    radio.addEventListener('change', updateOperationVisibility);
 });
 
 
@@ -248,23 +163,32 @@ startGameBtnEl.addEventListener('click', () => {
     if (nameInputValue) {
         playerName = nameInputValue;
         nameErrorEl.style.display = 'none';
-        console.log("Start Game Button: Player name set to:", playerName);
+        console.log("Start Game Button Clicked. Player name set to:", playerName);
 
-        // 1. Load Player Data: This updates globals (difficultyLevel, operationType, currentTheme)
-        //    AND sets the radio buttons in the UI to match the loaded data or defaults.
+        // 1. Load ONLY `collectedCreatures` for this player.
         loadPlayerData(playerName);
 
-        // 2. The globals and UI radio buttons are now aligned. Apply the theme visually.
-        applyTheme(currentTheme); // currentTheme was set by loadPlayerData
+        // 2. Read the CURRENT selections from the UI radio buttons to set globals for THIS session.
+        const selectedDifficultyRadio = document.querySelector('input[name="difficulty"]:checked');
+        difficultyLevel = selectedDifficultyRadio ? parseInt(selectedDifficultyRadio.value) : 3;
 
-        // 3. Final check of operation visibility based on final difficultyLevel.
-        updateOperationVisibility();
+        if (difficultyLevel === 1) {
+            operationType = "counting";
+        } else {
+            const selectedOperationRadio = document.querySelector('input[name="operation"]:checked');
+            operationType = selectedOperationRadio ? selectedOperationRadio.value : "multiplication";
+        }
 
-        console.log(`Final settings before starting game: Diff=${difficultyLevel}, Op=${operationType}, Theme=${currentTheme}`);
+        const selectedThemeRadio = document.querySelector('input[name="theme"]:checked');
+        currentTheme = selectedThemeRadio ? selectedThemeRadio.value : "rainbow";
+
+        applyTheme(currentTheme); // Apply the chosen theme visually.
+
+        console.log(`FINAL settings for this game session: Diff=${difficultyLevel}, Op=${operationType}, Theme=${currentTheme}`);
 
         startMenuEl.style.display = 'none';
         gameAndStickersContainerEl.style.display = 'flex';
-        initializeGame(); // This function will use the correct global values
+        initializeGame();
     } else {
         nameErrorEl.style.display = 'block';
         playerNameInputEl.focus();
@@ -280,10 +204,7 @@ playerNameInputEl.addEventListener('keypress', function(event) {
 
 function initializeGame() {
     console.log("--- Initializing Game (using current globals) ---");
-    console.log("Player:", playerName);
-    console.log("Difficulty Level:", difficultyLevel);
-    console.log("Operation Type:", operationType);
-    console.log("Current Theme:", currentTheme);
+    console.log("Player:", playerName, "Diff:", difficultyLevel, "Op:", operationType, "Theme:", currentTheme);
 
     if (difficultyLevel === 1) {
          document.querySelector("#game-container h1").textContent = `Counting Fun for ${playerName}! 🧸`;
@@ -297,7 +218,7 @@ function initializeGame() {
 
     generateProblem();
     updateStickerSectionStatus();
-    initializeGallery();
+    initializeGallery(); // Uses the `collectedCreatures` loaded for the player
     if(personalizedMessageEl) personalizedMessageEl.classList.remove('visible');
     answerEl.focus();
 }
@@ -307,17 +228,18 @@ if (mainMenuBtnEl) {
 }
 
 function goToMainMenu() {
-    console.log("goToMainMenu called for player:", playerName);
-    savePlayerData();
+    console.log("goToMainMenu called for player:", playerName, "- saving their creature collection if valid name.");
+    savePlayerData(); // This will now ONLY save collectedCreatures
 
     gameAndStickersContainerEl.style.display = 'none';
     startMenuEl.style.display = 'flex';
 
+    // Reset in-memory game state for the next potential player/session
     correctAnswers = 0;
     questionsAsked = 0;
     totalStickersPlaced = 0;
     availableStickerCredits = 0;
-    collectedCreatures = {};
+    collectedCreatures = {}; // Reset in-memory collection for UI of next potential session
     
     correctCountEl.textContent = correctAnswers;
     questionsAskedEl.textContent = questionsAsked;
@@ -325,7 +247,7 @@ function goToMainMenu() {
     feedbackEl.className = '';
     answerEl.value = '';
     answerEl.disabled = false;
-    document.getElementById('submitAnswerBtn').disabled = false;
+    if(document.getElementById('submitAnswerBtn')) document.getElementById('submitAnswerBtn').disabled = false;
 
     stickerBoardEl.innerHTML = '';
     stickerListEl.innerHTML = '';
@@ -339,22 +261,23 @@ function goToMainMenu() {
     }
     if (personalizedMessageEl) personalizedMessageEl.classList.remove('visible');
 
-    initializeGallery();
+    initializeGallery(); // Re-initialize gallery (will show placeholders)
 
     playerNameInputEl.value = "";
-    // Reset UI radio buttons to default
+    // Set UI radio buttons to default values for the start menu appearance
     document.getElementById('grade3').checked = true;
     document.getElementById('opMultiply').checked = true;
     document.getElementById('themeRainbow').checked = true;
-
-    // Reset JS global variables to reflect UI defaults
+    
+    // Reset global JS variables to reflect these UI defaults for the start menu state
     difficultyLevel = 3;
     operationType = "multiplication";
-    // currentTheme will be set by applyTheme
-    applyTheme("rainbow"); // Apply the default theme visually & update currentTheme global
-    updateOperationVisibility(); // Reflect the default difficulty
+    currentTheme = "rainbow"; 
+    
+    applyTheme(currentTheme); // Apply default theme visually & ensure its radio is checked
+    updateOperationVisibility(); // Reflect the default difficulty for op visibility
 
-    playerName = "Player";
+    playerName = "Player"; // Reset global playerName to default for next input
 
     playerNameInputEl.focus();
 }
@@ -363,41 +286,27 @@ function goToMainMenu() {
 function buildAllCreatureMetaData() {
     allCreatureMetaData = [];
     let creatureIdCounter = 1;
-
     animalImageFiles.forEach(animal => {
-        allCreatureMetaData.push({
-            id_num: creatureIdCounter++,
-            name: animal.name,
-            imageSrc: animal.baseImagePath
-        });
+        allCreatureMetaData.push({ id_num: creatureIdCounter++, name: animal.name, imageSrc: animal.baseImagePath });
     });
-
     const galleryAddedMergedNames = new Set(animalImageFiles.map(a => a.name));
     if (typeof mergeRecipes !== 'undefined' && Array.isArray(mergeRecipes)) {
         const sortedMergeRecipesForGallery = [...mergeRecipes].sort((a,b) => {
             if (a.tier !== b.tier) return a.tier - b.tier;
+            if (a.components && b.components && a.components.length !== b.components.length) return a.components.length - b.components.length; // Should be baseCount or tier now
             return a.resultName.localeCompare(b.resultName);
         });
-
         sortedMergeRecipesForGallery.forEach(recipe => {
             if (!galleryAddedMergedNames.has(recipe.resultName)) {
                 if (creatureIdCounter <= gallerySlotsCount) {
-                     allCreatureMetaData.push({
-                        id_num: creatureIdCounter++,
-                        name: recipe.resultName,
-                        imageSrc: `images/merged_animals/${recipe.resultImage}`
-                    });
+                     allCreatureMetaData.push({ id_num: creatureIdCounter++, name: recipe.resultName, imageSrc: `images/merged_animals/${recipe.resultImage}` });
                     galleryAddedMergedNames.add(recipe.resultName);
                 }
             }
         });
     }
     while(allCreatureMetaData.length < gallerySlotsCount) {
-        allCreatureMetaData.push({
-            id_num: creatureIdCounter++,
-            name: `Unknown ${creatureIdCounter-1}`,
-            imageSrc: placeholderImagePath
-        });
+        allCreatureMetaData.push({ id_num: creatureIdCounter++, name: `Unknown ${allCreatureMetaData.length + 1}`, imageSrc: placeholderImagePath });
     }
 }
 
@@ -407,12 +316,10 @@ function initializeGallery() {
     if (allCreatureMetaData.length === 0 || allCreatureMetaData.length < gallerySlotsCount) {
         buildAllCreatureMetaData();
     }
-
     for (let i = 0; i < gallerySlotsCount; i++) {
         const slot = document.createElement('div');
         slot.classList.add('gallery-slot');
         const creatureMeta = allCreatureMetaData[i];
-        
         if (creatureMeta) {
             slot.dataset.creatureName = creatureMeta.name;
             if (collectedCreatures[creatureMeta.name]) {
@@ -439,22 +346,16 @@ function initializeGallery() {
 
 function unlockInGallery(creatureName) {
     if (!animalGalleryEl || !creatureName) return;
-
     let newlyUnlocked = false;
     if (!collectedCreatures[creatureName]) {
         newlyUnlocked = true;
     }
     collectedCreatures[creatureName] = true;
-    if (newlyUnlocked) { // Only save if it's a new unlock for this player
-        savePlayerData();
+    if (newlyUnlocked) {
+        savePlayerData(); // Only saves collectedCreatures now
     }
-
     const creatureMeta = allCreatureMetaData.find(c => c.name === creatureName);
-    if (!creatureMeta) {
-        console.warn("Creature meta not found for gallery unlock:", creatureName);
-        return;
-    }
-
+    if (!creatureMeta) { console.warn("Creature meta not found for gallery unlock:", creatureName); return; }
     const slot = animalGalleryEl.querySelector(`.gallery-slot[data-creature-name="${creatureName}"]`);
     if (slot && !slot.classList.contains('unlocked')) {
         slot.innerHTML = '';
@@ -465,7 +366,6 @@ function unlockInGallery(creatureName) {
         slot.classList.add('unlocked');
     }
 }
-
 
 // --- Core Game Logic ---
 function generateProblem() {
@@ -478,11 +378,10 @@ function generateProblem() {
     } else if (difficultyLevel !== 1 && ["addition", "subtraction", "division", "multiplication"].includes(operationType)) {
         generateArithmeticProblem();
     } else {
-        console.error(`generateProblem: Invalid state! Op: "${operationType}", Diff: ${difficultyLevel}. Defaulting to 3rd grade multiplication for safety.`);
-        operationType = "multiplication"; 
-        difficultyLevel = 3;              
-        document.getElementById('opMultiply').checked = true; 
-        document.getElementById('grade3').checked = true;    
+        console.error(`generateProblem: Invalid state! Op: "${operationType}", Diff: ${difficultyLevel}. Defaulting.`);
+        operationType = "multiplication"; difficultyLevel = 3;
+        document.getElementById('opMultiply').checked = true;
+        document.getElementById('grade3').checked = true;
         updateOperationVisibility();
         generateArithmeticProblem();
     }
@@ -508,7 +407,6 @@ function generateArithmeticProblem() {
     let n1, n2, answer;
     let operatorSymbol = '?';
     console.log(`Generating ARITHMETIC Problem: Operation=${operationType}, Difficulty=${difficultyLevel}`);
-
     switch (operationType) {
         case "addition":
             operatorSymbol = '+';
@@ -543,14 +441,14 @@ function generateArithmeticProblem() {
                 case 5: n2 = Math.floor(Math.random() * 11) + 2;  quotient = Math.floor(Math.random() * 19) + 2; n1 = n2 * quotient; break;
                 default: console.warn("Div: Unknown/Unsupported diff", difficultyLevel, "defaulting to G3"); n2 = Math.floor(Math.random() * 8) + 2; quotient = Math.floor(Math.random() * 8) + 2; n1 = n2 * quotient; break;
             }
-            if (n2 === 0) { console.error("Division by zero attempted in generation!"); generateProblem(); return; }
+            if (n2 === 0) { console.error("Division by zero attempted!"); generateProblem(); return; }
             if (typeof n1 === 'undefined' || typeof n2 === 'undefined') { console.error("Div: n1/n2 undefined!"); n1=4;n2=2; quotient=2; }
             answer = quotient;
             break;
         case "multiplication":
         default:
             if (operationType !== "multiplication") {
-                 console.warn(`Unexpected operationType "${operationType}" in generateArithmeticProblem, defaulting to multiplication.`);
+                 console.warn(`Unexpected opType "${operationType}", defaulting to multiplication.`);
                  operationType = "multiplication";
             }
             operatorSymbol = '×';
@@ -575,7 +473,6 @@ function generateArithmeticProblem() {
             answer = n1 * n2;
             break;
     }
-
     num1 = n1; num2 = n2;
     correctAnswerValue = answer;
     problemTextDisplayEl.textContent = `${n1} ${operatorSymbol} ${n2} = ?`;
@@ -584,7 +481,7 @@ function generateArithmeticProblem() {
 function updateStickerSectionStatus() {
     if (availableStickerCredits > 0) {
         stickerSectionEl.classList.remove('hidden');
-        stickerHeaderEl.textContent = "🎉 Yay! Pick an animal friend! 🐾"; 
+        stickerHeaderEl.textContent = "🎉 Yay! Pick an animal friend! 🐾";
         stickerPromptEl.textContent = "Drag an animal to your reward board.";
         const firstItemInList = stickerListEl.querySelector('.sticker-option');
         if (!firstItemInList || firstItemInList.tagName !== 'IMG') { 
@@ -607,36 +504,30 @@ function updateStickerSectionStatus() {
     }
     updateScrollButtonStates();
 }
-
 function triggerAnimalReward() {
     availableStickerCredits = 1;
     updateStickerSectionStatus();
 }
-
 function checkAnswer() {
     const userAnswer = parseInt(answerEl.value);
     questionsAsked++;
-
     if (!isNaN(userAnswer)) {
         if (userAnswer === correctAnswerValue) {
-            feedbackEl.textContent = "🌟 Correct! 🌟";
-            feedbackEl.className = 'correct';
+            feedbackEl.textContent = "🌟 Correct! 🌟"; 
+            feedbackEl.className = 'correct'; 
             correctAnswers++;
-            triggerAnimalReward();
-
+            triggerAnimalReward(); 
         } else {
             feedbackEl.textContent = `🤔 Almost! The correct answer was ${correctAnswerValue}.`;
-            feedbackEl.className = 'incorrect';
+            feedbackEl.className = 'incorrect'; 
         }
     } else {
          feedbackEl.textContent = `Please enter a number.`;
-         feedbackEl.className = 'incorrect';
+         feedbackEl.className = 'incorrect'; 
          questionsAsked--;
     }
-
     correctCountEl.textContent = correctAnswers;
     questionsAskedEl.textContent = questionsAsked;
-
     if (questionsAsked < gameLength) {
         if (!isNaN(userAnswer) || questionsAsked === 0 || userAnswer !== undefined ){
              generateProblem();
@@ -647,12 +538,8 @@ function checkAnswer() {
     answerEl.focus();
 }
 answerEl.addEventListener('keypress', function(event) {
-    if (event.key === 'Enter') {
-        event.preventDefault();
-        checkAnswer();
-    }
+    if (event.key === 'Enter') { event.preventDefault(); checkAnswer(); }
 });
-
 function populateAnimalChoices() {
     stickerListEl.innerHTML = '';
     for (let i = 0; i < totalAnimalChoices; i++) {
@@ -670,17 +557,12 @@ function populateAnimalChoices() {
     updateDragDisabledState();
     updateScrollButtonStates();
 }
-
 function updateDragDisabledState() {
      document.querySelectorAll('#sticker-list .sticker-option').forEach(opt => {
-        if (availableStickerCredits <= 0) {
-            opt.classList.add('disabled-drag');
-        } else {
-            opt.classList.remove('disabled-drag');
-        }
+        if (availableStickerCredits <= 0) opt.classList.add('disabled-drag');
+        else opt.classList.remove('disabled-drag');
     });
 }
-
 function endGame() {
     problemTextDisplayEl.textContent = "Game Over!";
     problemVisualsEl.innerHTML = '';
@@ -706,12 +588,6 @@ function endGame() {
          stickerSectionEl.classList.remove('hidden');
      }
 }
-
-// --- Drag and Drop Logic for items FROM THE REWARD LIST (#sticker-list) ---
-// (handleDragStartMouse, handleDragStartTouch, handleDragMoveTouch, handleDropOnBoardOrZoo, 
-//  stickerBoardEl listeners, handleDragEndTouchRewardList functions remain the same)
-//  Ensure they use the global `canDragSticker` function correctly.
-
 function handleDragStartMouse(e) {
     if (!canDragSticker()) { e.preventDefault(); return; }
     draggedStickerElement = e.target.cloneNode(true);
@@ -752,7 +628,7 @@ function handleDragMoveTouch(e) {
     stickerGhost.style.left = (touch.clientX - dragOffsetX) + 'px';
     stickerGhost.style.top = (touch.clientY - dragOffsetY) + 'px';
 }
-function handleDropOnBoardOrZoo(pageX, pageY) { 
+function handleDropOnBoardOrZoo(pageX, pageY) {
     if (!draggedStickerElement) return;
     placeStickerOnBoard(pageX, pageY);
     if (draggedStickerElement) { draggedStickerElement = null; }
@@ -790,8 +666,6 @@ function handleDragEndTouchRewardList(e) {
     document.removeEventListener('touchmove', handleDragMoveTouch);
     document.removeEventListener('touchend', handleDragEndTouchRewardList);
 }
-
-// --- Place Item on Board ---
 function placeStickerOnBoard(pageX, pageY) {
     if (!draggedStickerElement) return;
     const boardRect = stickerBoardEl.getBoundingClientRect();
@@ -850,13 +724,9 @@ function placeStickerOnBoard(pageX, pageY) {
         draggedStickerElement = null;
     }
 }
-
-// --- Drag and Drop Logic for items ALREADY ON THE STICKER BOARD ---
 function makePlacedStickerInteractive(sticker, container) {
     let isDraggingPlaced = false;
     let interactionPointOffsetX, interactionPointOffsetY;
-    // No need for originalParentForSnapback if zoo is removed, always snaps to stickerBoardEl
-
     function startDrag(e) {
         isDraggingPlaced = true;
         itemDraggedFromMainBoard = sticker;
@@ -865,7 +735,7 @@ function makePlacedStickerInteractive(sticker, container) {
         const stickerRectPage = sticker.getBoundingClientRect();
         interactionPointOffsetX = clientX - stickerRectPage.left;
         interactionPointOffsetY = clientY - stickerRectPage.top;
-        document.body.appendChild(sticker); // Temporarily move to body
+        document.body.appendChild(sticker);
         sticker.style.position = 'absolute';
         sticker.style.left = (clientX - interactionPointOffsetX) + 'px';
         sticker.style.top = (clientY - interactionPointOffsetY) + 'px';
@@ -890,9 +760,9 @@ function makePlacedStickerInteractive(sticker, container) {
     }
     function endDrag(e_up) {
         if (!isDraggingPlaced) return;
-        const itemThatWasDragged = itemDraggedFromMainBoard; // Store before nulling
+        const itemThatWasDragged = itemDraggedFromMainBoard;
         isDraggingPlaced = false;
-        itemDraggedFromMainBoard = null; // Clear global reference
+        itemDraggedFromMainBoard = null;
         sticker.style.cursor = 'move';
         sticker.style.zIndex = '10';
         const eventType = e_up.type;
@@ -903,8 +773,6 @@ function makePlacedStickerInteractive(sticker, container) {
             document.removeEventListener('touchmove', moveDrag);
             document.removeEventListener('touchend', endDrag);
         }
-
-        // Always place back onto the stickerBoardEl (no other drop zone like zoo)
         const boardRect = stickerBoardEl.getBoundingClientRect();
         const stickerPageX = parseFloat(itemThatWasDragged.style.left);
         const stickerPageY = parseFloat(itemThatWasDragged.style.top);
@@ -920,7 +788,6 @@ function makePlacedStickerInteractive(sticker, container) {
         if (itemThatWasDragged.parentElement !== stickerBoardEl) {
             stickerBoardEl.appendChild(itemThatWasDragged);
         }
-        
         const isAnimalWrapper = itemThatWasDragged.classList.contains('placed-animal');
         if (isAnimalWrapper) {
             let aMergeOccurredInLoop; let iterations = 0; const maxIterations = 10;
@@ -961,8 +828,21 @@ function updateScrollButtonStates() {
 // --- Initial Setup ---
 document.addEventListener('DOMContentLoaded', () => {
     if(personalizedMessageEl) personalizedMessageEl.classList.remove('visible');
+    const initialThemeRadio = document.querySelector('input[name="theme"]:checked');
+    currentTheme = initialThemeRadio ? initialThemeRadio.value : "rainbow";
     applyTheme(currentTheme);
+
+    const initialDifficultyRadio = document.querySelector('input[name="difficulty"]:checked');
+    difficultyLevel = initialDifficultyRadio ? parseInt(initialDifficultyRadio.value) : 3;
+    if(difficultyLevel === 1) {
+        operationType = "counting";
+    } else {
+        const initialOperationRadio = document.querySelector('input[name="operation"]:checked');
+        operationType = initialOperationRadio ? initialOperationRadio.value : "multiplication";
+    }
+    
     updateOperationVisibility();
     updateScrollButtonStates();
-    // No Zoo initialization
+    buildAllCreatureMetaData();
+    initializeGallery();
 });
