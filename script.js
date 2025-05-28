@@ -527,6 +527,9 @@ function handleDragMoveTouch(e) {
     stickerGhost.style.top = (touch.clientY - dragOffsetY) + 'px';
 }
 
+// script.js
+// ... (other parts of script.js)
+
 function placeStickerOnBoard(pageX, pageY) {
     if (!draggedStickerElement) return;
 
@@ -536,7 +539,7 @@ function placeStickerOnBoard(pageX, pageY) {
     
     const isAnimalBaseElement = draggedStickerElement.tagName === 'IMG';
     const itemIdentifier = isAnimalBaseElement ? (draggedStickerElement.alt || "a new friend") : draggedStickerElement.textContent;
-    // const itemTypeForMerge = isAnimalBaseElement ? draggedStickerElement.dataset.animalType : null; // Already on draggedStickerElement
+    const animalTypeOfPlacedItem = isAnimalBaseElement ? draggedStickerElement.dataset.animalType : null; 
 
     const itemBgColor = isAnimalBaseElement ? 'transparent' : window.getComputedStyle(draggedStickerElement).backgroundColor;
     const itemTextColor = isAnimalBaseElement ? '#333' : window.getComputedStyle(draggedStickerElement).color;
@@ -555,7 +558,10 @@ function placeStickerOnBoard(pageX, pageY) {
         if (isAnimalBaseElement) {
             const wrapperDiv = document.createElement('div');
             wrapperDiv.classList.add('placed-animal');
-            // The clone (draggedStickerElement which is an img) already has its dataset.animalType
+            // Ensure the img itself (draggedStickerElement) has the animalType dataset
+            if (animalTypeOfPlacedItem && !draggedStickerElement.dataset.animalType) {
+                draggedStickerElement.dataset.animalType = animalTypeOfPlacedItem;
+            }
             wrapperDiv.appendChild(draggedStickerElement); 
             elementToPlaceOnBoard = wrapperDiv;
         } else {
@@ -572,32 +578,41 @@ function placeStickerOnBoard(pageX, pageY) {
         availableStickerCredits--; 
         updateStickerSectionStatus(); 
 
-        let mergeHappened = false;
-        if (isAnimalBaseElement && difficultyLevel === 1) { 
-            // Pass the type of the just-placed animal to avoid re-checking it if logic needs it,
-            // though current checkForMerges re-scans the whole board.
-            mergeHappened = checkForMerges(); 
+        let anyMergeHappenedThisTurn = false;
+        if (difficultyLevel === 1) { // Only try merging in preschool mode
+            let aMergeOccurredInLoop;
+            let iterations = 0; // Safety break for loop
+            const maxIterations = 10; // Prevent infinite loop if logic error
+            do {
+                aMergeOccurredInLoop = checkForMerges(); 
+                if (aMergeOccurredInLoop) {
+                    anyMergeHappenedThisTurn = true;
+                }
+                iterations++;
+            } while (aMergeOccurredInLoop && iterations < maxIterations); 
         }
 
-        if (!mergeHappened) { 
+        // Show the "collected item" message ONLY if no merge happened as the *final result* of this placement.
+        // The merge message itself is handled inside checkForMerges.
+        if (!anyMergeHappenedThisTurn) { 
             if (personalizedMessageTimeout) { clearTimeout(personalizedMessageTimeout); }
-            let personalizedText;
+            let personalizedTextToShow;
 
             if (isAnimalBaseElement && difficultyLevel === 1) {
-                personalizedText = `Great job, ${playerName}! You collected ${itemIdentifier}! 🥳`;
+                personalizedTextToShow = `Great job, ${playerName}! You collected ${itemIdentifier}! 🥳`;
                 personalizedMessageEl.style.borderColor = '#2ECC40'; 
                 personalizedMessageEl.style.color = (currentTheme === "videogame" && personalizedMessageEl.style.fontFamily.includes('Press Start 2P')) ? '' : '#2ECC40';
-            } else if (!isAnimalBaseElement) { 
+            } else if (!isAnimalBaseElement) { // Word sticker
                 const baseWord = itemIdentifier.replace('!', ''); 
                 switch (itemIdentifier) { 
-                    case "Star!": personalizedText = `${playerName}, you are a ${baseWord}! ⭐`; break;
-                    case "Genius!": personalizedText = `${playerName}, you are a ${baseWord}! 🧠`; break;
-                    case "Well Done!": personalizedText = `Well Done, ${playerName}! 👍`; break;
-                    case "Way to Go!": personalizedText = `Way to Go, ${playerName}! 🚀`; break;
-                    case "You Rock!": personalizedText = `${playerName}, you Rock! 🎸`; break;
-                    case "Bravo!": personalizedText = `Bravo, ${playerName}! 👏`; break;
-                    case "Wow!": personalizedText = `Wow, ${playerName}! That was amazing! ✨`; break;
-                    default: personalizedText = `${playerName}, you are ${itemIdentifier}`; break;
+                    case "Star!": personalizedTextToShow = `${playerName}, you are a ${baseWord}! ⭐`; break;
+                    case "Genius!": personalizedTextToShow = `${playerName}, you are a ${baseWord}! 🧠`; break;
+                    case "Well Done!": personalizedTextToShow = `Well Done, ${playerName}! 👍`; break;
+                    case "Way to Go!": personalizedTextToShow = `Way to Go, ${playerName}! 🚀`; break;
+                    case "You Rock!": personalizedTextToShow = `${playerName}, you Rock! 🎸`; break;
+                    case "Bravo!": personalizedTextToShow = `Bravo, ${playerName}! 👏`; break;
+                    case "Wow!": personalizedTextToShow = `Wow, ${playerName}! That was amazing! ✨`; break;
+                    default: personalizedTextToShow = `${playerName}, you are ${itemIdentifier}`; break;
                 }
                 personalizedMessageEl.style.borderColor = itemBgColor; 
                 if (currentTheme === "videogame") {
@@ -608,8 +623,8 @@ function placeStickerOnBoard(pageX, pageY) {
                 }
             }
             
-            if (personalizedText) { 
-                personalizedMessageEl.textContent = personalizedText;
+            if (personalizedTextToShow) { 
+                personalizedMessageEl.textContent = personalizedTextToShow;
                 personalizedMessageEl.classList.add('visible');
                 personalizedMessageTimeout = setTimeout(() => {
                     personalizedMessageEl.classList.remove('visible');
@@ -618,7 +633,11 @@ function placeStickerOnBoard(pageX, pageY) {
             }
         }
     }
+    // Reset draggedStickerElement, handled by the original caller (drop / touchend event)
 }
+
+// ... (rest of script.js should be the same as the last full version provided)
+// Ensure all DOM element consts, other functions (initializeGame, goToMainMenu, generateProblem, etc.) are present
 
 stickerBoardEl.addEventListener('dragover', (e) => e.preventDefault());
 stickerBoardEl.addEventListener('drop', (e) => {
