@@ -10,7 +10,7 @@ let displayedShapesCount;
 
 let correctAnswers = 0;
 let questionsAsked = 0;
-// correctAnswersNeededForSticker is no longer used as rewards are per correct answer now
+// correctAnswersNeededForSticker is effectively 1 for animals now
 let totalStickersPlaced = 0; // Tracks items on the main interactive stickerBoardEl
 let availableStickerCredits = 0; // Used for picking one animal after a correct answer
 
@@ -24,7 +24,10 @@ let draggedStickerElement = null;
 let stickerGhost = null;
 let dragOffsetX, dragOffsetY;
 
-// Base animal definitions - ensure 'name' matches 'animalType' used in mergeRecipes
+// Local Storage
+const localStorageKeyPrefix = "arithmeticFun_";
+
+// Base animal definitions
 const animalImageFiles = [
     { src: "cat.png", name: "Cat", alt: "a Cute Cat", baseImagePath: "images/animals/cat.png" },
     { src: "dog.png", name: "Dog", alt: "a Happy Dog", baseImagePath: "images/animals/dog.png" },
@@ -35,10 +38,10 @@ const animalImageFiles = [
 // mergeRecipes and checkForMerges are defined in merge.js
 
 // --- Gallery Specific Variables ---
-const gallerySlotsCount = 32; // 5 base + 10 (2) + 10 (3) + 5 (4) + 1 (5) + 1 (Supermaximal)
-let collectedCreatures = {}; // Tracks unlocked creatures by name: { "Cat": true, "Bearcat": true }
-let allCreatureMetaData = []; // Stores { id_num: number, name: string, imageSrc: string } for all 32 creatures
-const placeholderImagePath = 'images/placeholder.png'; // Path for placeholder image in gallery
+const gallerySlotsCount = 32;
+let collectedCreatures = {}; // Object to track unlocked creatures: { "Cat": true, "Bearcat": true }
+let allCreatureMetaData = [];
+const placeholderImagePath = 'images/placeholder.png';
 
 // --- DOM Element References (Core Game) ---
 const startMenuEl = document.getElementById('start-menu');
@@ -68,19 +71,206 @@ const stickerListScrollUpBtn = document.getElementById('stickerListScrollUpBtn')
 const stickerListScrollDownBtn = document.getElementById('stickerListScrollDownBtn');
 const stickerListScrollAmount = 60;
 
-const animalGalleryEl = document.getElementById('animal-gallery'); // Gallery Element
+const animalGalleryEl = document.getElementById('animal-gallery');
 
+// --- Local Storage Functions ---
+function savePlayerData() {
+    if (!playerName || playerName === "Player" || playerName.trim() === "") {
+        // console.log("Player name not set or default, not saving data.");
+        return;
+    }
+    try {
+        const playerData = {
+            collectedCreatures: collectedCreatures,
+            lastTheme: currentTheme,
+            lastDifficulty: difficultyLevel,
+            lastOperation: operationType
+        };
+        localStorage.setItem(localStorageKeyPrefix + playerName, JSON.stringify(playerData));
+        // console.log("Player data saved for:", playerName);
+    } catch (e) {
+        console.error("Error saving player data to local storage:", e);
+    }
+}
+
+function loadPlayerData(name) {
+    try {
+        const savedDataString = localStorage.getItem(localStorageKeyPrefix + name);
+        if (savedDataString) {
+            const savedPlayerData = JSON.parse(savedDataString);
+            collectedCreatures = savedPlayerData.collectedCreatures || {};
+            
+            currentTheme = savedPlayerData.lastTheme || "rainbow";
+            // applyTheme will be called after this based on selectedThemeRadio or currentTheme
+
+            difficultyLevel = savedPlayerData.lastDifficulty || 3;
+            const diffRadioId = difficultyLevel === 1 ? 'gradePreschool' : `grade${difficultyLevel}`;
+            const diffRadio = document.getElementById(diffRadioId);
+            if (diffRadio) diffRadio.checked = true;
+            
+            updateOperationVisibility(); // Update based on loaded difficulty
+
+            if (difficultyLevel !== 1) { 
+                operationType = savedPlayerData.lastOperation || "multiplication";
+                // Construct operation radio ID: op + Capitalized(operationType)
+                const opRadioId = `op${operationType.charAt(0).toUpperCase() + operationType.slice(1)}`;
+                const opRadio = document.getElementById(opRadioId);
+                if (opRadio) opRadio.checked = true;
+            } else {
+                operationType = "counting"; 
+            }
+            
+            // Theme radio button will be updated when applyTheme is called in startGameBtnEl listener
+            // console.log("Player data loaded for:", name);
+            return true; 
+        } else {
+            // console.log("No saved data for new player:", name);
+            collectedCreatures = {}; 
+            // Set defaults for UI elements on start menu if no data (already handled by 'checked' in HTML)
+            difficultyLevel = 3;
+            operationType = "multiplication";
+            currentTheme = "rainbow";
+            document.getElementById('grade3').checked = true;
+            document.getElementById('opMultiply').checked = true;
+            document.getElementById('themeRainbow').checked = true;
+            updateOperationVisibility();
+        }
+    } catch (e) {
+        console.error("Error loading player data:", e);
+        collectedCreatures = {}; 
+    }
+    return false; 
+}
+
+// script.js
+
+// ... (all existing global variables like playerName, difficultyLevel, etc.) ...
+// ... (all existing DOM element consts: startMenuEl, ..., stickerBoardEl, etc.) ...
+// ... (animalImageFiles constant) ...
+// mergeRecipes and checkForMerges are defined in merge.js
+
+// --- ADD THIS FUNCTION BACK ---
+function canDragSticker() {
+    // This function checks if there's a reward credit available.
+    // It's used by both animal rewards and (previously) word sticker rewards.
+    // Since all rewards are now animals and triggerAnimalReward sets availableStickerCredits = 1,
+    // this function still correctly checks if a reward pick is allowed.
+    if (availableStickerCredits <= 0) {
+        // console.log("No reward credits available to drag."); // For debugging
+        return false;
+    }
+    return true;
+}
+// --- END OF FUNCTION TO ADD BACK ---
+
+
+// --- Start Menu and Game Initialization Logic ---
+// ... (applyTheme, updateOperationVisibility, startGameBtn listeners, initializeGame, goToMainMenu functions as before) ...
+
+// --- Gallery Functions ---
+// ... (buildAllCreatureMetaData, initializeGallery, unlockInGallery functions as before) ...
+
+// --- Core Game Logic ---
+// ... (generateProblem, generateCountingProblem, generateArithmeticProblem functions as before) ...
+// ... (updateStickerSectionStatus, triggerAnimalReward functions as before) ...
+// ... (checkAnswer function - this one was updated in the last step, ensure it's correct) ...
+/*
+function checkAnswer() {
+    const userAnswer = parseInt(answerEl.value);
+    questionsAsked++;
+
+    if (!isNaN(userAnswer)) {
+        if (userAnswer === correctAnswerValue) {
+            feedbackEl.textContent = "🌟 Correct! 🌟"; 
+            feedbackEl.className = 'correct'; 
+            correctAnswers++;
+            triggerAnimalReward(); // ALL MODES now trigger an animal reward
+
+        } else {
+            feedbackEl.textContent = `🤔 Almost! The correct answer was ${correctAnswerValue}.`;
+            feedbackEl.className = 'incorrect'; 
+        }
+    } else {
+         feedbackEl.textContent = `Please enter a number.`;
+         feedbackEl.className = 'incorrect'; 
+         questionsAsked--;
+    }
+
+    correctCountEl.textContent = correctAnswers;
+    questionsAskedEl.textContent = questionsAsked;
+
+    if (questionsAsked < gameLength) {
+        if (!isNaN(userAnswer) || questionsAsked === 0 || userAnswer !== undefined ){
+             generateProblem();
+        }
+    } else {
+        endGame();
+    }
+    answerEl.focus();
+}
+answerEl.addEventListener('keypress', function(event) {
+    if (event.key === 'Enter') {
+        event.preventDefault();
+        checkAnswer();
+    }
+});
+*/
+// (The checkAnswer function above is likely what you have, just ensuring it's not the source of canDragSticker)
+
+
+// ... (populateAnimalChoices, updateDragDisabledState, endGame functions as before) ...
+// populateWordStickers function should be removed.
+
+
+// --- Drag and Drop Logic for items FROM THE REWARD LIST (#sticker-list) ---
+// (handleDragStartMouse, handleDragStartTouch - these will call the re-added canDragSticker)
+/*
+function handleDragStartMouse(e) {
+    if (!canDragSticker()) { e.preventDefault(); return; } // Call to canDragSticker
+    draggedStickerElement = e.target.cloneNode(true);
+    // ... rest of function
+}
+
+function handleDragStartTouch(e) {
+    if (!canDragSticker()) { return; } // Call to canDragSticker
+    e.preventDefault();
+    // ... rest of function
+}
+*/
+// ... (handleDragMoveTouch, handleDropOnBoardOrZoo, stickerBoardEl listeners, handleDragEndTouchRewardList functions as before) ...
+
+// --- Place Item on Board (Called by drop handlers for new items from list) ---
+// ... (placeStickerOnBoard function as before) ...
+
+// --- Drag and Drop Logic for items ALREADY ON THE STICKER BOARD ---
+// ... (makePlacedStickerInteractive function as before) ...
+
+// --- Sticker List Scroll Button Logic --- 
+// ... (scroll button listeners and updateScrollButtonStates function as before) ...
+
+// --- Initial Setup ---
+// ... (DOMContentLoaded listener with applyTheme, updateOperationVisibility, updateScrollButtonStates calls as before) ...
+// ... (NO initializeZoo call) ...
 // --- Theme Application ---
 function applyTheme(themeName) {
     document.body.className = '';
     document.body.classList.add(themeName + '-theme');
     currentTheme = themeName;
+
+    const themeRadio = document.getElementById(`theme${themeName.charAt(0).toUpperCase() + themeName.slice(1)}`);
+    if (themeRadio) {
+        themeRadio.checked = true;
+    }
+    // Only save if game has started and player name is valid
+    if (playerName && playerName !== "Player" && !startMenuEl.style.display_none_if_set_to_none_otherwise_empty_string_is_fine_here_too) { // Check if game is active
+         savePlayerData();
+    }
 }
 
 // --- Start Menu Logic ---
 function updateOperationVisibility() {
     const selectedDifficultyRadio = document.querySelector('input[name="difficulty"]:checked');
-    if (selectedDifficultyRadio && parseInt(selectedDifficultyRadio.value) === 1) { // Preschool selected
+    if (selectedDifficultyRadio && parseInt(selectedDifficultyRadio.value) === 1) {
         operationSelectionEl.style.display = 'none';
     } else {
         operationSelectionEl.style.display = 'block';
@@ -94,22 +284,25 @@ difficultyRadios.forEach(radio => {
 startGameBtnEl.addEventListener('click', () => {
     const nameInputValue = playerNameInputEl.value.trim();
     if (nameInputValue) {
-        playerName = nameInputValue;
+        playerName = nameInputValue; 
         nameErrorEl.style.display = 'none';
 
-        const selectedDifficultyRadio = document.querySelector('input[name="difficulty"]:checked');
-        difficultyLevel = selectedDifficultyRadio ? parseInt(selectedDifficultyRadio.value) : 3;
+        loadPlayerData(playerName); // Load data. This updates difficultyLevel, operationType, currentTheme globals.
 
-        if (difficultyLevel === 1) {
-            operationType = "counting";
-        } else {
-            const selectedOperationRadio = document.querySelector('input[name="operation"]:checked');
-            operationType = selectedOperationRadio ? selectedOperationRadio.value : "multiplication";
-        }
-
-        const selectedThemeRadio = document.querySelector('input[name="theme"]:checked');
-        const themeToApply = selectedThemeRadio ? selectedThemeRadio.value : "rainbow";
+        // Ensure UI reflects loaded or default values before starting
+        const themeToApply = currentTheme; // Use currentTheme as updated by loadPlayerData or default
         applyTheme(themeToApply);
+        
+        const difficultyRadioId = difficultyLevel === 1 ? 'gradePreschool' : `grade${difficultyLevel}`;
+        const diffRadioToEnsure = document.getElementById(difficultyRadioId);
+        if (diffRadioToEnsure) diffRadioToEnsure.checked = true;
+        updateOperationVisibility(); // Ensure op visibility is correct based on loaded difficulty
+
+        if (difficultyLevel !== 1) {
+            const opRadioIdToEnsure = `op${operationType.charAt(0).toUpperCase() + operationType.slice(1)}`;
+            const opRadioToEnsure = document.getElementById(opRadioIdToEnsure);
+            if (opRadioToEnsure) opRadioToEnsure.checked = true;
+        }
 
         startMenuEl.style.display = 'none';
         gameAndStickersContainerEl.style.display = 'flex';
@@ -131,7 +324,7 @@ function initializeGame() {
     if (difficultyLevel === 1) {
          document.querySelector("#game-container h1").textContent = `Counting Fun for ${playerName}! 🧸`;
     } else {
-         document.querySelector("#game-container h1").textContent = `${operationType.charAt(0).toUpperCase() + operationType.slice(1)} & Animal Fun for ${playerName}!`;
+         document.querySelector("#game-container h1").textContent = `${operationType.charAt(0).toUpperCase() + operationType.slice(1)} Fun for ${playerName}!`;
     }
     document.getElementById("sticker-board-header").textContent = `${playerName}'s Reward Board! ✨`;
 
@@ -140,8 +333,8 @@ function initializeGame() {
 
     generateProblem();
     updateStickerSectionStatus();
+    initializeGallery(); // Initialize gallery with (potentially loaded) collectedCreatures
     if(personalizedMessageEl) personalizedMessageEl.classList.remove('visible');
-    initializeGallery(); // Initialize gallery on game start
     answerEl.focus();
 }
 
@@ -150,6 +343,8 @@ if (mainMenuBtnEl) {
 }
 
 function goToMainMenu() {
+    savePlayerData(); // Save current player's data before going to main menu
+
     gameAndStickersContainerEl.style.display = 'none';
     startMenuEl.style.display = 'flex';
 
@@ -157,6 +352,7 @@ function goToMainMenu() {
     questionsAsked = 0;
     totalStickersPlaced = 0;
     availableStickerCredits = 0;
+    collectedCreatures = {}; // Reset in-memory collection for next player
 
     correctCountEl.textContent = correctAnswers;
     questionsAskedEl.textContent = questionsAsked;
@@ -178,17 +374,18 @@ function goToMainMenu() {
     }
     if (personalizedMessageEl) personalizedMessageEl.classList.remove('visible');
 
-    collectedCreatures = {}; // Reset collected creatures for the gallery
-    initializeGallery(); // Re-initialize gallery to show placeholders
+    initializeGallery(); // Re-initialize gallery (will show placeholders)
 
     playerNameInputEl.value = "";
     document.getElementById('grade3').checked = true;
     document.getElementById('opMultiply').checked = true;
     document.getElementById('themeRainbow').checked = true;
-    applyTheme("rainbow");
+    applyTheme("rainbow"); // Apply default visual theme (doesn't save "Player" data)
     difficultyLevel = 3;
     operationType = "multiplication";
     updateOperationVisibility();
+
+    playerName = "Player"; // Reset global playerName
 
     playerNameInputEl.focus();
 }
@@ -198,51 +395,59 @@ function buildAllCreatureMetaData() {
     allCreatureMetaData = [];
     let creatureIdCounter = 1;
 
-    // 1. Add Base Animals
     animalImageFiles.forEach(animal => {
         allCreatureMetaData.push({
-            id_num: creatureIdCounter++, // Use id_num to avoid conflict with element id property
+            id_num: creatureIdCounter++,
             name: animal.name,
             imageSrc: animal.baseImagePath
         });
     });
 
-    // 2. Add Merged Animals from mergeRecipes (ensure no duplicates by name for gallery listing)
     const galleryAddedMergedNames = new Set(animalImageFiles.map(a => a.name));
-    const sortedMergeRecipesForGallery = [...mergeRecipes].sort((a,b) => { // Sort by tier then name for gallery order
-        if (a.tier !== b.tier) return a.tier - b.tier;
-        return a.resultName.localeCompare(b.resultName);
-    });
+    if (typeof mergeRecipes !== 'undefined') { // Check if mergeRecipes is loaded
+        const sortedMergeRecipesForGallery = [...mergeRecipes].sort((a,b) => {
+            if (a.tier !== b.tier) return a.tier - b.tier;
+            return a.resultName.localeCompare(b.resultName);
+        });
 
-    sortedMergeRecipesForGallery.forEach(recipe => {
-        if (!galleryAddedMergedNames.has(recipe.resultName)) {
-            if (creatureIdCounter <= gallerySlotsCount) {
-                 allCreatureMetaData.push({
-                    id_num: creatureIdCounter++,
-                    name: recipe.resultName,
-                    imageSrc: `images/merged_animals/${recipe.resultImage}`
-                });
-                galleryAddedMergedNames.add(recipe.resultName);
+        sortedMergeRecipesForGallery.forEach(recipe => {
+            if (!galleryAddedMergedNames.has(recipe.resultName)) {
+                if (creatureIdCounter <= gallerySlotsCount) {
+                     allCreatureMetaData.push({
+                        id_num: creatureIdCounter++,
+                        name: recipe.resultName,
+                        imageSrc: `images/merged_animals/${recipe.resultImage}`
+                    });
+                    galleryAddedMergedNames.add(recipe.resultName);
+                }
             }
-        }
-    });
+        });
+    }
+    // Ensure allCreatureMetaData has exactly gallerySlotsCount items, pad if necessary
+    while(allCreatureMetaData.length < gallerySlotsCount) {
+        allCreatureMetaData.push({
+            id_num: creatureIdCounter++,
+            name: `Future Creature ${creatureIdCounter-1}`, // Placeholder name
+            imageSrc: placeholderImagePath // Use placeholder for unassigned slots
+        });
+    }
     // console.log("All Creature MetaData for Gallery:", allCreatureMetaData.length, allCreatureMetaData);
 }
 
 function initializeGallery() {
     if (!animalGalleryEl) return;
-    animalGalleryEl.innerHTML = ''; 
-    if (allCreatureMetaData.length === 0) { // Build only if not already built
+    animalGalleryEl.innerHTML = '';
+    if (allCreatureMetaData.length === 0 || allCreatureMetaData.length < gallerySlotsCount) {
         buildAllCreatureMetaData();
     }
 
     for (let i = 0; i < gallerySlotsCount; i++) {
         const slot = document.createElement('div');
         slot.classList.add('gallery-slot');
-        const creatureMeta = allCreatureMetaData[i]; // Get creature by index
+        const creatureMeta = allCreatureMetaData[i]; 
         
         if (creatureMeta) {
-            slot.dataset.creatureName = creatureMeta.name; 
+            slot.dataset.creatureName = creatureMeta.name;
             if (collectedCreatures[creatureMeta.name]) {
                 const img = document.createElement('img');
                 img.src = creatureMeta.imageSrc;
@@ -252,13 +457,13 @@ function initializeGallery() {
             } else {
                 const numberSpan = document.createElement('span');
                 numberSpan.classList.add('placeholder-number');
-                numberSpan.textContent = creatureMeta.id_num; 
+                numberSpan.textContent = creatureMeta.id_num;
                 slot.appendChild(numberSpan);
             }
-        } else { 
+        } else { // Should not happen if buildAllCreatureMetaData pads correctly
             const numberSpan = document.createElement('span');
             numberSpan.classList.add('placeholder-number');
-            numberSpan.textContent = (i + 1); // Generic number if meta not found
+            numberSpan.textContent = (i + 1); 
             slot.appendChild(numberSpan);
         }
         animalGalleryEl.appendChild(slot);
@@ -266,19 +471,19 @@ function initializeGallery() {
 }
 
 function unlockInGallery(creatureName) {
-    if (!animalGalleryEl || collectedCreatures[creatureName]) return; 
+    if (!animalGalleryEl || !creatureName) return; 
 
-    collectedCreatures[creatureName] = true; 
-
-    const creatureMeta = allCreatureMetaData.find(c => c.name === creatureName);
-    if (!creatureMeta) {
-        // console.warn("Creature meta not found for gallery unlock:", creatureName);
-        return;
+    if (!collectedCreatures[creatureName]) { // Only save and update UI if newly collected
+        collectedCreatures[creatureName] = true;
+        savePlayerData(); // Save progress
     }
 
+    const creatureMeta = allCreatureMetaData.find(c => c.name === creatureName);
+    if (!creatureMeta) return;
+
     const slot = animalGalleryEl.querySelector(`.gallery-slot[data-creature-name="${creatureName}"]`);
-    if (slot) {
-        slot.innerHTML = ''; 
+    if (slot && !slot.classList.contains('unlocked')) { // Update UI only if not already showing image
+        slot.innerHTML = '';
         const img = document.createElement('img');
         img.src = creatureMeta.imageSrc;
         img.alt = creatureMeta.name;
@@ -287,14 +492,17 @@ function unlockInGallery(creatureName) {
     }
 }
 
-// --- Core Game Logic ---
-function generateProblem() {
-    problemVisualsEl.innerHTML = '';
-    problemTextDisplayEl.textContent = '';
 
-    if (difficultyLevel === 1) {
+// --- Core Game Logic ---
+// generateProblem, generateCountingProblem, generateArithmeticProblem functions remain the same
+
+function generateProblem() {
+    problemVisualsEl.innerHTML = ''; 
+    problemTextDisplayEl.textContent = ''; 
+
+    if (difficultyLevel === 1) { 
         generateCountingProblem();
-    } else {
+    } else { 
         generateArithmeticProblem();
     }
     answerEl.value = '';
@@ -302,7 +510,7 @@ function generateProblem() {
 
 function generateCountingProblem() {
     problemTextDisplayEl.textContent = "How many shapes can you count?";
-    const numShapesToDisplay = Math.floor(Math.random() * 10) + 1;
+    const numShapesToDisplay = Math.floor(Math.random() * 10) + 1; 
     correctAnswerValue = numShapesToDisplay;
 
     const shapesEmojis = ['🔴', '🔵', '🟢', '🟡', '🟣', '🟠', '⭐', '🔺', '▪️', '🔶', '❤️', '💜', '🧡'];
@@ -311,7 +519,7 @@ function generateCountingProblem() {
     for (let i = 0; i < numShapesToDisplay; i++) {
         const shapeSpan = document.createElement('span');
         shapeSpan.textContent = selectedShapeEmoji;
-        shapeSpan.classList.add('shape');
+        shapeSpan.classList.add('shape'); 
         problemVisualsEl.appendChild(shapeSpan);
     }
 }
@@ -324,10 +532,10 @@ function generateArithmeticProblem() {
         case "addition":
             operatorSymbol = '+';
             switch (difficultyLevel) {
-                case 2: n1 = Math.floor(Math.random() * 21); n2 = Math.floor(Math.random() * 11); break;
-                case 3: n1 = Math.floor(Math.random() * 90) + 10; n2 = Math.floor(Math.random() * 90) + 10; break;
-                case 4: n1 = Math.floor(Math.random() * 401) + 100; n2 = Math.floor(Math.random() * 401) + 100; break;
-                case 5: n1 = Math.floor(Math.random() * 900) + 100; n2 = Math.floor(Math.random() * 900) + 100; break;
+                case 2: n1 = Math.floor(Math.random() * 21); n2 = Math.floor(Math.random() * 11); break; 
+                case 3: n1 = Math.floor(Math.random() * 90) + 10; n2 = Math.floor(Math.random() * 90) + 10; break; 
+                case 4: n1 = Math.floor(Math.random() * 401) + 100; n2 = Math.floor(Math.random() * 401) + 100; break; 
+                case 5: n1 = Math.floor(Math.random() * 900) + 100; n2 = Math.floor(Math.random() * 900) + 100; break; 
                 default: n1 = Math.floor(Math.random() * 90) + 10; n2 = Math.floor(Math.random() * 90) + 10; break;
             }
             answer = n1 + n2;
@@ -343,46 +551,46 @@ function generateArithmeticProblem() {
             }
             answer = n1 - n2;
             break;
-        case "division":
+        case "division": 
             operatorSymbol = '÷';
             let quotient;
             switch (difficultyLevel) {
-                case 3:
-                    n2 = Math.floor(Math.random() * 8) + 2;
-                    quotient = Math.floor(Math.random() * 8) + 2;
+                case 3: 
+                    n2 = Math.floor(Math.random() * 8) + 2; 
+                    quotient = Math.floor(Math.random() * 8) + 2; 
                     n1 = n2 * quotient;
                     break;
-                case 4:
-                    n2 = Math.floor(Math.random() * 11) + 2;
-                    quotient = Math.floor(Math.random() * 11) + 2;
+                case 4: 
+                    n2 = Math.floor(Math.random() * 11) + 2; 
+                    quotient = Math.floor(Math.random() * 11) + 2; 
                     n1 = n2 * quotient;
                     break;
-                case 5:
-                    n2 = Math.floor(Math.random() * 11) + 2;
-                    quotient = Math.floor(Math.random() * 19) + 2;
+                case 5: 
+                    n2 = Math.floor(Math.random() * 11) + 2;  
+                    quotient = Math.floor(Math.random() * 19) + 2; 
                     n1 = n2 * quotient;
                     break;
                 default: 
                     n2 = Math.floor(Math.random() * 8) + 2; quotient = Math.floor(Math.random() * 8) + 2; n1 = n2 * quotient; break;
             }
-            if (n2 === 0) { generateProblem(); return; }
+            if (n2 === 0) { generateProblem(); return; } 
             answer = quotient;
             break;
         case "multiplication":
-        default:
+        default: 
             operatorSymbol = '×';
             switch (difficultyLevel) {
-                case 2:
-                    if (Math.random() < 0.7) { n1 = Math.floor(Math.random() * 6); n2 = Math.floor(Math.random() * 11); }
-                    else {
-                        if (Math.random() < 0.5) { n1 = 10; n2 = Math.floor(Math.random() * 6); }
+                case 2: 
+                    if (Math.random() < 0.7) { n1 = Math.floor(Math.random() * 6); n2 = Math.floor(Math.random() * 11); } 
+                    else { 
+                        if (Math.random() < 0.5) { n1 = 10; n2 = Math.floor(Math.random() * 6); } 
                         else { n1 = Math.floor(Math.random() * 6); n2 = 10; }
                     }
                     break;
                 case 3: n1 = Math.floor(Math.random() * 10) + 1; n2 = Math.floor(Math.random() * 10) + 1; break;
                 case 4: n1 = Math.floor(Math.random() * 12) + 1; n2 = Math.floor(Math.random() * 12) + 1; break;
-                case 5:
-                    if (Math.random() > 0.5) { n1 = Math.floor(Math.random() * 12) + 1;  n2 = Math.floor(Math.random() * 10) + 10; }
+                case 5: 
+                    if (Math.random() > 0.5) { n1 = Math.floor(Math.random() * 12) + 1;  n2 = Math.floor(Math.random() * 10) + 10; } 
                     else { n1 = Math.floor(Math.random() * 10) + 10; n2 = Math.floor(Math.random() * 12) + 1; }
                     if (Math.random() < 0.2) { n1 = Math.floor(Math.random() * 14) + 2; n2 = Math.floor(Math.random() * 14) + 2; }
                     break;
@@ -391,17 +599,15 @@ function generateArithmeticProblem() {
             answer = n1 * n2;
             break;
     }
-    num1 = n1; num2 = n2;
+    num1 = n1; num2 = n2; 
     correctAnswerValue = answer;
     problemTextDisplayEl.textContent = `${n1} ${operatorSymbol} ${n2} = ?`;
 }
-
 
 function updateStickerSectionStatus() {
     // Now always assumes animal rewards if credits > 0
     if (availableStickerCredits > 0) {
         stickerSectionEl.classList.remove('hidden');
-        // Header/prompt usually set by triggerAnimalReward, but set a default just in case
         stickerHeaderEl.textContent = stickerHeaderEl.textContent.includes("Pick an animal") ? stickerHeaderEl.textContent : "🎉 Pick your reward! 🐾";
         stickerPromptEl.textContent = stickerPromptEl.textContent.includes("Drag an animal") ? stickerPromptEl.textContent : "Drag an animal to your reward board.";
         
@@ -442,18 +648,18 @@ function checkAnswer() {
 
     if (!isNaN(userAnswer)) {
         if (userAnswer === correctAnswerValue) {
-            feedbackEl.textContent = "🌟 Correct! 🌟";
-            feedbackEl.className = 'correct';
+            feedbackEl.textContent = "🌟 Correct! 🌟"; 
+            feedbackEl.className = 'correct'; 
             correctAnswers++;
             triggerAnimalReward(); // ALL MODES now trigger an animal reward
 
         } else {
             feedbackEl.textContent = `🤔 Almost! The correct answer was ${correctAnswerValue}.`;
-            feedbackEl.className = 'incorrect';
+            feedbackEl.className = 'incorrect'; 
         }
     } else {
          feedbackEl.textContent = `Please enter a number.`;
-         feedbackEl.className = 'incorrect';
+         feedbackEl.className = 'incorrect'; 
          questionsAsked--;
     }
 
@@ -483,7 +689,7 @@ function populateAnimalChoices() {
     for (let i = 0; i < totalAnimalChoices; i++) {
         const animalData = animalImageFiles[i % animalImageFiles.length];
         const animalImgEl = document.createElement('img');
-        animalImgEl.src = animalData.baseImagePath; // Use baseImagePath
+        animalImgEl.src = animalData.baseImagePath; 
         animalImgEl.alt = animalData.alt;
         animalImgEl.dataset.animalType = animalData.name; 
         animalImgEl.classList.add('sticker-option');
@@ -514,15 +720,13 @@ function endGame() {
     document.getElementById('submitAnswerBtn').disabled = true;
 
     let finalMessage = ` You got ${correctAnswers} out of ${questionsAsked} correct.`;
-    if (totalStickersPlaced > 0) {
+    if (totalStickersPlaced > 0) { 
         finalMessage += ` You have ${totalStickersPlaced} creation(s) on your board!`;
     }
-    // Gallery message could be added here if desired, e.g., based on collectedCreatures size
     const collectedCount = Object.keys(collectedCreatures).length;
     if (collectedCount > 0) {
         finalMessage += ` You discovered ${collectedCount} creature(s) in your collection!`;
     }
-
 
     if (totalStickersPlaced === 0 && collectedCount === 0 && correctAnswers > 0) {
          finalMessage += " Keep practicing to collect creatures!";
@@ -539,18 +743,6 @@ function endGame() {
 }
 
 // --- Drag and Drop Logic for items FROM THE REWARD LIST (#sticker-list) ---
-function canDragSticker() {
-    // This function now always checks availableStickerCredits,
-    // as both preschool animals and arithmetic rewards use this system
-    // (triggerAnimalReward sets availableStickerCredits = 1).
-    if (availableStickerCredits <= 0) {
-        // You could add a small visual cue here if you want, like a brief shake
-        // of the sticker list or a quick message, but for now, just preventing the drag.
-        // console.log("No sticker credits available!"); // For debugging
-        return false;
-    }
-    return true;
-}
 function handleDragStartMouse(e) {
     if (!canDragSticker()) { e.preventDefault(); return; }
     draggedStickerElement = e.target.cloneNode(true);
@@ -561,7 +753,7 @@ function handleDragStartMouse(e) {
     dragOffsetY = e.clientY - rect.top;
     try {
         e.dataTransfer.setDragImage(new Image(), 0, 0);
-        e.dataTransfer.setData('text/plain', e.target.dataset.animalType || e.target.alt); // Prefer animalType for consistency
+        e.dataTransfer.setData('text/plain', e.target.dataset.animalType || e.target.alt); 
     } catch (error) { /* Failsafe */ }
 }
 
@@ -604,7 +796,7 @@ function handleDragMoveTouch(e) {
 
 function handleDropOnBoardOrZoo(pageX, pageY) { // Zoo functionality is removed
     if (!draggedStickerElement) return;
-    placeStickerOnBoard(pageX, pageY); // Always try placing on the main board
+    placeStickerOnBoard(pageX, pageY); 
 
     if (draggedStickerElement) { draggedStickerElement = null; }
     if (stickerGhost && stickerGhost.parentNode) {
@@ -651,9 +843,9 @@ function placeStickerOnBoard(pageX, pageY) {
     const stickerTopLeftXonPage = pageX - dragOffsetX;
     const stickerTopLeftYonPage = pageY - dragOffsetY;
 
-    const isAnimalBaseElement = draggedStickerElement.tagName === 'IMG'; // Should always be true now
-    const animalIdentifier = draggedStickerElement.alt || "a new friend"; // Use alt for display name
-    const animalType = draggedStickerElement.dataset.animalType; // Crucial for merging
+    const isAnimalBaseElement = true; // All rewards from list are animals
+    const animalIdentifier = draggedStickerElement.alt || "a new friend";
+    const animalTypeOfPlacedItem = draggedStickerElement.dataset.animalType;
 
     const tempItemWidth = draggedStickerElement.offsetWidth || 50;
     const tempItemHeight = draggedStickerElement.offsetHeight || 50;
@@ -664,9 +856,9 @@ function placeStickerOnBoard(pageX, pageY) {
         itemCenterYonPage >= boardRect.top && itemCenterYonPage <= boardRect.bottom) {
 
         const wrapperDiv = document.createElement('div');
-        wrapperDiv.classList.add('placed-animal'); // All placed rewards are 'animals' or 'merged'
-        // The draggedStickerElement (the img) already has its dataset.animalType from populateAnimalChoices
-        wrapperDiv.appendChild(draggedStickerElement.cloneNode(true)); // Place a clone of the img
+        wrapperDiv.classList.add('placed-animal');
+        // The draggedStickerElement (img) already has its dataset.animalType
+        wrapperDiv.appendChild(draggedStickerElement.cloneNode(true)); // Place a clone of the img from list
         let elementToPlaceOnBoard = wrapperDiv;
 
         elementToPlaceOnBoard.style.position = 'absolute';
@@ -681,21 +873,21 @@ function placeStickerOnBoard(pageX, pageY) {
         updateStickerSectionStatus();
 
         // --- Unlock in Gallery for base animal ---
-        if (animalType) { // animalType is the 'name' like "Cat", "Dog"
-            unlockInGallery(animalType);
+        if (animalTypeOfPlacedItem) { 
+            unlockInGallery(animalTypeOfPlacedItem);
         }
 
         let anyMergeHappenedThisTurn = false;
         let aMergeOccurredInLoop;
         let iterations = 0;
-        const maxIterations = 10;
+        const maxIterations = 10; 
         do {
             if (typeof checkForMerges === 'function') {
-                const mergeResultName = checkForMerges(); // Expects name of merged creature or null
+                const mergeResultName = checkForMerges(); 
                 if (mergeResultName) {
                     anyMergeHappenedThisTurn = true;
                     aMergeOccurredInLoop = true;
-                    unlockInGallery(mergeResultName); // Unlock the *merged* creature
+                    unlockInGallery(mergeResultName); 
                 } else {
                     aMergeOccurredInLoop = false;
                 }
@@ -729,7 +921,7 @@ function makePlacedStickerInteractive(sticker, container) {
     let originalParentForSnapback, originalLeftForSnapback, originalTopForSnapback;
 
     function startDrag(e) {
-        // No dragging from gallery items with this function. Gallery items are static.
+        // No dragging from gallery items
         isDraggingPlaced = true;
         itemDraggedFromMainBoard = sticker;
 
@@ -789,29 +981,29 @@ function makePlacedStickerInteractive(sticker, container) {
             document.removeEventListener('touchend', endDrag);
         }
         
-        // If item was not moved to a different valid drop zone (none implemented other than board for now)
-        // Re-position it on the stickerBoardEl
-        if (itemThatWasDragged && itemThatWasDragged.parentElement !== stickerBoardEl) { // Check if it was moved to body
-            const boardRect = stickerBoardEl.getBoundingClientRect();
-            const stickerPageX = parseFloat(itemThatWasDragged.style.left);
-            const stickerPageY = parseFloat(itemThatWasDragged.style.top);
+        // Item should be placed back onto the stickerBoardEl
+        const boardRect = stickerBoardEl.getBoundingClientRect();
+        const stickerPageX = parseFloat(itemThatWasDragged.style.left);
+        const stickerPageY = parseFloat(itemThatWasDragged.style.top);
 
-            let newLeft = stickerPageX - boardRect.left;
-            let newTop = stickerPageY - boardRect.top;
+        let newLeft = stickerPageX - boardRect.left;
+        let newTop = stickerPageY - boardRect.top;
 
-            const itemWidth = itemThatWasDragged.offsetWidth;
-            const itemHeight = itemThatWasDragged.offsetHeight;
-            newLeft = Math.max(0, Math.min(newLeft, boardRect.width - itemWidth));
-            newTop = Math.max(0, Math.min(newTop, boardRect.height - itemHeight));
+        const itemWidth = itemThatWasDragged.offsetWidth;
+        const itemHeight = itemThatWasDragged.offsetHeight;
+        newLeft = Math.max(0, Math.min(newLeft, boardRect.width - itemWidth));
+        newTop = Math.max(0, Math.min(newTop, boardRect.height - itemHeight));
 
-            itemThatWasDragged.style.left = newLeft + 'px';
-            itemThatWasDragged.style.top = newTop + 'px';
-            itemThatWasDragged.style.position = 'absolute';
-            stickerBoardEl.appendChild(itemThatWasDragged); // Append back to board
+        itemThatWasDragged.style.left = newLeft + 'px';
+        itemThatWasDragged.style.top = newTop + 'px';
+        itemThatWasDragged.style.position = 'absolute';
+
+        if (itemThatWasDragged.parentElement !== stickerBoardEl) {
+            stickerBoardEl.appendChild(itemThatWasDragged);
         }
         
         // After re-placing on board, check for merges again
-        const isAnimalWrapper = itemThatWasDragged.classList.contains('placed-animal');
+        const isAnimalWrapper = itemThatWasDragged.classList.contains('placed-animal'); // Includes base and merged
         if (isAnimalWrapper) { 
             let aMergeOccurredInLoop;
             let iterations = 0;
@@ -865,4 +1057,5 @@ document.addEventListener('DOMContentLoaded', () => {
     updateOperationVisibility();
     updateScrollButtonStates();
     // Gallery is initialized when initializeGame() is called after start.
+    // No direct call to initializeZoo() as zoo feature was removed.
 });
