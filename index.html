@@ -9,7 +9,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Nunito:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
-<body class="rainbow-theme"> <div id="start-menu">
+<body class="rainbow-theme"> 
+    </div>
+
+    <div id="start-menu">
         <h2>Welcome to Arithmetic & Counting Fun!</h2>
         <label for="playerNameInput">Enter your name:</label>
         <input type="text" id="playerNameInput" maxlength="25" placeholder="Your Name">
@@ -68,26 +71,25 @@
         </div>
 
         <div id="sticker-board-container">
-            <div class="board-header-controls">
-                <h2 id="sticker-board-header">Your Reward Board! ✨</h2>
-                <button id="viewZooBtn" title="View Creature Collection">🏞️ Collection</button>
-            </div>
+            <h2 id="sticker-board-header">Your Reward Board! ✨</h2>
             <div id="sticker-board"></div>
+        </div>
+
+        <div id="animal-gallery-container">
+            <h2>My Creature Collection!</h2>
+            <div id="animal-gallery">
+                </div>
         </div>
     </div>
 
     <div id="personalized-message"></div>
 
-    <div id="zoo-gallery-overlay" class="hidden">
-        <div id="zoo-gallery-content">
-            <h2>Creature Collection</h2>
-            <div id="zoo-gallery-grid">
-                </div>
-            <button id="closeZooGalleryBtn">Close</button>
-        </div>
+    <div id="zoo-container" class="hidden">
+        <h2>My Awesome Zoo!</h2>
+        <div id="zoo-animals-area">
+            </div>
+        <button id="closeZooBtn">Close Zoo</button>
     </div>
 
-    <script src="merge.js"></script>   
-    <script src="script.js"></script>  
-</body>
+    <script src="merge.js"></script>   <script src="script.js"></script>  </body>
 </html>

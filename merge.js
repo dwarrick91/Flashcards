@@ -1,76 +1,58 @@
 // merge.js
 
-// Base animal names (for consistency and reference)
-// const baseAnimalNames = ["Bear", "Cat", "Dog", "Lion", "Panda"];
-
 const mergeRecipes = [
-    // --- NEW: Tier 6 - Supermaximal Merge (1 recipe) ---
-    // Requires 5 instances of the ultimate Tier 5 creature
+    // --- Tier 6 - Supermaximal Merge (1 recipe) ---
     { 
         components: [
-            "Bearcatdoglionpanda", 
-            "Bearcatdoglionpanda", 
-            "Bearcatdoglionpanda", 
-            "Bearcatdoglionpanda", 
-            "Bearcatdoglionpanda"
-        ], 
+            "Bearcatdoglionpanda", "Bearcatdoglionpanda", "Bearcatdoglionpanda", 
+            "Bearcatdoglionpanda", "Bearcatdoglionpanda"
+        ].sort(), // Sorting components for consistent matching if order doesn't matter
         resultName: "Supermaximal", 
         resultImage: "supermaximal.png", 
-        tier: 6 // Highest tier for prioritization
-        // baseCount conceptually could be 5 (unique animals) or 25 (5x5), 
-        // but tier is primary sort key now.
+        tier: 6 
     },
 
-    // --- Tier 5 (1 recipe, 5 base animals) ---
-    // Path: Can be direct or via Tier 4 + Base (these are alternative ways to get Bearcatdoglionpanda)
+    // --- Tier 5 (1 result, multiple paths to get it) ---
     { components: ["Bearcatdoglion", "Panda"].sort(), resultName: "Bearcatdoglionpanda", resultImage: "bearcatdoglionpanda.png", tier: 5 },
     { components: ["Bearcatdogpanda", "Lion"].sort(), resultName: "Bearcatdoglionpanda", resultImage: "bearcatdoglionpanda.png", tier: 5 },
     { components: ["Bearcatlionpanda", "Dog"].sort(), resultName: "Bearcatdoglionpanda", resultImage: "bearcatdoglionpanda.png", tier: 5 },
     { components: ["Beardoglionpanda", "Cat"].sort(), resultName: "Bearcatdoglionpanda", resultImage: "bearcatdoglionpanda.png", tier: 5 },
     { components: ["Catdoglionpanda", "Bear"].sort(), resultName: "Bearcatdoglionpanda", resultImage: "bearcatdoglionpanda.png", tier: 5 },
-    // Direct 5-base animal merge
     { components: ["Bear", "Cat", "Dog", "Lion", "Panda"].sort(), resultName: "Bearcatdoglionpanda", resultImage: "bearcatdoglionpanda.png", tier: 5 },
 
-
-    // --- Tier 4 (5 recipes, 4 base animals each) ---
-    // Paths to Bearcatdoglion
+    // --- Tier 4 (5 results, multiple paths to each) ---
+    // Bearcatdoglion
     { components: ["Bearcatdog", "Lion"].sort(), resultName: "Bearcatdoglion", resultImage: "bearcatdoglion.png", tier: 4 },
     { components: ["Bearcatlion", "Dog"].sort(), resultName: "Bearcatdoglion", resultImage: "bearcatdoglion.png", tier: 4 },
     { components: ["Beardoglion", "Cat"].sort(), resultName: "Bearcatdoglion", resultImage: "bearcatdoglion.png", tier: 4 },
     { components: ["Catdoglion", "Bear"].sort(), resultName: "Bearcatdoglion", resultImage: "bearcatdoglion.png", tier: 4 },
     { components: ["Bear", "Cat", "Dog", "Lion"].sort(), resultName: "Bearcatdoglion", resultImage: "bearcatdoglion.png", tier: 4 },
-
-    // Paths to Bearcatdogpanda
+    // Bearcatdogpanda
     { components: ["Bearcatdog", "Panda"].sort(), resultName: "Bearcatdogpanda", resultImage: "bearcatdogpanda.png", tier: 4 },
     { components: ["Bearcatpanda", "Dog"].sort(), resultName: "Bearcatdogpanda", resultImage: "bearcatdogpanda.png", tier: 4 },
     { components: ["Beardogpanda", "Cat"].sort(), resultName: "Bearcatdogpanda", resultImage: "bearcatdogpanda.png", tier: 4 },
     { components: ["Catdogpanda", "Bear"].sort(), resultName: "Bearcatdogpanda", resultImage: "bearcatdogpanda.png", tier: 4 },
     { components: ["Bear", "Cat", "Dog", "Panda"].sort(), resultName: "Bearcatdogpanda", resultImage: "bearcatdogpanda.png", tier: 4 },
-
-    // Paths to Bearcatlionpanda
+    // Bearcatlionpanda
     { components: ["Bearcatlion", "Panda"].sort(), resultName: "Bearcatlionpanda", resultImage: "bearcatlionpanda.png", tier: 4 },
     { components: ["Bearcatpanda", "Lion"].sort(), resultName: "Bearcatlionpanda", resultImage: "bearcatlionpanda.png", tier: 4 },
     { components: ["Bearlionpanda", "Cat"].sort(), resultName: "Bearcatlionpanda", resultImage: "bearcatlionpanda.png", tier: 4 },
     { components: ["Catlionpanda", "Bear"].sort(), resultName: "Bearcatlionpanda", resultImage: "bearcatlionpanda.png", tier: 4 },
     { components: ["Bear", "Cat", "Lion", "Panda"].sort(), resultName: "Bearcatlionpanda", resultImage: "bearcatlionpanda.png", tier: 4 },
-
-    // Paths to Beardoglionpanda
+    // Beardoglionpanda
     { components: ["Beardoglion", "Panda"].sort(), resultName: "Beardoglionpanda", resultImage: "beardoglionpanda.png", tier: 4 },
     { components: ["Beardogpanda", "Lion"].sort(), resultName: "Beardoglionpanda", resultImage: "beardoglionpanda.png", tier: 4 },
     { components: ["Bearlionpanda", "Dog"].sort(), resultName: "Beardoglionpanda", resultImage: "beardoglionpanda.png", tier: 4 },
     { components: ["Doglionpanda", "Bear"].sort(), resultName: "Beardoglionpanda", resultImage: "beardoglionpanda.png", tier: 4 },
     { components: ["Bear", "Dog", "Lion", "Panda"].sort(), resultName: "Beardoglionpanda", resultImage: "beardoglionpanda.png", tier: 4 },
-
-    // Paths to Catdoglionpanda
+    // Catdoglionpanda
     { components: ["Catdoglion", "Panda"].sort(), resultName: "Catdoglionpanda", resultImage: "catdoglionpanda.png", tier: 4 },
     { components: ["Catdogpanda", "Lion"].sort(), resultName: "Catdoglionpanda", resultImage: "catdoglionpanda.png", tier: 4 },
     { components: ["Catlionpanda", "Dog"].sort(), resultName: "Catdoglionpanda", resultImage: "catdoglionpanda.png", tier: 4 },
     { components: ["Doglionpanda", "Cat"].sort(), resultName: "Catdoglionpanda", resultImage: "catdoglionpanda.png", tier: 4 },
     { components: ["Cat", "Dog", "Lion", "Panda"].sort(), resultName: "Catdoglionpanda", resultImage: "catdoglionpanda.png", tier: 4 },
 
-
     // --- Tier 3 (10 results, 3 base animals each) ---
-    // Adding more sequential paths for each Tier 3 result
     // Bearcatdog
     { components: ["Bearcat", "Dog"].sort(), resultName: "Bearcatdog", resultImage: "bearcatdog.png", tier: 3 },
     { components: ["Beardog", "Cat"].sort(), resultName: "Bearcatdog", resultImage: "bearcatdog.png", tier: 3 },
@@ -122,7 +104,7 @@ const mergeRecipes = [
     { components: ["Lionpanda", "Dog"].sort(), resultName: "Doglionpanda", resultImage: "doglionpanda.png", tier: 3 },
     { components: ["Dog", "Lion", "Panda"].sort(), resultName: "Doglionpanda", resultImage: "doglionpanda.png", tier: 3 },
 
-    // --- Tier 2: 2-Animal Merges (10) --- (These only use base animals as components)
+    // --- Tier 2: 2-Animal Merges (10) ---
     { components: ["Bear", "Cat"].sort(), resultName: "Bearcat", resultImage: "bearcat.png", tier: 2 },
     { components: ["Bear", "Dog"].sort(), resultName: "Beardog", resultImage: "beardog.png", tier: 2 },
     { components: ["Bear", "Lion"].sort(), resultName: "Bearlion", resultImage: "bearlion.png", tier: 2 },
@@ -136,40 +118,51 @@ const mergeRecipes = [
 ];
 
 function checkForMerges() {
+    // This function relies on global variables from script.js:
+    // stickerBoardEl, totalStickersPlaced, makePlacedStickerInteractive,
+    // personalizedMessageTimeout, personalizedMessageEl, playerName, currentTheme.
+
     const placedItemElements = Array.from(stickerBoardEl.children);
 
+    // 1. Get all identifiable items currently on the board with their type ('id') and element
     const itemsOnBoard = placedItemElements.map(wrapper => {
         let id = null;
-        if (wrapper.dataset.mergedName) {
+        if (wrapper.dataset.mergedName) { // This is an already merged creature
             id = wrapper.dataset.mergedName;
-        } else if (wrapper.classList.contains('placed-animal') && wrapper.querySelector('img')?.dataset.animalType) {
+        } else if (wrapper.classList.contains('placed-animal') && wrapper.querySelector('img')?.dataset.animalType) { // This is a base animal
             id = wrapper.querySelector('img').dataset.animalType;
         }
         return id ? { id: id, element: wrapper } : null;
     }).filter(item => item !== null);
 
-    const minComponentsForAnyRecipe = Math.min(...mergeRecipes.map(r => r.components.length), 2);
-    if (itemsOnBoard.length < minComponentsForAnyRecipe) return false;
+    const minComponentsForAnyRecipe = Math.min(...mergeRecipes.map(r => r.components.length), 2); 
+    if (itemsOnBoard.length < minComponentsForAnyRecipe) return null; // Return null if no merge
 
-    // Sort recipes: by tier (desc), then by number of direct components (desc) for tie-breaking.
-    // This ensures more complex/higher-value merges are attempted first.
+    // 2. Sort recipes: by tier (desc), then by number of direct components (desc) for tie-breaking.
     const sortedRecipes = [...mergeRecipes].sort((a, b) => {
         if (b.tier !== a.tier) {
             return b.tier - a.tier;
         }
-        return b.components.length - a.components.length;
+        // If tiers are equal, prefer recipes with more components (more specific)
+        if (b.components.length !== a.components.length) {
+             return b.components.length - a.components.length;
+        }
+        // Fallback to sort by name if all else is equal, for deterministic behavior
+        return a.resultName.localeCompare(b.resultName);
     });
 
     for (const recipe of sortedRecipes) {
         if (itemsOnBoard.length < recipe.components.length) {
-            continue;
+            continue; 
         }
 
         let availableItemsForRecipeCheck = [...itemsOnBoard]; // Create a mutable copy for this recipe iteration
-        const itemsToConsumeElements = [];
+        const itemsToConsumeElements = []; // Stores the actual DOM element wrappers to remove
 
         let canMakeRecipe = true;
-        for (const requiredComponentId of recipe.components) {
+        // For each component ID required by the recipe
+        for (const requiredComponentId of recipe.components) { 
+            // Find an item on the board that matches this component ID
             const foundItemIndex = availableItemsForRecipeCheck.findIndex(
                 itemOnBoard => itemOnBoard.id === requiredComponentId
             );
@@ -178,21 +171,22 @@ function checkForMerges() {
                 itemsToConsumeElements.push(availableItemsForRecipeCheck[foundItemIndex].element);
                 availableItemsForRecipeCheck.splice(foundItemIndex, 1); // "Consume" from the temp list
             } else {
-                canMakeRecipe = false;
+                canMakeRecipe = false; // Required component not found on board
                 break;
             }
         }
 
-        if (canMakeRecipe) {
+        if (canMakeRecipe) { // All components for this recipe were found as distinct items on the board
+            // --- A merge is possible! ---
             const firstConsumedElementRect = itemsToConsumeElements[0].getBoundingClientRect();
             const boardRect = stickerBoardEl.getBoundingClientRect();
 
             itemsToConsumeElements.forEach(element => element.remove());
-            totalStickersPlaced -= (itemsToConsumeElements.length - 1);
+            totalStickersPlaced -= (itemsToConsumeElements.length -1) ; // Net change in items on board
 
             const mergedCreatureWrapper = document.createElement('div');
             mergedCreatureWrapper.classList.add('placed-animal', `merged-tier-${recipe.tier}`);
-            mergedCreatureWrapper.dataset.mergedName = recipe.resultName;
+            mergedCreatureWrapper.dataset.mergedName = recipe.resultName; // This is its new ID
 
             const mergedImgEl = document.createElement('img');
             mergedImgEl.src = `images/merged_animals/${recipe.resultImage}`;
@@ -202,25 +196,25 @@ function checkForMerges() {
 
             let newLeft = firstConsumedElementRect.left - boardRect.left;
             let newTop = firstConsumedElementRect.top - boardRect.top;
-            const mergedImageDisplayWidth = 60;
-            newLeft += (firstConsumedElementRect.offsetWidth / 2) - (mergedImageDisplayWidth / 2);
+            const mergedImageDisplayWidth = 60; // Assuming placed merged animals are also 60px
+            newLeft += (firstConsumedElementRect.offsetWidth / 2) - (mergedImageDisplayWidth / 2); // Try to center
 
             mergedCreatureWrapper.style.left = newLeft + 'px';
             mergedCreatureWrapper.style.top = newTop + 'px';
 
             stickerBoardEl.appendChild(mergedCreatureWrapper);
-            makePlacedStickerInteractive(mergedCreatureWrapper, stickerBoardEl);
+            makePlacedStickerInteractive(mergedCreatureWrapper, stickerBoardEl); 
 
             if (personalizedMessageTimeout) clearTimeout(personalizedMessageTimeout);
             personalizedMessageEl.textContent = `${playerName}, you've created a ${recipe.resultName}! Incredible! ✨`;
             
-            personalizedMessageEl.style.borderColor = '#FFD700';
+            personalizedMessageEl.style.borderColor = '#FFD700'; // Gold for any merge success
             if (currentTheme === "videogame") {
-                personalizedMessageEl.style.color = '';
+                personalizedMessageEl.style.color = ''; 
             } else if (currentTheme === "animals") {
                  personalizedMessageEl.style.color = '#4CAF50';
-            } else {
-                personalizedMessageEl.style.color = '#DAA520';
+            } else { 
+                personalizedMessageEl.style.color = '#DAA520'; 
             }
             
             personalizedMessageEl.classList.add('visible');
@@ -229,8 +223,8 @@ function checkForMerges() {
                 personalizedMessageEl.style.color = '';
             }, 3500);
 
-            return true; 
+            return recipe.resultName; // A merge happened, return the name of the new creature
         }
     }
-    return false; 
+    return null; // No merge happened in this pass
 }

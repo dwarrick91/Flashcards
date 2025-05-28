@@ -1,17 +1,18 @@
 /* styles.css */
 
-/* --- Font Import --- */
-/* @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Nunito:wght@400;700&display=swap'); */
-/* Ensure the above @import or a <link> tag is in your HTML <head> */
+/* --- Font Import (Ensure this is in your HTML head or linked appropriately) ---
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Nunito:wght@400;700&display=swap');
+*/
 
 /* --- Base Styles --- */
 body {
     font-family: 'Nunito', 'Arial', sans-serif;
     text-align: center;
     margin: 0;
-    background-color: #f7f9fc;
-    color: #333745;
-    line-height: 1.6;
+    /* Global padding removed, handled by containers or specific sections */
+    background-color: #f7f9fc; /* Modern light, slightly cool grey */
+    color: #333745; /* Softer dark text for better readability */
+    line-height: 1.6; /* Improved default line height */
     position: relative;
     min-height: 100vh;
     box-sizing: border-box;
@@ -21,77 +22,101 @@ body {
     flex-direction: column;
     align-items: center;
     transition: background-color 0.5s ease, color 0.5s ease;
-    padding: 10px; /* Added back for overall spacing */
-}
-body.zoo-gallery-open { 
-    overflow: hidden;
 }
 
 /* --- Start Menu Styles --- */
 #start-menu {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background-color: rgba(247, 249, 252, 0.98); 
+    position: top: 0; left: 0; width: 100%; height: 100%;
+    background-color: rgba(247, 249, 252, 0.98); /* Slightly transparent to match new body bg */
     display: flex; flex-direction: column; justify-content: center; align-items: center;
     z-index: 3000; padding: 15px; box-sizing: border-box; text-align: center; overflow-y: auto;
 }
 #start-menu h2 {
-    font-size: 2.3em; margin-bottom: 15px;
+    font-size: 2.5em;
+    margin-bottom: 25px;
+    /* Theme-specific text color/gradient will apply */
 }
-#start-menu label { 
-    font-size: 1.2em; 
-    margin-bottom: 6px;
-    display: block; 
+#start-menu label { /* General label styling for name input */
+    font-size: 1.2em;
+    color: #4A5568; /* Softer text */
+    margin-bottom: 8px;
+    display: block;
 }
 #start-menu input[type="text"] {
-    padding: 10px; font-size: 1.1em; border: 2px solid #ccc; border-radius: 8px;
-    width: 80%; max-width: 280px; margin-bottom: 10px; text-align: center;
+    padding: 12px 15px;
+    font-size: 1.1em;
+    border: 1px solid #CBD5E0; /* Lighter, modern border */
+    border-radius: 8px; /* Slightly more rounded */
+    width: 80%; max-width: 300px; margin-bottom: 20px; /* More space */
+    text-align: center;
     box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 #start-menu input[type="text"]:focus {
-    border-color: #4A90E2; 
+    border-color: #4A90E2; /* Modern blue focus */
     box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
     outline: none;
 }
+
 .selection-group {
-    margin: 10px 0; padding: 10px; border: 1px solid #ddd; border-radius: 8px;
-    width: 90%; max-width: 320px; 
-    background-color: rgba(255,255,255,0.5);
+    margin: 12px 0; /* More vertical spacing */
+    padding: 18px; /* More internal padding */
+    border: 1px solid #e2e8f0; /* Softer border */
+    border-radius: 12px; /* More rounded */
+    width: 90%; max-width: 350px;
+    background-color: #FFFFFF; /* Clean white */
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05); /* Softer, modern shadow */
 }
-.selection-group p { 
-    margin-top: 0; margin-bottom: 8px; 
-    font-weight: bold; font-size: 1.1em; 
+.selection-group p {
+    margin-top: 0; margin-bottom: 12px;
+    font-weight: bold; font-size: 1.15em;
+    /* Theme-specific color/gradient */
 }
 .selection-group label {
-    display: block; margin: 5px auto; cursor: pointer; font-size: 1em;
-    max-width: 220px; text-align: left; padding-left: 15px; 
+    display: block; margin: 8px auto; cursor: pointer; font-size: 1em;
+    max-width: 230px; /* Adjust for potentially longer labels */
+    text-align: left; padding: 10px 15px; /* More tappable area */
+    border-radius: 8px; /* Rounded label backgrounds */
+    transition: background-color 0.2s ease;
+    color: #4A5568; /* Softer label text */
+}
+.selection-group label:hover {
+    background-color: #edf2f7; /* Subtle hover */
 }
 .selection-group input[type="radio"] {
-    margin-right: 6px; cursor: pointer; transform: scale(1.1); vertical-align: middle;
+    margin-right: 10px; /* More space */
+    cursor: pointer; transform: scale(1.2); vertical-align: middle;
 }
 #start-menu button#startGameBtn {
-    padding: 12px 25px; font-size: 1.2em; border-radius: 30px; cursor: pointer;
-    transition: background-color 0.3s, transform 0.2s; font-weight: bold; margin-top: 10px;
+    padding: 14px 35px;
+    font-size: 1.3em;
+    border-radius: 50px; /* Pill shape */
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    font-weight: bold; margin-top: 20px; /* More space */
+    border: none;
+    /* Theme-specific background/color/shadow */
 }
 .error-message {
-    font-weight: bold; margin-top: 8px; font-size: 0.9em;
+    font-weight: bold; margin-top: 10px; font-size: 0.9em;
+    /* Theme-specific color */
 }
 
 /* --- Game Area Styles --- */
 #game-and-stickers-container { display: none; flex-direction: column; align-items: center; width: 100%; }
 #game-container {
-    padding: 20px; padding-top: 60px; 
-    border-radius: 16px; 
+    padding: 20px; padding-top: 60px; /* Space for main menu btn */
+    border-radius: 16px; /* Softer, larger rounding */
     width: 90%; max-width: 500px;
-    margin-bottom: 25px; 
+    margin-bottom: 25px; /* More space */
     box-sizing: border-box; position: relative;
     transition: background-color 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease;
-    background-color: #ffffff; 
-    box-shadow: 0 10px 35px rgba(0, 0, 0, 0.08); 
+    background-color: #ffffff;
+    box-shadow: 0 10px 35px rgba(0, 0, 0, 0.08); /* Softer, more prominent shadow */
 }
  #mainMenuBtn {
     position: absolute; top: 18px; left: 18px; padding: 10px 18px; font-size: 0.9em;
-    border: none; border-radius: 20px; 
+    border: none; border-radius: 20px; /* Pill shape */
     cursor: pointer; z-index: 100;
     transition: background-color 0.3s ease, transform 0.2s ease, color 0.3s ease, box-shadow 0.3s ease;
     font-weight: bold;
@@ -102,17 +127,18 @@ body.zoo-gallery-open {
 #game-container h1 {
     font-size: 2.2em; font-weight: bold; margin-bottom: 25px; margin-top: 0;
     transition: color 0.5s ease;
+    /* Theme-specific text color/gradient */
 }
 #problemTextDisplay {
     font-size: 1.8em; margin-bottom: 12px; min-height: 1.5em; font-weight: bold;
 }
 #problemVisuals {
-    font-size: 2.5em; margin-bottom: 18px; min-height: 70px; 
+    font-size: 2.5em; margin-bottom: 18px; min-height: 70px; /* More space for shapes */
     display: flex; flex-wrap: wrap; justify-content: center; align-items: center;
-    gap: 5px; 
+    gap: 5px; /* Space between shapes */
 }
 #problemVisuals .shape {
-    font-size: 1.8em; 
+    font-size: 1.8em; /* Relative to parent, makes them about 45px */
     margin: 3px; display: inline-block;
 }
 
@@ -122,7 +148,7 @@ input[type="number"] {
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 input[type="number"]:focus {
-    border-color: #4A90E2; 
+    border-color: #4A90E2;
     box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
     outline: none;
 }
@@ -132,14 +158,14 @@ button#submitAnswerBtn {
     background-size: 200% auto;
     transition: background-position 0.5s ease, transform 0.2s ease, background-color 0.5s ease, color 0.5s ease, box-shadow 0.3s ease;
     display: block; width: 100%; max-width: 230px; margin: 0 auto; box-sizing: border-box; font-weight: bold;
-    text-shadow: none; 
+    text-shadow: none; /* Cleaner look */
     box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
-button#submitAnswerBtn:hover, button#submitAnswerBtn:active { 
-    transform: translateY(-2px) scale(1.03); 
+button#submitAnswerBtn:hover, button#submitAnswerBtn:active {
+    transform: translateY(-2px) scale(1.03);
     box-shadow: 0 6px 15px rgba(0,0,0,0.15);
 }
-        
+
 #feedback {
     font-size: 1.1em; margin-top: 15px; min-height: 2.5em; padding: 10px;
     border-radius: 6px;
@@ -160,143 +186,130 @@ button#submitAnswerBtn:hover, button#submitAnswerBtn:active {
 }
 #sticker-header { font-size: 1.4em; font-weight: bold; margin-bottom: 10px; min-height: 1.5em; }
 #sticker-prompt { font-size: 0.9em; margin-bottom:15px; color: #4A5568; }
-        
+
 .sticker-list-container { display: flex; flex-direction: column; align-items: center; }
 .scroll-btn {
-    border: none; padding: 0; font-size: 1.5em; border-radius: 50%; 
+    border: none; padding: 0; font-size: 1.5em; border-radius: 50%; /* Circular */
     cursor: pointer; transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
-    width: 40px; height: 40px; margin: 5px 0; line-height: 40px; 
+    width: 40px; height: 40px; margin: 5px 0; line-height: 40px; /* Center icon */
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 .scroll-btn:hover { transform: scale(1.1); }
 .scroll-btn:disabled { background-color: #e2e8f0 !important; color: #a0aec0 !important; cursor: not-allowed; opacity: 0.7; }
 
-#sticker-list { 
+#sticker-list {
     display: flex; flex-wrap: wrap; gap: 12px; justify-content: center;
-    max-height: 140px; 
-    overflow-y: auto; -webkit-overflow-scrolling: touch; 
+    max-height: 140px; /* Slightly more room */
+    overflow-y: auto; -webkit-overflow-scrolling: touch;
     padding: 15px; border: 1px solid #e2e8f0; border-radius: 8px;
     width: 100%; box-sizing: border-box;
     background-color: #f7fafc;
     transition: background-color 0.5s ease, border-color 0.5s ease;
 }
-#sticker-list img.sticker-option { 
-    width: 55px; height: 55px; object-fit: contain; 
-    border: 1px solid #e2e8f0; 
-    border-radius: 8px; 
-    background-color: #fff; 
+#sticker-list img.sticker-option {
+    width: 55px; height: 55px; object-fit: contain; /* Slightly larger */
+    border: 1px solid #e2e8f0;
+    border-radius: 8px; /* Consistent rounding */
+    background-color: #fff; /* Add a bg for images if transparent parts are an issue */
 }
 .sticker-option.disabled-drag { cursor: not-allowed; opacity: 0.5; transform: scale(0.95); }
 
-.sticker-base { 
+.sticker-base { /* For word stickers */
     padding: 12px 18px; border-radius: 12px; font-weight: bold; font-size: 1em;
     text-align: center; transition: transform 0.2s ease-out, box-shadow 0.2s ease-out, opacity 0.2s, background-color 0.3s, color 0.3s;
-    min-width: 100px; 
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1); 
+    min-width: 100px; /* Increased min-width */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     display: inline-flex; align-items: center; justify-content: center;
     word-break: keep-all; line-height: 1.2;
 }
-.sticker-option { cursor: grab; } 
-.sticker-option:not(.disabled-drag):hover { 
-    transform: translateY(-3px) scale(1.05); 
+.sticker-option { cursor: grab; }
+.sticker-option:not(.disabled-drag):hover {
+    transform: translateY(-3px) scale(1.05);
     box-shadow: 0 6px 12px rgba(0,0,0,0.15);
 }
 
-#sticker-board-container { width: 95%; max-width: 700px; margin: 20px auto; } 
-.board-header-controls { 
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px; 
-}
-#sticker-board-header { font-size: 1.5em; font-weight: bold; margin-bottom: 0; }
-#viewZooBtn { 
-    padding: 8px 12px;
-    font-size: 0.9em;
-    border: none;
-    border-radius: 20px;
-    cursor: pointer;
-    transition: background-color 0.3s, transform 0.2s, color 0.3s;
-    font-weight: bold;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-#viewZooBtn:hover { transform: scale(1.05); }
-
-
+#sticker-board-container { width: 95%; max-width: 700px; margin: 20px auto; }
+#sticker-board-header { font-size: 1.5em; font-weight: bold; margin-bottom: 10px; }
 #sticker-board {
     width: 100%; height: 300px; border-radius: 12px; position: relative;
     overflow: hidden; box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
-    border-width: 4px; border-style: solid; border-color: transparent; 
+    border-width: 4px; border-style: solid; border-color: transparent;
     background-clip: padding-box;
     transition: background-color 0.5s ease, border-image 0.5s ease;
 }
-.placed-sticker-text, .placed-animal { 
+.placed-sticker-text, .placed-animal {
     position: absolute; cursor: move; user-select: none; z-index: 10;
 }
-.placed-animal img { 
+.placed-animal img {
     width: 60px; height: 60px; object-fit: contain; display: block;
 }
 .sticker-ghost { position: fixed; pointer-events: none; opacity: 0.75; z-index: 1000; }
 .sticker-ghost img { width: 50px; height: 50px; object-fit: contain; }
 
+/* --- Animal Collection Gallery Styles --- */
+#animal-gallery-container {
+    width: 95%;
+    max-width: 700px; 
+    margin: 25px auto;
+    padding: 15px;
+    background-color: #fff; 
+    border-radius: 12px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.07);
+    transition: background-color 0.5s ease, border-color 0.5s ease;
+}
+#animal-gallery-container h2 {
+    font-size: 1.6em;
+    margin-top: 0;
+    margin-bottom: 15px;
+}
+#animal-gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(70px, 1fr)); 
+    gap: 10px;
+    padding: 10px;
+    background-color: #f0f0f0; 
+    border-radius: 8px;
+    min-height: 100px; 
+    max-height: 400px; 
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+.gallery-slot {
+    width: 70px; height: 70px;
+    background-color: #e9ecef; 
+    border: 2px dashed #ced4da; 
+    border-radius: 8px;
+    display: flex; justify-content: center; align-items: center;
+    font-size: 1.8em; font-weight: bold; color: #adb5bd; 
+    cursor: default; overflow: hidden; 
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+.gallery-slot img {
+    width: 100%; height: 100%; object-fit: contain; display: block; 
+}
+.gallery-slot.unlocked {
+    background-color: #fff; 
+    border-style: solid;
+    font-size: 0.7em; 
+    color: #333;
+    padding: 2px; 
+    box-sizing: border-box; 
+    position: relative; 
+}
+.gallery-slot.unlocked .placeholder-number { display: none; }
+
 
 #personalized-message {
     position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.9);
-    padding: 30px 45px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15); 
+    padding: 30px 45px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
     z-index: 2000; font-size: 2.5em; font-weight: bold; text-align: center;
     opacity: 0; transition: opacity 0.3s ease-out, transform 0.3s ease-out, background-color 0.3s, border-color 0.3s, color 0.3s;
-    pointer-events: none; border-width: 0px; border-style: solid; 
+    pointer-events: none; border-width: 0px; border-style: solid; /* Border removed by default */
 }
 #personalized-message.visible { opacity: 1; transform: translate(-50%, -50%) scale(1); pointer-events: auto; }
+.hidden { display: none !important; }
 
-
-/* Zoo Gallery Overlay Styles */
-#zoo-gallery-overlay {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background-color: rgba(0, 0, 0, 0.7); 
-    z-index: 4000; 
-    display: flex; justify-content: center; align-items: center;
-    opacity: 0;
-    visibility: hidden; /* Start hidden */
-    transition: opacity 0.3s ease-out, visibility 0s ease-out 0.3s; /* Corrected transition */
-}
-#zoo-gallery-overlay.visible {
-    opacity: 1;
-    visibility: visible;
-    transition: opacity 0.3s ease-out, visibility 0s ease-out 0s; /* Corrected transition */
-}
-#zoo-gallery-content {
-    padding: 25px; border-radius: 15px; width: 90%; max-width: 700px; 
-    height: 85%; max-height: 550px; box-shadow: 0 8px 30px rgba(0,0,0,0.2);
-    display: flex; flex-direction: column; position: relative; 
-}
-#zoo-gallery-content h2 {
-    text-align: center; margin-top: 0; margin-bottom: 20px; font-size: 1.8em; 
-}
-#zoo-gallery-grid {
-    flex-grow: 1; overflow-y: auto; -webkit-overflow-scrolling: touch;
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); 
-    gap: 15px; padding: 15px; border-radius: 8px;
-}
-.zoo-gallery-item {
-    display: flex; flex-direction: column; align-items: center; justify-content: space-between; 
-    padding: 10px; border-radius: 8px; text-align: center;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-.zoo-gallery-item:hover { transform: translateY(-3px); box-shadow: 0 6px 12px rgba(0,0,0,0.1); }
-.zoo-gallery-item img { width: 70px; height: 70px; object-fit: contain; margin-bottom: 8px; }
-.zoo-gallery-item span { font-size: 0.75em; word-break: break-word; line-height: 1.2; }
-#closeZooGalleryBtn {
-    margin-top: 20px; padding: 12px 25px; font-size: 1em;
-    border: none; border-radius: 25px; cursor: pointer; align-self: center;
-    font-weight: bold; transition: background-color 0.3s ease, transform 0.2s ease;
-}
-#closeZooGalleryBtn:hover { transform: scale(1.05); }
-
-.hidden { display: none !important; } /* General utility class, used for #sticker-section initially */
-
-/* --- Rainbow Theme --- */
+/* --- Rainbow Theme (Default) --- */
 .rainbow-theme body { background-color: #f0f8ff; color: #333745; }
 .rainbow-theme #start-menu { background-color: rgba(240, 248, 255, 0.98); }
 .rainbow-theme #start-menu h2, .rainbow-theme .selection-group p {
@@ -327,7 +340,7 @@ button#submitAnswerBtn:hover, button#submitAnswerBtn:active {
 .rainbow-theme .scroll-btn { background-color: #718096; color: white; }
 .rainbow-theme .scroll-btn:hover { background-color: #4A5568; }
 .rainbow-theme #sticker-list { background-color: #f7fafc; border: 1px solid #e2e8f0; }
-.rainbow-theme .sticker-base { box-shadow: 0 4px 8px rgba(0,0,0,0.1); } 
+.rainbow-theme .sticker-base { box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
 .rainbow-theme .sticker-base.theme-sticker-color-1 { background-color: #FF4136; color: white; }
 .rainbow-theme .sticker-base.theme-sticker-color-2 { background-color: #FF851B; color: white; }
 .rainbow-theme .sticker-base.theme-sticker-color-3 { background-color: #FFDC00; color: #333; }
@@ -337,16 +350,12 @@ button#submitAnswerBtn:hover, button#submitAnswerBtn:active {
 .rainbow-theme .sticker-base.theme-sticker-color-7 { background-color: #B10DC9; color: white; }
 .rainbow-theme #sticker-board-header { color: #2ECC40; }
 .rainbow-theme #sticker-board { background-color: #f0f8ff; border-image: linear-gradient(45deg, #FF4136, #FF851B, #FFDC00, #2ECC40, #0074D9, #4B0082, #B10DC9) 1; }
-.rainbow-theme #personalized-message { background-color: rgba(255, 255, 255, 0.97); color: #333745; border-width: 6px; }
-.rainbow-theme #viewZooBtn { background-color: #B10DC9; color: white; }
-.rainbow-theme #viewZooBtn:hover { background-color: #85147E; }
-.rainbow-theme #zoo-gallery-content { background-color: #f8f9fa; border: 1px solid #e0e0e0;}
-.rainbow-theme #zoo-gallery-content h2 { color: #007bff; }
-.rainbow-theme #zoo-gallery-grid { background-color: #ffffff; border-color: #e0e0e0; }
-.rainbow-theme .zoo-gallery-item { border: 1px solid #f0f0f0; background-color: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.05);}
-.rainbow-theme .zoo-gallery-item span { color: #495057; }
-.rainbow-theme #closeZooGalleryBtn { background-color: #FF4136; color: white; }
-.rainbow-theme #closeZooGalleryBtn:hover { background-color: #c70019; }
+.rainbow-theme #personalized-message { background-color: rgba(255, 255, 255, 0.97); color: #333745; border-width: 6px; /* Border color set by JS */}
+.rainbow-theme #animal-gallery-container { background-color: #e6f7ff; border: 1px solid #b3d9ff;}
+.rainbow-theme #animal-gallery-container h2 { color: #0074D9; }
+.rainbow-theme #animal-gallery { background-color: #f0f8ff; }
+.rainbow-theme .gallery-slot.unlocked { border-color: #FFDC00; /* Yellow border */}
+
 
 /* --- Videogame Theme --- */
 .videogame-theme body { background-color: #0d0d21; color: #e0e1dd; font-family: 'Press Start 2P', cursive; }
@@ -369,7 +378,7 @@ button#submitAnswerBtn:hover, button#submitAnswerBtn:active {
 }
 .videogame-theme button#submitAnswerBtn { background-image: none; background-color: #00FFFF; color: #0d0d21; text-shadow: none; border: 2px solid #FFFF00; font-size: 0.9em;}
 .videogame-theme button#submitAnswerBtn:hover { background-color: #00cccc; }
-.videogame-theme #problemVisuals .shape, .videogame-theme #problemTextDisplay, .videogame-theme input[type="number"], .videogame-theme #score-board, .videogame-theme #sticker-prompt  { color: #e0e1dd; } 
+.videogame-theme #problemVisuals .shape, .videogame-theme #problemTextDisplay, .videogame-theme input[type="number"], .videogame-theme #score-board, .videogame-theme #sticker-prompt  { color: #e0e1dd; }
 .videogame-theme input[type="number"] { background-color: #0d0d21; border-color: #00FFFF; color: #00FFFF;}
 .videogame-theme #feedback { 
     background-color: #101028; border: 1px solid #00FFFF; color: #e0e1dd; 
@@ -397,16 +406,12 @@ button#submitAnswerBtn:hover, button#submitAnswerBtn:active {
     background-color: rgba(200, 200, 220, 0.95); font-family: 'Press Start 2P', cursive; 
     font-size: 1.3em; border-width: 4px; color: #1a1a2e; text-shadow: 1px 1px 0px #00c8c8; 
 }
-.videogame-theme #viewZooBtn { background-color: #FFFF00; color: #0d0d21; font-family: 'Press Start 2P', cursive; font-size:0.6em; padding: 10px 8px;}
-.videogame-theme #viewZooBtn:hover { background-color: #cccc00; }
-.videogame-theme #zoo-gallery-content { background-color: #16213e; border: 2px solid #00FFFF; color: #e0e1dd; font-family: 'Press Start 2P', cursive;}
-.videogame-theme #zoo-gallery-content h2 { color: #00FF00; font-size: 1em;} 
-.videogame-theme #zoo-gallery-grid { background-color: #0d0d21; border-color: #FF00FF; }
-.videogame-theme .zoo-gallery-item { border-color: #00FFFF; background-color: #101028; }
-.videogame-theme .zoo-gallery-item span { color: #00FF00; font-size: 0.5em; line-height: 1.1; } 
-.videogame-theme .zoo-gallery-item img { width: 60px; height: 60px;}
-.videogame-theme #closeZooGalleryBtn { background-color: #FF00FF; color: #0d0d21; font-family: 'Press Start 2P', cursive; font-size:0.7em;}
-.videogame-theme #closeZooGalleryBtn:hover { background-color: #cc00cc; }
+.videogame-theme #animal-gallery-container { background-color: #1a1a2e; border: 2px solid #FF00FF; }
+.videogame-theme #animal-gallery-container h2 { color: #FF00FF; font-size: 1.2em; } /* Adjusted from 1.2em */
+.videogame-theme #animal-gallery { background-color: #0d0d21; border: 1px solid #00FFFF; }
+.videogame-theme .gallery-slot { background-color: #2a2a3e; border-color: #00FFFF; color: #00FFFF; font-size: 1.2em;} /* Adjusted */
+.videogame-theme .gallery-slot.unlocked { background-color: #101028; border-color: #00FF00; }
+.videogame-theme .gallery-slot.unlocked img { background-color: transparent; }
 
 
 /* --- Animals Theme --- */
@@ -449,15 +454,11 @@ button#submitAnswerBtn:hover, button#submitAnswerBtn:active {
 .animals-theme #sticker-board-header { color: #387002; }
 .animals-theme #sticker-board { background-color: #dcedc8; border-image: linear-gradient(45deg, #8d6e63, #ffb300, #7cb342, #4db6ac, #4fc3f7) 1; }
 .animals-theme #personalized-message { background-color: rgba(241, 248, 233, 0.97); color: #2e7d32; border-width: 4px;}
-.animals-theme #viewZooBtn { background-color: #8d6e63; color: white; } 
-.animals-theme #viewZooBtn:hover { background-color: #6d4c41; }
-.animals-theme #zoo-gallery-content { background-color: #f1f8e9; border: 1px solid #c8e6c9;}
-.animals-theme #zoo-gallery-content h2 { color: #387002; }
-.animals-theme #zoo-gallery-grid { background-color: #e8f5e9; border-color: #c8e6c9; }
-.animals-theme .zoo-gallery-item { border: 1px solid #dcedc8; background-color: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.05);}
-.animals-theme .zoo-gallery-item span { color: #387002; }
-.animals-theme #closeZooGalleryBtn { background-color: #7cb342; color: white; }
-.animals-theme #closeZooGalleryBtn:hover { background-color: #558b2f; }
+.animals-theme #animal-gallery-container { background-color: #f1f8e9; border: 1px solid #c8e6c9; }
+.animals-theme #animal-gallery-container h2 { color: #388e3c; }
+.animals-theme #animal-gallery { background-color: #e8f5e9; }
+.animals-theme .gallery-slot { background-color: #dcedc8; border-color: #a5d6a7; color: #556b2f; }
+.animals-theme .gallery-slot.unlocked { background-color: #fff; border-color: #7cb342; }
 
 
 /* Media Queries for smaller screens */
@@ -471,10 +472,6 @@ button#submitAnswerBtn:hover, button#submitAnswerBtn:active {
     .selection-group label {font-size: 1em;}
     .videogame-theme #start-menu h2, .videogame-theme .selection-group p { font-size: 1.5em; }
     .videogame-theme #start-menu label, .videogame-theme .selection-group label { font-size: 0.7em;}
-    #zoo-gallery-content h2 { font-size: 1.5em; }
-    .videogame-theme #zoo-gallery-content h2 { font-size: 0.9em; }
-    .zoo-gallery-item img { width: 60px; height: 60px; }
-    .zoo-gallery-item span { font-size: 0.7em; }
 }
 @media (max-width: 600px) {
     #sticker-board { height: 250px; }
@@ -499,6 +496,11 @@ button#submitAnswerBtn:hover, button#submitAnswerBtn:active {
     .sticker-base { font-size: 0.8em; padding: 6px 10px; min-width: 70px;}
     #sticker-list img.sticker-option { width: 45px; height: 45px; }
     .placed-animal img { width: 50px; height: 50px; }
+    #animal-gallery-container h2 { font-size: 1.3em; }
+    .gallery-slot { width: 60px; height: 60px; font-size: 1.5em; }
+    #animal-gallery { grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)); }
+    .videogame-theme #animal-gallery-container h2 { font-size: 1em; }
+
 
     #mainMenuBtn { top: 10px; left: 10px; font-size: 0.8em; padding: 6px 10px;}
     #start-menu h2 {font-size: 1.8em;}
@@ -506,9 +508,4 @@ button#submitAnswerBtn:hover, button#submitAnswerBtn:active {
     .selection-group p {font-size: 1em;}
     .selection-group label {font-size: 0.9em; padding-left: 5px;}
     .videogame-theme #start-menu h2, .videogame-theme .selection-group p { font-size: 1.2em; }
-    #zoo-gallery-grid { grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 10px; padding: 5px; }
-    .zoo-gallery-item img { width: 50px; height: 50px; }
-    .zoo-gallery-item span { font-size: 0.65em; }
-    #zoo-gallery-content h2 { font-size: 1.2em; }
-    .videogame-theme #zoo-gallery-content h2 { font-size: 0.8em; }
 }
