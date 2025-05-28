@@ -28,10 +28,8 @@ const themeStickerColorClasses = [
     "theme-sticker-color-1", "theme-sticker-color-2", "theme-sticker-color-3",
     "theme-sticker-color-4", "theme-sticker-color-5", "theme-sticker-color-6", "theme-sticker-color-7"
 ];
-
-// animalImageFiles is still needed here if populateAnimalChoices uses it directly.
-// Or, if populateAnimalChoices also moves to merge.js or takes animalImageFiles as a param.
-// For now, let's assume populateAnimalChoices remains in script.js and needs this.
+        
+// animalImageFiles is used by populateAnimalChoices in this file
 const animalImageFiles = [
     { src: "cat.png", name: "Cat", alt: "a Cute Cat" }, 
     { src: "dog.png", name: "Dog", alt: "a Happy Dog" },
@@ -39,9 +37,7 @@ const animalImageFiles = [
     { src: "lion.png", name: "Lion", alt: "a Brave Lion" },
     { src: "panda.png", name: "Panda", alt: "a Playful Panda" }
 ];
-
-// mergeRecipes is now in merge.js
-// checkForMerges function is now in merge.js
+// mergeRecipes and checkForMerges are now in merge.js
 
 
 const startMenuEl = document.getElementById('start-menu');
@@ -538,9 +534,9 @@ function placeStickerOnBoard(pageX, pageY) {
     const stickerTopLeftXonPage = pageX - dragOffsetX;
     const stickerTopLeftYonPage = pageY - dragOffsetY;
     
-    const isAnimalBaseElement = draggedStickerElement.tagName === 'IMG'; // Check if the dragged element itself is an img
+    const isAnimalBaseElement = draggedStickerElement.tagName === 'IMG';
     const itemIdentifier = isAnimalBaseElement ? (draggedStickerElement.alt || "a new friend") : draggedStickerElement.textContent;
-    const itemTypeForMerge = isAnimalBaseElement ? draggedStickerElement.dataset.animalType : null; 
+    // const itemTypeForMerge = isAnimalBaseElement ? draggedStickerElement.dataset.animalType : null; // Already on draggedStickerElement
 
     const itemBgColor = isAnimalBaseElement ? 'transparent' : window.getComputedStyle(draggedStickerElement).backgroundColor;
     const itemTextColor = isAnimalBaseElement ? '#333' : window.getComputedStyle(draggedStickerElement).color;
@@ -559,10 +555,7 @@ function placeStickerOnBoard(pageX, pageY) {
         if (isAnimalBaseElement) {
             const wrapperDiv = document.createElement('div');
             wrapperDiv.classList.add('placed-animal');
-            // Ensure the img clone (draggedStickerElement) has its dataset copied
-            if (draggedStickerElement.dataset.animalType) {
-                 wrapperDiv.dataset.animalTypeFromImg = draggedStickerElement.dataset.animalType; // For easier access on wrapper if needed
-            }
+            // The clone (draggedStickerElement which is an img) already has its dataset.animalType
             wrapperDiv.appendChild(draggedStickerElement); 
             elementToPlaceOnBoard = wrapperDiv;
         } else {
@@ -581,7 +574,9 @@ function placeStickerOnBoard(pageX, pageY) {
 
         let mergeHappened = false;
         if (isAnimalBaseElement && difficultyLevel === 1) { 
-            mergeHappened = checkForMerges(); // checkForMerges will look for .placed-animal > img[data-animal-type]
+            // Pass the type of the just-placed animal to avoid re-checking it if logic needs it,
+            // though current checkForMerges re-scans the whole board.
+            mergeHappened = checkForMerges(); 
         }
 
         if (!mergeHappened) { 
@@ -748,7 +743,3 @@ if(personalizedMessageEl) personalizedMessageEl.classList.remove('visible');
 applyTheme(currentTheme); 
 updateOperationVisibility(); 
 updateScrollButtonStates();
-
-
-  
-
