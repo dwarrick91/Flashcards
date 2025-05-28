@@ -1,142 +1,514 @@
-body { font-family: 'Nunito', 'Arial', sans-serif; text-align: center; margin: 0; padding: 10px; position: relative; min-height: 100vh; box-sizing: border-box; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; overflow-x: hidden; display: flex; flex-direction: column; align-items: center; transition: background-color 0.5s ease, color 0.5s ease; }
-        #start-menu { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(240, 248, 255, 0.98); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 3000; padding: 15px; box-sizing: border-box; text-align: center; overflow-y: auto; }
-        #start-menu h2 { font-size: 2.3em; margin-bottom: 15px; background-image: linear-gradient(to right, #FF4136, #FF851B, #FFDC00, #2ECC40, #0074D9, #4B0082, #B10DC9); -webkit-background-clip: text; background-clip: text; color: transparent; }
-        #start-menu label { font-size: 1.2em; margin-bottom: 6px; display: block; }
-        #start-menu input[type="text"] { padding: 10px; font-size: 1.1em; border: 2px solid #ccc; border-radius: 8px; width: 80%; max-width: 280px; margin-bottom: 10px; text-align: center; box-shadow: inset 0 1px 3px rgba(0,0,0,0.1); }
-        .selection-group { margin: 10px 0; padding: 10px; border: 1px solid #ddd; border-radius: 8px; width: 90%; max-width: 320px; }
-        .selection-group p { margin-top: 0; margin-bottom: 8px; font-weight: bold; font-size: 1.1em; }
-        .selection-group label { display: block; margin: 5px auto; cursor: pointer; font-size: 1em; max-width: 200px; text-align: left; padding-left: 15px; }
-        .selection-group input[type="radio"] { margin-right: 6px; cursor: pointer; transform: scale(1.1); vertical-align: middle; }
-        #start-menu button#startGameBtn { padding: 12px 25px; font-size: 1.2em; border-radius: 30px; cursor: pointer; transition: background-color 0.3s, transform 0.2s; font-weight: bold; margin-top: 10px; }
-        .error-message { font-weight: bold; margin-top: 8px; font-size: 0.9em; }
-        #game-and-stickers-container { display: none; flex-direction: column; align-items: center; width: 100%; }
-        #game-container { padding: 20px; padding-top: 50px; border-radius: 10px; width: 90%; max-width: 500px; margin-bottom: 20px; box-sizing: border-box; position: relative; transition: background-color 0.5s ease, border-color 0.5s ease; }
-        #mainMenuBtn { position: absolute; top: 15px; left: 15px; padding: 8px 12px; font-size: 0.9em; border: none; border-radius: 5px; cursor: pointer; z-index: 100; transition: background-color 0.3s, transform 0.2s, color 0.3s; }
-        #mainMenuBtn:hover { transform: scale(1.05); }
-        #game-container h1 { font-size: 2em; font-weight: bold; margin-bottom: 15px; margin-top: 0; transition: color 0.5s ease; }
-        #problemTextDisplay { font-size: 1.8em; margin-bottom: 10px; color: #333; min-height: 1.5em; }
-        #problemVisuals { font-size: 2.5em; margin-bottom: 15px; min-height: 60px; display: flex; flex-wrap: wrap; justify-content: center; align-items: center; }
-        #problemVisuals .shape { font-size: 2em; margin: 5px; display: inline-block; }
-        input[type="number"] { padding: 12px; font-size: 1.2em; width: 80px; max-width: 100px; text-align: center; border: 2px solid #ccc; border-radius: 5px; margin-bottom: 15px; box-sizing: border-box; }
-        button#submitAnswerBtn { padding: 12px 18px; font-size: 1.1em; border: none; border-radius: 25px; cursor: pointer; background-size: 200% auto; transition: background-position 0.5s ease, transform 0.2s, background-color 0.5s ease, color 0.5s ease; display: block; width: 100%; max-width: 220px; margin: 0 auto; box-sizing: border-box; font-weight: bold; }
-        button#submitAnswerBtn:hover, button#submitAnswerBtn:active { transform: scale(1.05); }
-        #feedback { font-size: 1.1em; margin-top: 10px; min-height: 2.5em; padding: 8px; border-radius: 4px; transition: background-color 0.5s ease, border-color 0.5s ease, color 0.5s ease; line-height: 1.4; }
-        .correct { font-weight: bold; }
-        .incorrect { font-weight: bold; }
-        #score-board { font-size: 1.1em; margin-bottom: 15px; }
-        #sticker-section { margin-top: 20px; padding: 15px; border-radius: 10px; width: 95%; max-width: 600px; margin-left: auto; margin-right: auto; box-sizing: border-box; margin-bottom: 20px; transition: background-color 0.5s ease, border-color 0.5s ease; }
-        #sticker-header { font-size: 1.4em; font-weight: bold; margin-bottom: 10px; min-height: 1.5em; }
-        #sticker-prompt { font-size: 0.9em; margin-bottom:10px; }
-        .sticker-list-container { display: flex; flex-direction: column; align-items: center; }
-        .scroll-btn { border: none; padding: 5px 15px; font-size: 1.1em; border-radius: 5px; cursor: pointer; transition: background-color 0.3s, color 0.3s; width: 80px; margin: 3px 0; line-height: 1.2; }
-        .scroll-btn:hover { transform: scale(1.05); }
-        .scroll-btn:disabled { background-color: #cccccc !important; color: #777 !important; cursor: not-allowed; opacity: 0.7; }
-        #sticker-list { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; max-height: 130px; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 10px; border: 1px solid #ddd; border-radius: 5px; width: 100%; box-sizing: border-box; transition: background-color 0.5s ease, border-color 0.5s ease; }
-        #sticker-list img.sticker-option { width: 50px; height: 50px; object-fit: contain; border: 1px solid #eee; border-radius: 5px; }
-        .sticker-option.disabled-drag { cursor: not-allowed; opacity: 0.5; transform: scale(0.95); }
-        .sticker-base { padding: 10px 15px; border-radius: 25px; font-weight: bold; font-size: 0.95em; text-align: center; transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s, background-color 0.3s, color 0.3s; min-width: 90px; display: inline-flex; align-items: center; justify-content: center; word-break: keep-all; line-height: 1.2; }
-        .sticker-option { cursor: grab; } 
-        .sticker-option:not(.disabled-drag):hover { transform: scale(1.1); }
-        #sticker-board-container { width: 95%; max-width: 700px; margin: 0 auto; }
-        #sticker-board-header { font-size: 1.5em; font-weight: bold; margin-bottom: 10px; }
-        #sticker-board { width: 100%; height: 300px; border-radius: 10px; position: relative; overflow: hidden; box-shadow: inset 0 0 10px rgba(0,0,0,0.05); border-width: 4px; border-style: solid; border-color: transparent; background-clip: padding-box; transition: background-color 0.5s ease, border-image 0.5s ease, border-color 0.5s ease; }
-        .placed-sticker-text, .placed-animal { position: absolute; cursor: move; user-select: none; z-index: 10; }
-        .placed-animal img { width: 60px; height: 60px; object-fit: contain; display: block; }
-        .sticker-ghost { position: fixed; pointer-events: none; opacity: 0.75; z-index: 1000; }
-        .sticker-ghost img { width: 50px; height: 50px; object-fit: contain; }
-        #personalized-message { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.9); padding: 25px 35px; border-radius: 20px; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2); z-index: 2000; font-size: 2.8em; font-weight: bold; text-align: center; opacity: 0; transition: opacity 0.3s ease-out, transform 0.3s ease-out, background-color 0.3s, border-color 0.3s, color 0.3s; pointer-events: none; border-width: 6px; border-style: solid; }
-        #personalized-message.visible { opacity: 1; transform: translate(-50%, -50%) scale(1); pointer-events: auto; }
-        .hidden { display: none !important; }
+/* styles.css */
 
-        /* Theme Specific Styles (ensure #sticker-board styles are present and correct) */
-        .rainbow-theme body { background-color: #f0f8ff; color: #333; }
-        .rainbow-theme #start-menu { background-color: rgba(240, 248, 255, 0.98); }
-        .rainbow-theme #start-menu h2, .rainbow-theme .selection-group p { background-image: linear-gradient(to right, #FF4136, #FF851B, #FFDC00, #2ECC40, #0074D9, #4B0082, #B10DC9); -webkit-background-clip: text; background-clip: text; color: transparent; }
-        .rainbow-theme #start-menu button#startGameBtn { background-color: #2ECC40; color: white; box-shadow: 0 4px 8px rgba(46, 204, 64, 0.4); }
-        .rainbow-theme #start-menu button#startGameBtn:hover { background-color: #25a233; }
-        .rainbow-theme .error-message { color: #FF4136; }
-        .rainbow-theme #game-container { background-color: #fff; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); }
-        .rainbow-theme #mainMenuBtn { background-color: #0074D9; color: white; }
-        .rainbow-theme #mainMenuBtn:hover { background-color: #0056b3; }
-        .rainbow-theme #game-container h1 { background-image: linear-gradient(to right, #FF4136, #FF851B, #FFDC00, #2ECC40, #0074D9, #4B0082, #B10DC9); -webkit-background-clip: text; background-clip: text; color: transparent; }
-        .rainbow-theme button#submitAnswerBtn { background-image: linear-gradient(to right, #FF4136, #FF851B, #FFDC00, #2ECC40, #0074D9, #4B0082, #B10DC9); color: white; text-shadow: 0 1px 2px rgba(0,0,0,0.2); }
-        .rainbow-theme button#submitAnswerBtn:hover { background-position: right center; }
-        .rainbow-theme #feedback { background-color: rgba(230,247,255,0.5); border: 1px dashed #0074d9; color: #333;}
-        .rainbow-theme .correct { color: #2ECC40; } .rainbow-theme .incorrect { color: #FF4136; }
-        .rainbow-theme #sticker-section { background-color: #fff; border: 2px solid #0074D9;}
-        .rainbow-theme #sticker-header { color: #0074D9; }
-        .rainbow-theme #problemTextDisplay { color: #333; }
-        .rainbow-theme .scroll-btn { background-color: #0074D9; color: white; }
-        .rainbow-theme .scroll-btn:hover { background-color: #0056b3; }
-        .rainbow-theme #sticker-list { background-color: #f9f9f9; border: 1px solid #ddd; }
-        .rainbow-theme .sticker-base { box-shadow: 0 3px 6px rgba(0,0,0,0.2); } 
-        .rainbow-theme .sticker-base.theme-sticker-color-1 { background-color: #FF4136; color: white; } .rainbow-theme .sticker-base.theme-sticker-color-2 { background-color: #FF851B; color: white; } .rainbow-theme .sticker-base.theme-sticker-color-3 { background-color: #FFDC00; color: #333; } .rainbow-theme .sticker-base.theme-sticker-color-4 { background-color: #2ECC40; color: white; } .rainbow-theme .sticker-base.theme-sticker-color-5 { background-color: #0074D9; color: white; } .rainbow-theme .sticker-base.theme-sticker-color-6 { background-color: #4B0082; color: white; } .rainbow-theme .sticker-base.theme-sticker-color-7 { background-color: #B10DC9; color: white; }
-        .rainbow-theme #sticker-board-header { color: #2ECC40; }
-        .rainbow-theme #sticker-board { background-color: #fffacd; border-image: linear-gradient(45deg, #FF4136, #FF851B, #FFDC00, #2ECC40, #0074D9, #4B0082, #B10DC9) 1; }
-        .rainbow-theme #personalized-message { background-color: rgba(255, 255, 255, 0.97); color: #333; }
+/* --- Font Import --- */
+/* @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Nunito:wght@400;700&display=swap'); */
+/* Ensure the above @import or a <link> tag is in your HTML <head> */
 
-        .videogame-theme body { background-color: #0d0d21; color: #c0c0c0; font-family: 'Press Start 2P', cursive; }
-        .videogame-theme #start-menu { background-color: rgba(13, 13, 33, 0.98); }
-        .videogame-theme #start-menu h2, .videogame-theme .selection-group p { background-image: linear-gradient(to right, #00FFFF, #FF00FF, #FFFF00); -webkit-background-clip: text; background-clip: text; color: transparent; font-size: 1.8em;  }
-        .videogame-theme #start-menu label, .videogame-theme .selection-group label { color: #00FFFF; font-size: 0.8em;}
-        .videogame-theme #start-menu input[type="text"] { background-color: #1a1a2e; color: #00FFFF; border: 2px solid #00FFFF; font-size: 0.9em;}
-        .videogame-theme #start-menu button#startGameBtn { background-color: #FF00FF; color: #0d0d21; box-shadow: 0 0 10px #FF00FF; border: 2px solid #FFFF00; font-size: 1em;}
-        .videogame-theme #start-menu button#startGameBtn:hover { background-color: #cc00cc;}
-        .videogame-theme .error-message { color: #FF00FF; }
-        .videogame-theme #game-container { background-color: #1a1a2e; border: 3px solid #00FFFF; box-shadow: 0 0 15px #00FFFF; }
-        .videogame-theme #mainMenuBtn { background-color: #FF00FF; color: #0d0d21; border: 1px solid #FFFF00;}
-        .videogame-theme #mainMenuBtn:hover { background-color: #cc00cc;}
-        .videogame-theme #game-container h1 { background-image: linear-gradient(to right, #00FFFF, #FF00FF, #FFFF00); -webkit-background-clip: text; background-clip: text; color: transparent; font-size: 1.5em; }
-        .videogame-theme button#submitAnswerBtn { background-image: none; background-color: #00FFFF; color: #0d0d21; text-shadow: none; border: 2px solid #FFFF00;}
-        .videogame-theme button#submitAnswerBtn:hover { background-color: #00cccc; }
-        .videogame-theme #problemVisuals .shape, .videogame-theme #problemTextDisplay, .videogame-theme input[type="number"], .videogame-theme #score-board, .videogame-theme #sticker-prompt  { color: #c0c0c0; }
-        .videogame-theme input[type="number"] { background-color: #0d0d21; border-color: #00FFFF; color: #00FFFF;}
-        .videogame-theme #feedback { background-color: #101028; border: 1px solid #00FFFF; color: #c0c0c0; font-family: 'Press Start 2P', cursive; font-size: 0.8em; line-height: 1.4; }
-        .videogame-theme .correct { color: #00FF00; text-shadow: 0 0 3px #00FF00, 0 0 5px #00FF00; font-weight: normal; }
-        .videogame-theme .incorrect { color: #FF0000; text-shadow: 0 0 3px #FF0000, 0 0 5px #FF0000; font-weight: normal;}
-        .videogame-theme #sticker-section { background-color: #1a1a2e; border: 2px solid #FF00FF; }
-        .videogame-theme #sticker-header { color: #FF00FF; }
-        .videogame-theme .scroll-btn { background-color: #FF00FF; color: #0d0d21; border: 1px solid #FFFF00;}
-        .videogame-theme .scroll-btn:hover { background-color: #cc00cc;}
-        .videogame-theme #sticker-list { background-color: #0d0d21; border-color: #00FFFF; }
-        .videogame-theme #sticker-list img.sticker-option { border-color: #00FFFF; }
-        .videogame-theme .sticker-base { box-shadow: 0 2px 5px rgba(0,0,0,0.5); font-size: 0.7em; padding: 8px 10px;}
-        .videogame-theme .sticker-base.theme-sticker-color-1 { background-color: #ff3366; color: white; } .videogame-theme .sticker-base.theme-sticker-color-2 { background-color: #33ff99; color: black; } .videogame-theme .sticker-base.theme-sticker-color-3 { background-color: #3399ff; color: white; } .videogame-theme .sticker-base.theme-sticker-color-4 { background-color: #ffcc33; color: black; } .videogame-theme .sticker-base.theme-sticker-color-5 { background-color: #cc33ff; color: white; } .videogame-theme .sticker-base.theme-sticker-color-6 { background-color: #ffffff; color: black; } .videogame-theme .sticker-base.theme-sticker-color-7 { background-color: #00ff00; color: black; } 
-        .videogame-theme #sticker-board-header { color: #00FF00; }
-        .videogame-theme #sticker-board { background-color: #101028; border-image: linear-gradient(45deg, #00FFFF, #FF00FF, #FFFF00) 1; }
-        .videogame-theme #personalized-message { background-color: rgba(200, 200, 220, 0.95); font-family: 'Press Start 2P', cursive; font-size: 1.5em; border-width: 4px; color: #1a1a2e; text-shadow: 1px 1px 0px #00c8c8; }
+/* --- Base Styles --- */
+body {
+    font-family: 'Nunito', 'Arial', sans-serif;
+    text-align: center;
+    margin: 0;
+    background-color: #f7f9fc;
+    color: #333745;
+    line-height: 1.6;
+    position: relative;
+    min-height: 100vh;
+    box-sizing: border-box;
+    -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: background-color 0.5s ease, color 0.5s ease;
+    padding: 10px; /* Added back for overall spacing */
+}
+body.zoo-gallery-open { 
+    overflow: hidden;
+}
 
-        .animals-theme body { background-color: #e8f5e9; color: #387002; font-family: 'Nunito', sans-serif; }
-        .animals-theme #start-menu { background-color: rgba(232, 245, 233, 0.98); }
-        .animals-theme #start-menu h2 { color: #4CAF50; background-image: none; font-size: 2.3em;} 
-        .animals-theme .selection-group p { color: #388e3c; background-image: none; } 
-        .animals-theme #start-menu label, .animals-theme .selection-group label { color: #2e7d32; }
-        .animals-theme #start-menu input[type="text"] { border-color: #66bb6a; }
-        .animals-theme #start-menu button#startGameBtn { background-color: #4CAF50; color: white; box-shadow: 0 4px 8px rgba(76, 175, 80, 0.4); }
-        .animals-theme #start-menu button#startGameBtn:hover { background-color: #388e3c; }
-        .animals-theme .error-message { color: #d32f2f; } 
-        .animals-theme #game-container { background-color: #ffffff; border: 3px solid #a5d6a7; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-        .animals-theme #mainMenuBtn { background-color: #4CAF50; color: white; }
-        .animals-theme #mainMenuBtn:hover { background-color: #388e3c; }
-        .animals-theme #game-container h1 { color: #387002; background-image: none; font-size: 2.2em;}
-        .animals-theme button#submitAnswerBtn { background-image: none; background-color: #81c784; color: #1b5e20; text-shadow: none; }
-        .animals-theme button#submitAnswerBtn:hover { background-color: #66bb6a; }
-        .animals-theme #problemVisuals .shape, .animals-theme #problemTextDisplay, .animals-theme input[type="number"], .animals-theme #score-board, .animals-theme #sticker-prompt { color: #387002; }
-        .animals-theme input[type="number"] { border-color: #81c784; }
-        .animals-theme #feedback { background-color: #f1f8e9; border: 1px solid #a5d6a7; color: #387002; }
-        .animals-theme .correct { color: #388e3c; } .animals-theme .incorrect { color: #c62828; }
-        .animals-theme #sticker-section { background-color: #ffffff; border: 2px solid #66bb6a; }
-        .animals-theme #sticker-header { color: #388e3c; }
-        .animals-theme .scroll-btn { background-color: #66bb6a; color: white; }
-        .animals-theme .scroll-btn:hover { background-color: #4caf50; }
-        .animals-theme #sticker-list { background-color: #f1f8e9; border-color: #a5d6a7; }
-        .animals-theme #sticker-list img.sticker-option { border-color: #a5d6a7; }
-        .animals-theme .sticker-base { box-shadow: 0 2px 5px rgba(0,0,0,0.15); }
-        .animals-theme .sticker-base.theme-sticker-color-1 { background-color: #ffb300; color: white; } .animals-theme .sticker-base.theme-sticker-color-2 { background-color: #7cb342; color: white; } .animals-theme .sticker-base.theme-sticker-color-3 { background-color: #4db6ac; color: white; } .animals-theme .sticker-base.theme-sticker-color-4 { background-color: #8d6e63; color: white; } .animals-theme .sticker-base.theme-sticker-color-5 { background-color: #4fc3f7; color: white; } .animals-theme .sticker-base.theme-sticker-color-6 { background-color: #fff176; color: #5d4037; } .animals-theme .sticker-base.theme-sticker-color-7 { background-color: #ba68c8; color: white; } 
-        .animals-theme #sticker-board-header { color: #387002; }
-        .animals-theme #sticker-board { background-color: #c8e6c9; border-image: linear-gradient(45deg, #8d6e63, #ffb300, #7cb342, #4db6ac, #4fc3f7) 1; }
-        .animals-theme #personalized-message { background-color: rgba(232, 245, 233, 0.95); color: #2e7d32; border-width: 4px;}
+/* --- Start Menu Styles --- */
+#start-menu {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background-color: rgba(247, 249, 252, 0.98); 
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    z-index: 3000; padding: 15px; box-sizing: border-box; text-align: center; overflow-y: auto;
+}
+#start-menu h2 {
+    font-size: 2.3em; margin-bottom: 15px;
+}
+#start-menu label { 
+    font-size: 1.2em; 
+    margin-bottom: 6px;
+    display: block; 
+}
+#start-menu input[type="text"] {
+    padding: 10px; font-size: 1.1em; border: 2px solid #ccc; border-radius: 8px;
+    width: 80%; max-width: 280px; margin-bottom: 10px; text-align: center;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+#start-menu input[type="text"]:focus {
+    border-color: #4A90E2; 
+    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
+    outline: none;
+}
+.selection-group {
+    margin: 10px 0; padding: 10px; border: 1px solid #ddd; border-radius: 8px;
+    width: 90%; max-width: 320px; 
+    background-color: rgba(255,255,255,0.5);
+}
+.selection-group p { 
+    margin-top: 0; margin-bottom: 8px; 
+    font-weight: bold; font-size: 1.1em; 
+}
+.selection-group label {
+    display: block; margin: 5px auto; cursor: pointer; font-size: 1em;
+    max-width: 220px; text-align: left; padding-left: 15px; 
+}
+.selection-group input[type="radio"] {
+    margin-right: 6px; cursor: pointer; transform: scale(1.1); vertical-align: middle;
+}
+#start-menu button#startGameBtn {
+    padding: 12px 25px; font-size: 1.2em; border-radius: 30px; cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s; font-weight: bold; margin-top: 10px;
+}
+.error-message {
+    font-weight: bold; margin-top: 8px; font-size: 0.9em;
+}
 
-        @media (max-width: 700px) {#personalized-message { font-size: 2.2em;} #start-menu h2 {font-size: 2em;} .videogame-theme #start-menu h2, .videogame-theme .selection-group p { font-size: 1.5em; } .videogame-theme #start-menu label, .videogame-theme .selection-group label { font-size: 0.7em;} }
-        @media (max-width: 600px) {#game-container h1 {font-size: 1.8em;} .videogame-theme #game-container h1 {font-size: 1.2em;}}
-        @media (max-width: 480px) {#personalized-message {font-size: 1.6em;} .videogame-theme #personalized-message {font-size: 1.1em;} #game-container h1 {font-size: 1.6em;} #problemTextDisplay {font-size: 1.5em;} #problemVisuals {font-size: 2em;} #start-menu h2 {font-size: 1.8em;} .videogame-theme #start-menu h2, .videogame-theme .selection-group p { font-size: 1.2em; }}
+/* --- Game Area Styles --- */
+#game-and-stickers-container { display: none; flex-direction: column; align-items: center; width: 100%; }
+#game-container {
+    padding: 20px; padding-top: 60px; 
+    border-radius: 16px; 
+    width: 90%; max-width: 500px;
+    margin-bottom: 25px; 
+    box-sizing: border-box; position: relative;
+    transition: background-color 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease;
+    background-color: #ffffff; 
+    box-shadow: 0 10px 35px rgba(0, 0, 0, 0.08); 
+}
+ #mainMenuBtn {
+    position: absolute; top: 18px; left: 18px; padding: 10px 18px; font-size: 0.9em;
+    border: none; border-radius: 20px; 
+    cursor: pointer; z-index: 100;
+    transition: background-color 0.3s ease, transform 0.2s ease, color 0.3s ease, box-shadow 0.3s ease;
+    font-weight: bold;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+#mainMenuBtn:hover { transform: scale(1.03); box-shadow: 0 4px 8px rgba(0,0,0,0.15); }
+
+#game-container h1 {
+    font-size: 2.2em; font-weight: bold; margin-bottom: 25px; margin-top: 0;
+    transition: color 0.5s ease;
+}
+#problemTextDisplay {
+    font-size: 1.8em; margin-bottom: 12px; min-height: 1.5em; font-weight: bold;
+}
+#problemVisuals {
+    font-size: 2.5em; margin-bottom: 18px; min-height: 70px; 
+    display: flex; flex-wrap: wrap; justify-content: center; align-items: center;
+    gap: 5px; 
+}
+#problemVisuals .shape {
+    font-size: 1.8em; 
+    margin: 3px; display: inline-block;
+}
+
+input[type="number"] {
+    padding: 12px 15px; font-size: 1.2em; width: 90px; max-width: 120px; text-align: center;
+    border: 1px solid #CBD5E0; border-radius: 8px; margin-bottom: 20px; box-sizing: border-box;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+input[type="number"]:focus {
+    border-color: #4A90E2; 
+    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
+    outline: none;
+}
+
+button#submitAnswerBtn {
+    padding: 14px 20px; font-size: 1.15em; border: none; border-radius: 50px; cursor: pointer;
+    background-size: 200% auto;
+    transition: background-position 0.5s ease, transform 0.2s ease, background-color 0.5s ease, color 0.5s ease, box-shadow 0.3s ease;
+    display: block; width: 100%; max-width: 230px; margin: 0 auto; box-sizing: border-box; font-weight: bold;
+    text-shadow: none; 
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+button#submitAnswerBtn:hover, button#submitAnswerBtn:active { 
+    transform: translateY(-2px) scale(1.03); 
+    box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+}
+        
+#feedback {
+    font-size: 1.1em; margin-top: 15px; min-height: 2.5em; padding: 10px;
+    border-radius: 6px;
+    transition: background-color 0.5s ease, border-color 0.5s ease, color 0.5s ease;
+    line-height: 1.4;
+}
+.correct { font-weight: bold; }
+.incorrect { font-weight: bold; }
+
+#score-board { font-size: 1.1em; margin-bottom: 15px; color: #4A5568;}
+
+#sticker-section {
+    margin-top: 20px; padding: 20px; border-radius: 12px; width: 95%; max-width: 600px;
+    margin-left: auto; margin-right: auto; box-sizing: border-box; margin-bottom: 20px;
+    transition: background-color 0.5s ease, border-color 0.5s ease;
+    background-color: #ffffff;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.07);
+}
+#sticker-header { font-size: 1.4em; font-weight: bold; margin-bottom: 10px; min-height: 1.5em; }
+#sticker-prompt { font-size: 0.9em; margin-bottom:15px; color: #4A5568; }
+        
+.sticker-list-container { display: flex; flex-direction: column; align-items: center; }
+.scroll-btn {
+    border: none; padding: 0; font-size: 1.5em; border-radius: 50%; 
+    cursor: pointer; transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
+    width: 40px; height: 40px; margin: 5px 0; line-height: 40px; 
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+.scroll-btn:hover { transform: scale(1.1); }
+.scroll-btn:disabled { background-color: #e2e8f0 !important; color: #a0aec0 !important; cursor: not-allowed; opacity: 0.7; }
+
+#sticker-list { 
+    display: flex; flex-wrap: wrap; gap: 12px; justify-content: center;
+    max-height: 140px; 
+    overflow-y: auto; -webkit-overflow-scrolling: touch; 
+    padding: 15px; border: 1px solid #e2e8f0; border-radius: 8px;
+    width: 100%; box-sizing: border-box;
+    background-color: #f7fafc;
+    transition: background-color 0.5s ease, border-color 0.5s ease;
+}
+#sticker-list img.sticker-option { 
+    width: 55px; height: 55px; object-fit: contain; 
+    border: 1px solid #e2e8f0; 
+    border-radius: 8px; 
+    background-color: #fff; 
+}
+.sticker-option.disabled-drag { cursor: not-allowed; opacity: 0.5; transform: scale(0.95); }
+
+.sticker-base { 
+    padding: 12px 18px; border-radius: 12px; font-weight: bold; font-size: 1em;
+    text-align: center; transition: transform 0.2s ease-out, box-shadow 0.2s ease-out, opacity 0.2s, background-color 0.3s, color 0.3s;
+    min-width: 100px; 
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1); 
+    display: inline-flex; align-items: center; justify-content: center;
+    word-break: keep-all; line-height: 1.2;
+}
+.sticker-option { cursor: grab; } 
+.sticker-option:not(.disabled-drag):hover { 
+    transform: translateY(-3px) scale(1.05); 
+    box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+}
+
+#sticker-board-container { width: 95%; max-width: 700px; margin: 20px auto; } 
+.board-header-controls { 
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px; 
+}
+#sticker-board-header { font-size: 1.5em; font-weight: bold; margin-bottom: 0; }
+#viewZooBtn { 
+    padding: 8px 12px;
+    font-size: 0.9em;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s, color 0.3s;
+    font-weight: bold;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+#viewZooBtn:hover { transform: scale(1.05); }
+
+
+#sticker-board {
+    width: 100%; height: 300px; border-radius: 12px; position: relative;
+    overflow: hidden; box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
+    border-width: 4px; border-style: solid; border-color: transparent; 
+    background-clip: padding-box;
+    transition: background-color 0.5s ease, border-image 0.5s ease;
+}
+.placed-sticker-text, .placed-animal { 
+    position: absolute; cursor: move; user-select: none; z-index: 10;
+}
+.placed-animal img { 
+    width: 60px; height: 60px; object-fit: contain; display: block;
+}
+.sticker-ghost { position: fixed; pointer-events: none; opacity: 0.75; z-index: 1000; }
+.sticker-ghost img { width: 50px; height: 50px; object-fit: contain; }
+
+
+#personalized-message {
+    position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.9);
+    padding: 30px 45px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15); 
+    z-index: 2000; font-size: 2.5em; font-weight: bold; text-align: center;
+    opacity: 0; transition: opacity 0.3s ease-out, transform 0.3s ease-out, background-color 0.3s, border-color 0.3s, color 0.3s;
+    pointer-events: none; border-width: 0px; border-style: solid; 
+}
+#personalized-message.visible { opacity: 1; transform: translate(-50%, -50%) scale(1); pointer-events: auto; }
+
+
+/* Zoo Gallery Overlay Styles */
+#zoo-gallery-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background-color: rgba(0, 0, 0, 0.7); 
+    z-index: 4000; 
+    display: flex; justify-content: center; align-items: center;
+    opacity: 0;
+    visibility: hidden; /* Start hidden */
+    transition: opacity 0.3s ease-out, visibility 0s ease-out 0.3s; /* Corrected transition */
+}
+#zoo-gallery-overlay.visible {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.3s ease-out, visibility 0s ease-out 0s; /* Corrected transition */
+}
+#zoo-gallery-content {
+    padding: 25px; border-radius: 15px; width: 90%; max-width: 700px; 
+    height: 85%; max-height: 550px; box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+    display: flex; flex-direction: column; position: relative; 
+}
+#zoo-gallery-content h2 {
+    text-align: center; margin-top: 0; margin-bottom: 20px; font-size: 1.8em; 
+}
+#zoo-gallery-grid {
+    flex-grow: 1; overflow-y: auto; -webkit-overflow-scrolling: touch;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); 
+    gap: 15px; padding: 15px; border-radius: 8px;
+}
+.zoo-gallery-item {
+    display: flex; flex-direction: column; align-items: center; justify-content: space-between; 
+    padding: 10px; border-radius: 8px; text-align: center;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.zoo-gallery-item:hover { transform: translateY(-3px); box-shadow: 0 6px 12px rgba(0,0,0,0.1); }
+.zoo-gallery-item img { width: 70px; height: 70px; object-fit: contain; margin-bottom: 8px; }
+.zoo-gallery-item span { font-size: 0.75em; word-break: break-word; line-height: 1.2; }
+#closeZooGalleryBtn {
+    margin-top: 20px; padding: 12px 25px; font-size: 1em;
+    border: none; border-radius: 25px; cursor: pointer; align-self: center;
+    font-weight: bold; transition: background-color 0.3s ease, transform 0.2s ease;
+}
+#closeZooGalleryBtn:hover { transform: scale(1.05); }
+
+.hidden { display: none !important; } /* General utility class, used for #sticker-section initially */
+
+/* --- Rainbow Theme --- */
+.rainbow-theme body { background-color: #f0f8ff; color: #333745; }
+.rainbow-theme #start-menu { background-color: rgba(240, 248, 255, 0.98); }
+.rainbow-theme #start-menu h2, .rainbow-theme .selection-group p {
+    background-image: linear-gradient(to right, #FF4136, #FF851B, #FFDC00, #2ECC40, #0074D9, #4B0082, #B10DC9);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.rainbow-theme #start-menu button#startGameBtn { background-color: #2ECC40; color: white; box-shadow: 0 4px 12px rgba(46, 204, 64, 0.3); }
+.rainbow-theme #start-menu button#startGameBtn:hover { background-color: #25a233; transform: translateY(-2px) scale(1.02); }
+.rainbow-theme .error-message { color: #FF4136; }
+.rainbow-theme #game-container { background-color: #fff; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08); }
+.rainbow-theme #mainMenuBtn { background-color: #0074D9; color: white; box-shadow: 0 2px 5px rgba(0,116,217,0.2);}
+.rainbow-theme #mainMenuBtn:hover { background-color: #0056b3; box-shadow: 0 4px 8px rgba(0,86,179,0.3);}
+.rainbow-theme #game-container h1 {
+    background-image: linear-gradient(to right, #FF4136, #FF851B, #FFDC00, #2ECC40, #0074D9, #4B0082, #B10DC9);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.rainbow-theme button#submitAnswerBtn {
+    background-image: linear-gradient(to right, #FF4136, #FF851B, #FFDC00, #2ECC40, #0074D9, #B10DC9);
+    color: white; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+.rainbow-theme button#submitAnswerBtn:hover { background-position: right center; transform: translateY(-2px) scale(1.03); box-shadow: 0 6px 15px rgba(0,0,0,0.2); }
+.rainbow-theme #feedback { background-color: rgba(230,247,255,0.8); border: 1px dashed #0074d9; color: #333745;}
+.rainbow-theme .correct { color: #2ECC40; }
+.rainbow-theme .incorrect { color: #FF4136; }
+.rainbow-theme #sticker-section { background-color: #fff; border: 2px solid #e2e8f0; box-shadow: 0 6px 20px rgba(0,0,0,0.07);}
+.rainbow-theme #sticker-header { color: #0074D9; }
+.rainbow-theme #problemTextDisplay { color: #333745; }
+.rainbow-theme .scroll-btn { background-color: #718096; color: white; }
+.rainbow-theme .scroll-btn:hover { background-color: #4A5568; }
+.rainbow-theme #sticker-list { background-color: #f7fafc; border: 1px solid #e2e8f0; }
+.rainbow-theme .sticker-base { box-shadow: 0 4px 8px rgba(0,0,0,0.1); } 
+.rainbow-theme .sticker-base.theme-sticker-color-1 { background-color: #FF4136; color: white; }
+.rainbow-theme .sticker-base.theme-sticker-color-2 { background-color: #FF851B; color: white; }
+.rainbow-theme .sticker-base.theme-sticker-color-3 { background-color: #FFDC00; color: #333; }
+.rainbow-theme .sticker-base.theme-sticker-color-4 { background-color: #2ECC40; color: white; }
+.rainbow-theme .sticker-base.theme-sticker-color-5 { background-color: #0074D9; color: white; }
+.rainbow-theme .sticker-base.theme-sticker-color-6 { background-color: #4B0082; color: white; }
+.rainbow-theme .sticker-base.theme-sticker-color-7 { background-color: #B10DC9; color: white; }
+.rainbow-theme #sticker-board-header { color: #2ECC40; }
+.rainbow-theme #sticker-board { background-color: #f0f8ff; border-image: linear-gradient(45deg, #FF4136, #FF851B, #FFDC00, #2ECC40, #0074D9, #4B0082, #B10DC9) 1; }
+.rainbow-theme #personalized-message { background-color: rgba(255, 255, 255, 0.97); color: #333745; border-width: 6px; }
+.rainbow-theme #viewZooBtn { background-color: #B10DC9; color: white; }
+.rainbow-theme #viewZooBtn:hover { background-color: #85147E; }
+.rainbow-theme #zoo-gallery-content { background-color: #f8f9fa; border: 1px solid #e0e0e0;}
+.rainbow-theme #zoo-gallery-content h2 { color: #007bff; }
+.rainbow-theme #zoo-gallery-grid { background-color: #ffffff; border-color: #e0e0e0; }
+.rainbow-theme .zoo-gallery-item { border: 1px solid #f0f0f0; background-color: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.05);}
+.rainbow-theme .zoo-gallery-item span { color: #495057; }
+.rainbow-theme #closeZooGalleryBtn { background-color: #FF4136; color: white; }
+.rainbow-theme #closeZooGalleryBtn:hover { background-color: #c70019; }
+
+/* --- Videogame Theme --- */
+.videogame-theme body { background-color: #0d0d21; color: #e0e1dd; font-family: 'Press Start 2P', cursive; }
+.videogame-theme #start-menu { background-color: rgba(13, 13, 33, 0.98); }
+.videogame-theme #start-menu h2, .videogame-theme .selection-group p {
+    background-image: linear-gradient(to right, #00FFFF, #FF00FF, #FFFF00);
+    -webkit-background-clip: text; background-clip: text; color: transparent; font-size: 1.5em; 
+}
+.videogame-theme #start-menu label, .videogame-theme .selection-group label { color: #00FFFF; font-size: 0.7em;} 
+.videogame-theme #start-menu input[type="text"] { background-color: #1a1a2e; color: #00FFFF; border: 2px solid #00FFFF; font-size: 0.8em;} 
+.videogame-theme #start-menu button#startGameBtn { background-color: #FF00FF; color: #0d0d21; box-shadow: 0 0 10px #FF00FF; border: 2px solid #FFFF00; font-size: 0.9em;} 
+.videogame-theme #start-menu button#startGameBtn:hover { background-color: #cc00cc;}
+.videogame-theme .error-message { color: #FF00FF; }
+.videogame-theme #game-container { background-color: #1a1a2e; border: 3px solid #00FFFF; box-shadow: 0 0 15px #00FFFF; }
+.videogame-theme #mainMenuBtn { background-color: #FF00FF; color: #0d0d21; border: 1px solid #FFFF00; font-size: 0.7em;}
+.videogame-theme #mainMenuBtn:hover { background-color: #cc00cc;}
+.videogame-theme #game-container h1 {
+    background-image: linear-gradient(to right, #00FFFF, #FF00FF, #FFFF00);
+    -webkit-background-clip: text; background-clip: text; color: transparent; font-size: 1.3em; 
+}
+.videogame-theme button#submitAnswerBtn { background-image: none; background-color: #00FFFF; color: #0d0d21; text-shadow: none; border: 2px solid #FFFF00; font-size: 0.9em;}
+.videogame-theme button#submitAnswerBtn:hover { background-color: #00cccc; }
+.videogame-theme #problemVisuals .shape, .videogame-theme #problemTextDisplay, .videogame-theme input[type="number"], .videogame-theme #score-board, .videogame-theme #sticker-prompt  { color: #e0e1dd; } 
+.videogame-theme input[type="number"] { background-color: #0d0d21; border-color: #00FFFF; color: #00FFFF;}
+.videogame-theme #feedback { 
+    background-color: #101028; border: 1px solid #00FFFF; color: #e0e1dd; 
+    font-family: 'Press Start 2P', cursive; font-size: 0.7em; line-height: 1.4; padding: 8px;
+}
+.videogame-theme .correct { color: #00FF00; text-shadow: 0 0 3px #00FF00, 0 0 5px #00FF00; font-weight: normal; }
+.videogame-theme .incorrect { color: #FF0000; text-shadow: 0 0 3px #FF0000, 0 0 5px #FF0000; font-weight: normal;}
+.videogame-theme #sticker-section { background-color: #1a1a2e; border: 2px solid #FF00FF; }
+.videogame-theme #sticker-header { color: #FF00FF; }
+.videogame-theme .scroll-btn { background-color: #FF00FF; color: #0d0d21; border: 1px solid #FFFF00; font-size: 1em;}
+.videogame-theme .scroll-btn:hover { background-color: #cc00cc;}
+.videogame-theme #sticker-list { background-color: #0d0d21; border-color: #00FFFF; }
+.videogame-theme #sticker-list img.sticker-option { border-color: #00FFFF; }
+.videogame-theme .sticker-base { box-shadow: 0 2px 5px rgba(0,0,0,0.5); font-size: 0.6em; padding: 6px 8px; min-width: 70px;} 
+.videogame-theme .sticker-base.theme-sticker-color-1 { background-color: #ff3366; color: white; } 
+.videogame-theme .sticker-base.theme-sticker-color-2 { background-color: #33ff99; color: black; } 
+.videogame-theme .sticker-base.theme-sticker-color-3 { background-color: #3399ff; color: white; } 
+.videogame-theme .sticker-base.theme-sticker-color-4 { background-color: #ffcc33; color: black; } 
+.videogame-theme .sticker-base.theme-sticker-color-5 { background-color: #cc33ff; color: white; } 
+.videogame-theme .sticker-base.theme-sticker-color-6 { background-color: #ffffff; color: black; } 
+.videogame-theme .sticker-base.theme-sticker-color-7 { background-color: #00ff00; color: black; } 
+.videogame-theme #sticker-board-header { color: #00FF00; }
+.videogame-theme #sticker-board { background-color: #101028; border-image: linear-gradient(45deg, #00FFFF, #FF00FF, #FFFF00) 1; }
+.videogame-theme #personalized-message { 
+    background-color: rgba(200, 200, 220, 0.95); font-family: 'Press Start 2P', cursive; 
+    font-size: 1.3em; border-width: 4px; color: #1a1a2e; text-shadow: 1px 1px 0px #00c8c8; 
+}
+.videogame-theme #viewZooBtn { background-color: #FFFF00; color: #0d0d21; font-family: 'Press Start 2P', cursive; font-size:0.6em; padding: 10px 8px;}
+.videogame-theme #viewZooBtn:hover { background-color: #cccc00; }
+.videogame-theme #zoo-gallery-content { background-color: #16213e; border: 2px solid #00FFFF; color: #e0e1dd; font-family: 'Press Start 2P', cursive;}
+.videogame-theme #zoo-gallery-content h2 { color: #00FF00; font-size: 1em;} 
+.videogame-theme #zoo-gallery-grid { background-color: #0d0d21; border-color: #FF00FF; }
+.videogame-theme .zoo-gallery-item { border-color: #00FFFF; background-color: #101028; }
+.videogame-theme .zoo-gallery-item span { color: #00FF00; font-size: 0.5em; line-height: 1.1; } 
+.videogame-theme .zoo-gallery-item img { width: 60px; height: 60px;}
+.videogame-theme #closeZooGalleryBtn { background-color: #FF00FF; color: #0d0d21; font-family: 'Press Start 2P', cursive; font-size:0.7em;}
+.videogame-theme #closeZooGalleryBtn:hover { background-color: #cc00cc; }
+
+
+/* --- Animals Theme --- */
+.animals-theme body { background-color: #e8f5e9; color: #387002; font-family: 'Nunito', sans-serif; }
+.animals-theme #start-menu { background-color: rgba(232, 245, 233, 0.98); }
+.animals-theme #start-menu h2 { color: #4CAF50; background-image: none; font-size: 2.3em;} 
+.animals-theme .selection-group p { color: #388e3c; background-image: none; } 
+.animals-theme #start-menu label, .animals-theme .selection-group label { color: #2e7d32; }
+.animals-theme #start-menu input[type="text"] { border-color: #66bb6a; }
+.animals-theme #start-menu button#startGameBtn { background-color: #4CAF50; color: white; box-shadow: 0 4px 8px rgba(76, 175, 80, 0.4); }
+.animals-theme #start-menu button#startGameBtn:hover { background-color: #388e3c; transform: translateY(-2px) scale(1.02); }
+.animals-theme .error-message { color: #d32f2f; } 
+.animals-theme #game-container { background-color: #ffffff; border: 3px solid #a5d6a7; box-shadow: 0 6px 20px rgba(0,0,0,0.08); }
+.animals-theme #mainMenuBtn { background-color: #4CAF50; color: white; }
+.animals-theme #mainMenuBtn:hover { background-color: #388e3c; }
+.animals-theme #game-container h1 { color: #387002; background-image: none; font-size: 2.2em;}
+.animals-theme button#submitAnswerBtn { background-image: none; background-color: #81c784; color: #1b5e20; text-shadow: none; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+.animals-theme button#submitAnswerBtn:hover { background-color: #66bb6a; transform: translateY(-2px) scale(1.02); box-shadow: 0 5px 12px rgba(0,0,0,0.15);}
+.animals-theme #problemVisuals .shape, .animals-theme #problemTextDisplay, .animals-theme input[type="number"], .animals-theme #score-board, .animals-theme #sticker-prompt { color: #387002; }
+.animals-theme input[type="number"] { border-color: #81c784; }
+.animals-theme #feedback { 
+    background-color: #f1f8e9; border: 1px solid #c8e6c9; color: #387002; 
+}
+.animals-theme .correct { color: #388e3c; }
+.animals-theme .incorrect { color: #c62828; }
+.animals-theme #sticker-section { background-color: #ffffff; border: 2px solid #81c784; box-shadow: 0 4px 15px rgba(0,0,0,0.06);}
+.animals-theme #sticker-header { color: #388e3c; }
+.animals-theme .scroll-btn { background-color: #66bb6a; color: white; }
+.animals-theme .scroll-btn:hover { background-color: #4caf50; }
+.animals-theme #sticker-list { background-color: #e8f5e9; border-color: #c8e6c9; }
+.animals-theme #sticker-list img.sticker-option { border-color: #c8e6c9; background-color: #fff; }
+.animals-theme .sticker-base { box-shadow: 0 3px 7px rgba(0,0,0,0.12); }
+.animals-theme .sticker-base.theme-sticker-color-1 { background-color: #ffb300; color: white; } 
+.animals-theme .sticker-base.theme-sticker-color-2 { background-color: #7cb342; color: white; } 
+.animals-theme .sticker-base.theme-sticker-color-3 { background-color: #4db6ac; color: white; } 
+.animals-theme .sticker-base.theme-sticker-color-4 { background-color: #8d6e63; color: white; } 
+.animals-theme .sticker-base.theme-sticker-color-5 { background-color: #4fc3f7; color: white; } 
+.animals-theme .sticker-base.theme-sticker-color-6 { background-color: #fff176; color: #5d4037; } 
+.animals-theme .sticker-base.theme-sticker-color-7 { background-color: #ba68c8; color: white; } 
+.animals-theme #sticker-board-header { color: #387002; }
+.animals-theme #sticker-board { background-color: #dcedc8; border-image: linear-gradient(45deg, #8d6e63, #ffb300, #7cb342, #4db6ac, #4fc3f7) 1; }
+.animals-theme #personalized-message { background-color: rgba(241, 248, 233, 0.97); color: #2e7d32; border-width: 4px;}
+.animals-theme #viewZooBtn { background-color: #8d6e63; color: white; } 
+.animals-theme #viewZooBtn:hover { background-color: #6d4c41; }
+.animals-theme #zoo-gallery-content { background-color: #f1f8e9; border: 1px solid #c8e6c9;}
+.animals-theme #zoo-gallery-content h2 { color: #387002; }
+.animals-theme #zoo-gallery-grid { background-color: #e8f5e9; border-color: #c8e6c9; }
+.animals-theme .zoo-gallery-item { border: 1px solid #dcedc8; background-color: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.05);}
+.animals-theme .zoo-gallery-item span { color: #387002; }
+.animals-theme #closeZooGalleryBtn { background-color: #7cb342; color: white; }
+.animals-theme #closeZooGalleryBtn:hover { background-color: #558b2f; }
+
+
+/* Media Queries for smaller screens */
+@media (max-width: 700px) {
+    #personalized-message { font-size: 2.2em; padding: 20px 30px; }
+    #start-menu h2 { font-size: 2em; }
+    #start-menu label { font-size: 1.1em; }
+    #start-menu input[type="text"] { font-size: 1em; padding: 10px; }
+    #start-menu button#startGameBtn { font-size: 1.2em; padding: 12px 25px; }
+    .selection-group p {font-size: 1.1em;}
+    .selection-group label {font-size: 1em;}
+    .videogame-theme #start-menu h2, .videogame-theme .selection-group p { font-size: 1.5em; }
+    .videogame-theme #start-menu label, .videogame-theme .selection-group label { font-size: 0.7em;}
+    #zoo-gallery-content h2 { font-size: 1.5em; }
+    .videogame-theme #zoo-gallery-content h2 { font-size: 0.9em; }
+    .zoo-gallery-item img { width: 60px; height: 60px; }
+    .zoo-gallery-item span { font-size: 0.7em; }
+}
+@media (max-width: 600px) {
+    #sticker-board { height: 250px; }
+    .sticker-base { font-size: 0.85em; padding: 8px 12px; min-width: 80px;}
+    #game-container h1 { font-size: 1.8em; }
+     .videogame-theme #game-container h1 { font-size: 1.2em;}
+}
+@media (max-width: 480px) {
+    #personalized-message { font-size: 1.6em; padding: 15px 20px; width: 85%; }
+     .videogame-theme #personalized-message {font-size: 1.1em;}
+    #game-container h1 { font-size: 1.6em; }
+    #problemTextDisplay {font-size: 1.5em;} 
+    #problemVisuals {font-size: 2em;}
+    #problemVisuals .shape { font-size: 1.5em;} 
+    input[type="number"] { font-size: 1.1em; width: 70px; }
+    button#submitAnswerBtn { font-size: 1em; }
+    #feedback { font-size: 1em; }
+    #score-board { font-size: 1em; }
+    #sticker-header { font-size: 1.2em; }
+    #sticker-board-header { font-size: 1.3em; }
+    #sticker-board { height: 200px; }
+    .sticker-base { font-size: 0.8em; padding: 6px 10px; min-width: 70px;}
+    #sticker-list img.sticker-option { width: 45px; height: 45px; }
+    .placed-animal img { width: 50px; height: 50px; }
+
+    #mainMenuBtn { top: 10px; left: 10px; font-size: 0.8em; padding: 6px 10px;}
+    #start-menu h2 {font-size: 1.8em;}
+    .selection-group {padding: 5px; margin: 5px 0;}
+    .selection-group p {font-size: 1em;}
+    .selection-group label {font-size: 0.9em; padding-left: 5px;}
+    .videogame-theme #start-menu h2, .videogame-theme .selection-group p { font-size: 1.2em; }
+    #zoo-gallery-grid { grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 10px; padding: 5px; }
+    .zoo-gallery-item img { width: 50px; height: 50px; }
+    .zoo-gallery-item span { font-size: 0.65em; }
+    #zoo-gallery-content h2 { font-size: 1.2em; }
+    .videogame-theme #zoo-gallery-content h2 { font-size: 0.8em; }
+}

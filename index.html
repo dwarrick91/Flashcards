@@ -68,12 +68,26 @@
         </div>
 
         <div id="sticker-board-container">
-            <h2 id="sticker-board-header">Your Reward Board! ✨</h2>
+            <div class="board-header-controls">
+                <h2 id="sticker-board-header">Your Reward Board! ✨</h2>
+                <button id="viewZooBtn" title="View Creature Collection">🏞️ Collection</button>
+            </div>
             <div id="sticker-board"></div>
         </div>
     </div>
 
     <div id="personalized-message"></div>
 
-    <script src="merge.js"></script>   <script src="script.js"></script>  </body>
+    <div id="zoo-gallery-overlay" class="hidden">
+        <div id="zoo-gallery-content">
+            <h2>Creature Collection</h2>
+            <div id="zoo-gallery-grid">
+                </div>
+            <button id="closeZooGalleryBtn">Close</button>
+        </div>
+    </div>
+
+    <script src="merge.js"></script>   
+    <script src="script.js"></script>  
+</body>
 </html>
